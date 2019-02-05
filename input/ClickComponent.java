@@ -7,12 +7,7 @@ import java.awt.event.*;
 import java.util.*;
 
 public class ClickComponent extends JComponent implements MouseListener{
-	
-//---  Constant Values   ----------------------------------------------------------------------
 
-	/** */
-	private static final long serialVersionUID = 1L;
-	
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** int value representing the coded value for which event-region is currently selected*/

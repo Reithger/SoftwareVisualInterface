@@ -34,4 +34,5 @@ public class test {
 		fram.addPanel("fir", pan);
 		fram.addPanel("sas", pan2);
 		}
+
 }
