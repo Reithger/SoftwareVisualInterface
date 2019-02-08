@@ -53,12 +53,13 @@ public class DrawnButton extends Element implements Clickable{
 	 * @param key
 	 */
 	
-	public DrawnButton(int x, int y, int wid, int hei, int key) {
+	public DrawnButton(int x, int y, int prior, int wid, int hei, int key) {
 		cornerX = x - wid/2;
 		cornerY = y - hei/2;
 		width = wid;
 		height = hei;
 		code = key;
+		setDrawPriority(prior);
 		color = null;
 	}
 
@@ -66,8 +67,8 @@ public class DrawnButton extends Element implements Clickable{
 	
 	@Override
 	public void drawToScreen(Graphics g) {
-		Color maintain = g.getColor();
 		if(color != null) {
+			Color maintain = g.getColor();
 			g.setColor(color);
 			g.fillRect(cornerX, cornerY, width, height);
 			g.setColor(maintain);

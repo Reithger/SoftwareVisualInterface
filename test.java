@@ -15,7 +15,7 @@ public class test {
 		WindowFrame fram = new WindowFrame(1200, 500);
 		ElementPanel pan = new ElementPanel(0, 0, 550, 290) {
 			public void keyBehaviour(char event) {
-				
+				removeElement("rec");
 			}
 			
 			public void clickBehaviour(int event) {
