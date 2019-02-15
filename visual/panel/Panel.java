@@ -20,6 +20,11 @@ import visual.frame.Frame;
 
 public abstract class Panel extends JPanel{
 
+//---  Constant Variables   -------------------------------------------------------------------
+
+	/**	 */
+	private static final long serialVersionUID = 1L;
+	
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** Frame object that houses this Panel object; may be null if unassociated, parentFrame may not always show this Panel*/

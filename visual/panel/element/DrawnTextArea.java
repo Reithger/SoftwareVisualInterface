@@ -42,6 +42,9 @@ public class DrawnTextArea extends Element implements Clickable, TextStorage{
 				x = xHigh;
 				y += fM.getHeight();	
 			}
+			if(y > yLow) {
+				break;
+			}
 			g.drawString(s, x, y);
 			x += wid;
 		}
@@ -68,6 +71,9 @@ public class DrawnTextArea extends Element implements Clickable, TextStorage{
 			if(storedText.length() == 0)
 				return false;
 			storedText = storedText.substring(0, storedText.length()-1);
+		}
+		else if((int) in == 10) {		//Do something for new line entry
+			storedText += "";
 		}
 		else {
 			storedText += in;

@@ -1,9 +1,5 @@
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
@@ -16,12 +12,14 @@ public class test {
 		ElementPanel pan = new ElementPanel(0, 0, 550, 290) {
 			public void keyBehaviour(char event) {
 				removeElement("rec");
+				union.set(event+"");
 			}
 			
 			public void clickBehaviour(int event) {
 				if(event == -1) {
 					System.out.println(this.getElementStoredText("ent"));
 				}
+				System.out.println(union.get());
 			} 
 			
 		};
@@ -34,5 +32,39 @@ public class test {
 		fram.addPanel("fir", pan);
 		fram.addPanel("sas", pan2);
 		}
+	
 
+
+}
+class union{
+	
+	private static union un;
+	private static String str;
+	
+	protected union(String sup) {
+		str = sup;
+	}
+	
+	public static union getUnion() {
+		if(un == null)
+			un = new union(" ");
+		return un;
+	}
+	
+	public static void set(String in) {
+		getUnion().setIn(in);
+	}
+	
+	private void setIn(String in) {
+		str = in;
+	}
+	
+	public static String get() {
+		return getUnion().getIn();
+	}
+	
+	private String getIn() {
+		return str;
+	}
+	
 }

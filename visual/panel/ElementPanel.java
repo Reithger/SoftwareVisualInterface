@@ -1,7 +1,6 @@
 package visual.panel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.io.File;
@@ -20,10 +19,13 @@ import visual.panel.element.*;
 
 public class ElementPanel extends Panel{
 
+//---  Constant Variables   -------------------------------------------------------------------
+
+	/**	 */
+	private static final long serialVersionUID = 1L;
+	
 //---  Instance Variables   -------------------------------------------------------------------
 	
-	/** HashMap that saves the image associated to the provided file path and allows re-access via the file path*/
-	private HashMap<String, Image> images;
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
 	private HashMap<String, Element> drawList;
 	/** HashMap that assigns a name to defined regions of the screen that generate a specified code upon interaction*/
@@ -46,7 +48,6 @@ public class ElementPanel extends Panel{
 	public ElementPanel(int x, int y, int width, int height){
 		super();
 		initiate(x, y, width, height);
-		images = new HashMap<String, Image>();
 		drawList = new HashMap<String, Element>();
 		clickList = new HashMap<String, Detectable>();
 	}
@@ -212,17 +213,11 @@ public class ElementPanel extends Panel{
 	public Image retrieveImage(String pathIn) {
 		String path = pathIn.replace("\\", "/");
 		try {
-			if(images.get(path) == null) {
-				images.put(path, ImageIO.read(ElementPanel.class.getResource(path.substring(path.indexOf("/")))));
-			}
-			return images.get(path);
+			return ImageIO.read(ElementPanel.class.getResource(path.substring(path.indexOf("/"))));
 		}
 		catch(Exception e) {
 			try {
-				if(images.get(path) == null) {
-					images.put(path, ImageIO.read(new File(path)));
-				}
-				return images.get(path);
+				return ImageIO.read(new File(path));
 			}
 			catch(Exception e1) {
 				e1.printStackTrace();

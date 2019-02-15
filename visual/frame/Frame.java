@@ -1,5 +1,6 @@
 package visual.frame;
 
+import java.awt.Graphics;
 import java.util.Timer;
 
 import javax.swing.JFrame;
@@ -21,7 +22,7 @@ public abstract class Frame extends JFrame{
 //---  Constant Values   ----------------------------------------------------------------------
 	
 	/** int constant value representing the speed at which this Frame calls repaint() to refresh itself*/
-	private static final int REFRESH_RATE = 1000/15;
+	private static final int REFRESH_RATE = 1000/60;
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
