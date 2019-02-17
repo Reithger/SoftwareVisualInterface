@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Font;
 
+import input.Communication;
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
 
@@ -12,21 +13,23 @@ public class test {
 		ElementPanel pan = new ElementPanel(0, 0, 550, 290) {
 			public void keyBehaviour(char event) {
 				removeElement("rec");
-				union.set(event+"");
+				Communication.set(event+"");
 			}
 			
 			public void clickBehaviour(int event) {
 				if(event == -1) {
 					System.out.println(this.getElementStoredText("ent"));
 				}
-				System.out.println(union.get());
+				System.out.println(Communication.get());
 			} 
 			
 		};
 		pan.addTextEntry("ent", 5, 15, 15, 500, 250, 1, new Font("Arial Bold", Font.BOLD, 18));
 		pan.addRectangle("rec", 0, 15, 15, 500, 250, new Color(255,255,255), new Color(0,0,0));
 		ElementPanel pan2 = new ElementPanel(600, 0, 400, 400) {
-			
+			public void clickBehaviour(int event) {
+				Communication.set("Second");
+			}
 		};
 		pan2.addImage("sas", 100, 200, 200, imagePath);
 		fram.addPanel("fir", pan);
@@ -35,36 +38,4 @@ public class test {
 	
 
 
-}
-class union{
-	
-	private static union un;
-	private static String str;
-	
-	protected union(String sup) {
-		str = sup;
-	}
-	
-	public static union getUnion() {
-		if(un == null)
-			un = new union(" ");
-		return un;
-	}
-	
-	public static void set(String in) {
-		getUnion().setIn(in);
-	}
-	
-	private void setIn(String in) {
-		str = in;
-	}
-	
-	public static String get() {
-		return getUnion().getIn();
-	}
-	
-	private String getIn() {
-		return str;
-	}
-	
 }

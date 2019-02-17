@@ -2,7 +2,8 @@ package input;
 
 /**
  * This interface functions to define the behavior of objects which are used
- * to define regions of the screen that respond to input.
+ * to define regions of the screen that respond to input and generate some
+ * code value when triggered.
  * 
  * @author Mac Clevinger
  *
@@ -25,8 +26,9 @@ public interface Detectable {
 	public abstract boolean wasClicked(int xPos, int yPos);
 	
 	/**
+	 * This method requests the code value stored by this Detectable object.
 	 * 
-	 * @return
+	 * @return - Returns an int value representing the code value assigned to this Detectable object.
 	 */
 	
 	public abstract int getCode();

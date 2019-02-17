@@ -13,6 +13,9 @@ import visual.panel.element.*;
  * This class implements the Panel abstract class to provide a suite of drawing tools and interactivity
  * to the programmer via the element package, as well as handling some low-level complexities that arise.
  * 
+ * If using the SWI library, you should not need to look any deeper than this unless you wish to change
+ * base functionality. All features are provided by methods describing those features.
+ * 
  * @author Mac Clevinger
  *
  */
@@ -143,7 +146,7 @@ public class ElementPanel extends Panel{
 	 * 
 	 */
 	
-	public void updateClickRegions() {
+	private void updateClickRegions() {
 		resetDetectionRegions();
 		for(Detectable d : clickList.values()) {
 			if(!addClickRegion(d)) {
@@ -210,7 +213,7 @@ public class ElementPanel extends Panel{
 	 * @return - Returns an Image object corresponding to the provided file path given as a String.
 	 */
 	
-	public Image retrieveImage(String pathIn) {
+	private Image retrieveImage(String pathIn) {
 		String path = pathIn.replace("\\", "/");
 		try {
 			return ImageIO.read(ElementPanel.class.getResource(path.substring(path.indexOf("/"))));

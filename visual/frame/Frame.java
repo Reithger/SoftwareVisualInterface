@@ -1,10 +1,7 @@
 package visual.frame;
 
-import java.awt.Graphics;
 import java.util.Timer;
-
 import javax.swing.JFrame;
-
 import timer.TimerRefresh;
 import visual.panel.Panel;
 
@@ -21,6 +18,9 @@ public abstract class Frame extends JFrame{
 	
 //---  Constant Values   ----------------------------------------------------------------------
 	
+	/**	I just wanted the error to go away */
+	private static final long serialVersionUID = 1L;
+
 	/** int constant value representing the speed at which this Frame calls repaint() to refresh itself*/
 	private static final int REFRESH_RATE = 1000/60;
 	

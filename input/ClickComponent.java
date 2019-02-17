@@ -1,12 +1,26 @@
 package input;
-import javax.swing.*;
 
 import visual.panel.Panel;
-
 import java.awt.event.*;
 import java.util.*;
 
-public class ClickComponent extends JComponent implements MouseListener{
+/**
+ * This class implements the MouseListener interface to predefine behavior for integrating user
+ * interactivity via the user's Mouse; this is a low level class that a user of the SWI library
+ * for visual design should not see.
+ * 
+ * Response to user input is performed by predefining regions of the screen to generate defined
+ * code values that the containing Panel object is given when its clickEvent method is called.
+ * 
+ * Extending to account for x, y integer coordinate values being passed to the Panel is planned
+ * for future flexibility; likely create an interface for which discrete and 'continuous' reactivity
+ * is integrated.
+ * 
+ * @author Mac Clevinger
+ *
+ */
+
+public class ClickComponent implements MouseListener{
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -20,8 +34,10 @@ public class ClickComponent extends JComponent implements MouseListener{
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
-	 * Constructor for objects of the ClickComponent object; default selected value is -1,
+	 * Constructor for objects of the ClickComponent object; default selected value is -1, and
+	 * this object is added as a MouseListener to the provided Panel.
 	 * 
+	 * @param panel - Panel object for which this ClickComponent exists; directs input to this Panel.
 	 */
 	
 	public ClickComponent(Panel panel){
@@ -34,8 +50,12 @@ public class ClickComponent extends JComponent implements MouseListener{
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	/**
+	 * Getter method that returns the value currently stored by this ClickComponent (that value
+	 * being a reflection of the user's interaction with the Panel this is adjoined to.)
 	 * 
-	 * @return
+	 * Value is reset after each call of this method.
+	 * 
+	 * @return - Returns an int value representing the code value stored by this ClickComponent
 	 */
 	
 	public int getSelected(){
@@ -47,7 +67,8 @@ public class ClickComponent extends JComponent implements MouseListener{
 //---  Operations   ---------------------------------------------------------------------------
 
 	/**
-	 * 
+	 * This method resets the stored value of this ClickComponent to -1 (the default value for
+	 * nothing significant having been selected; there may have been a click action, though.)
 	 */
 	
 	public void resetSelected(){
@@ -55,7 +76,8 @@ public class ClickComponent extends JComponent implements MouseListener{
 	}
 
 	/**
-	 * 
+	 * This method resets the list of Detectable objects stored by this ClickComponent; no
+	 * regions of the screen will generate code values until new Detectables are added.
 	 */
 	
 	public void resetDetectionRegions() {
@@ -65,7 +87,12 @@ public class ClickComponent extends JComponent implements MouseListener{
 //---  Remover Methods   ----------------------------------------------------------------------
 	
 	/**
+	 * This method removes the Detectable object specified by a Code value (that is,
+	 * the Detectable object which would return the provided value if a click registered
+	 * in its region.)
 	 * 
+	 * @param code - int value that represents the code for which the matching Detectable object should be removed.
+	 * @return - Returns a boolean value describing whether or not a Detectable object was found and removed or not.
 	 */
 	
 	public boolean removeDetectionRegion(int code) {
@@ -80,6 +107,13 @@ public class ClickComponent extends JComponent implements MouseListener{
 	}
 
 	/**
+	 * This method removes all Detectable objects for which the provided x and y coordinates would
+	 * generate their code. (Detectable objects can overlap, and all would trigger a ClickEvent in
+	 * the containing Panel object.)
+	 * 
+	 * @param x - int value representing the x coordinate of the point in the Panel containing this ClickComponent to remove Detectable objects from.
+	 * @param y - int value representing the y coordinate of the point in the Panel containing this ClickComponent to remove Detectable objects from.
+	 * @return - Returns a boolean value representing whether any Detectable objects were removed (true) or not (false).
 	 * 
 	 */
 	
@@ -98,7 +132,9 @@ public class ClickComponent extends JComponent implements MouseListener{
 //---  Setter Methods   -----------------------------------------------------------------------
 
 	/**
+	 * This method takes the provided list of Detectable objects and assigns it to this ClickComponent.
 	 * 
+	 * @param updated - ArrayList<<r>Detectable> object containing Detectable objects
 	 */
 	
 	public void setDetectionRegions(ArrayList<Detectable> updated){
@@ -106,7 +142,13 @@ public class ClickComponent extends JComponent implements MouseListener{
 	}
 
 	/**
+	 * This method sets the provided Panel as the container for which this ClickComponent exists (will
+	 * direct user interaction to that Panel.)
 	 * 
+	 * Does not add this ClickComponent to the Panel, only changes the reference locally. You are still
+	 * able to add the ClickComponent to the Panel elsewhere.
+	 * 
+	 * @param reference - Panel object for which this ClickComponent is now associated.
 	 */
 	
 	public void setParentFrame(Panel reference){
@@ -114,6 +156,15 @@ public class ClickComponent extends JComponent implements MouseListener{
 	}
 	
 //---  Adder Methods   ------------------------------------------------------------------------
+	
+	/**
+	 * This method adds the provided Detectable object to the ArrayList stored
+	 * by this ClickComponent; if an existing Detectable object already uses the
+	 * code associated to the Detectable object, it is not added.
+	 * 
+	 * @param region - Detectable object representing a new defined region of the screen to generate a specified code value.
+	 * @return - Returns a boolean value representing whether or not the Detectable object was successfully added.
+	 */
 	
 	public boolean addClickRegion(Detectable region){
 		for(Detectable d : detectionRegions) {
@@ -132,11 +183,16 @@ public class ClickComponent extends JComponent implements MouseListener{
 		containerFrame.requestFocusInWindow();
 		Integer x = e.getX();
 		Integer y = e.getY();
+		boolean happened = false;
 		for(Detectable d : detectionRegions) {
-			if(d.wasClicked(x, y))
+			if(d.wasClicked(x, y)) {
+				happened = true;
 				activeSelect = d.getCode();
+				containerFrame.clickEvent(getSelected());
+			}
 		}
-		containerFrame.clickEvent(getSelected());
+		if(!happened)
+			containerFrame.clickEvent(getSelected());
 	}
 	
 	@Override

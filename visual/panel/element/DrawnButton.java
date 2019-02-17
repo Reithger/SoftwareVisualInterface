@@ -2,8 +2,14 @@ package visual.panel.element;
 
 import java.awt.Color;
 import java.awt.Graphics;
-
 import input.ClickRegionRectangle;
+
+/**
+ * This class extends the Element class and implements the Clickable interface
+ * 
+ * @author Mac Clevinger
+ *
+ */
 
 public class DrawnButton extends Element implements Clickable{
 	
