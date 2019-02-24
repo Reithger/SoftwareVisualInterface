@@ -17,7 +17,6 @@ public class WindowFrame extends Frame{
 	
 	/** HashMap<<r>String, Panel> object containing the Panel objects contained by this WindowFrame and their names*/
 	private HashMap<String, Panel> windows;
-
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -72,6 +71,13 @@ public class WindowFrame extends Frame{
 		catch(Exception e) {
 			System.out.println("Error: Attempt to remove non-existant Panel object");
 		}
+	}
+	
+	
+//---  Getter Methods   -----------------------------------------------------------------------
+	
+	public Panel getPanel(String name) {
+		return windows.get(name);
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------

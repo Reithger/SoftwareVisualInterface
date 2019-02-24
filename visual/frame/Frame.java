@@ -20,7 +20,6 @@ public abstract class Frame extends JFrame{
 	
 	/**	I just wanted the error to go away */
 	private static final long serialVersionUID = 1L;
-
 	/** int constant value representing the speed at which this Frame calls repaint() to refresh itself*/
 	private static final int REFRESH_RATE = 1000/60;
 	
@@ -59,5 +58,7 @@ public abstract class Frame extends JFrame{
 	 */
 	
 	public abstract void addPanel(String name, Panel panel);
+	
+	public abstract Panel getPanel(String name);
 	
 }

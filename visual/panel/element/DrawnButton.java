@@ -40,9 +40,9 @@ public class DrawnButton extends Element implements Clickable{
 	 * @param col
 	 */
 	
-	public DrawnButton(int x, int y, int prior, int wid, int hei, int key, Color col) {
-		cornerX = x - wid/2;
-		cornerY = y - hei/2;
+	public DrawnButton(int x, int y, int wid, int hei, int prior, int key, Color col) {
+		cornerX = x;
+		cornerY = y;
 		width = wid;
 		height = hei;
 		code = key;
@@ -59,9 +59,9 @@ public class DrawnButton extends Element implements Clickable{
 	 * @param key
 	 */
 	
-	public DrawnButton(int x, int y, int prior, int wid, int hei, int key) {
-		cornerX = x - wid/2;
-		cornerY = y - hei/2;
+	public DrawnButton(int x, int y, int wid, int hei, int prior, int key) {
+		cornerX = x;
+		cornerY = y;
 		width = wid;
 		height = hei;
 		code = key;

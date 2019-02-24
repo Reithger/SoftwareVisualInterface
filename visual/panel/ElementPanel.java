@@ -289,8 +289,12 @@ public class ElementPanel extends Panel{
 	 * @param key - int value describing the value that is generated when this DrawnButton object is clicked
 	 */
 
-	public void addButton(String name, int priority, int x, int y, int wid, int hei, int key){
-		DrawnButton drawn = new DrawnButton(x, y, priority, wid, hei, key);
+	public void addButton(String name, int priority, int x, int y, int wid, int hei, int key, boolean centered){
+		DrawnButton drawn;
+		if(!centered)
+			drawn = new DrawnButton(x, y, wid, hei, priority, key);
+		else
+			drawn = new DrawnButton(x - wid/2, y - hei/2, wid, hei, priority, key);
 		drawList.put(name, drawn);
 		clickList.put(name, drawn.getDetectionRegion());
 		updateClickRegions();
@@ -318,8 +322,12 @@ public class ElementPanel extends Panel{
 	 * @param key - int value describing the value that is generated when this DrawnButton object is clicked
 	 */
 	
-	public void addButton(String name, int priority, int x, int y, int wid, int hei, Color col, int key){
-		DrawnButton drawn = new DrawnButton(x, y, priority, wid, hei, key, col);
+	public void addButton(String name, int priority, int x, int y, int wid, int hei, Color col, int key, boolean centered){
+		DrawnButton drawn;
+		if(!centered)
+			drawn = new DrawnButton(x, y, wid, hei, priority, key, col);
+		else
+			drawn = new DrawnButton(x - wid/2, y - hei/2, wid, hei, priority, key, col);
 		drawList.put(name, drawn);
 		clickList.put(name, drawn.getDetectionRegion());
 		updateClickRegions();
@@ -375,12 +383,18 @@ public class ElementPanel extends Panel{
 	 * @param priority - int value describing the drawing priority of this Element (what should be drawn first/last in cases of overlap)
 	 * @param x - int value describing the x coordinate of the upper-left corner of this DrawnText object
 	 * @param y - int value describing the y coordinate of the upper-left corner of this DrawnText object
+	 * @param width - 
+	 * @param height - 
 	 * @param phrase - String object representing the string of characters to be drawn to this ElementPanel
 	 * @param font - Font object describing the font with which to draw the provided String phrase
 	 */
 	
-	public void addText(String name, int priority, int x, int y, String phrase, Font font){
-		DrawnText text = new DrawnText(x, y, priority, phrase, font);
+	public void addText(String name, int priority, int x, int y, int width, int height, String phrase, Font font, boolean centered){
+		DrawnText text;
+		if(!centered) 
+			text = new DrawnText(x, y, x + width, y + height, priority, phrase, font);
+		else
+			text = new DrawnText(x - width/2, y - height/2, x + width/2, y + height/2, priority, phrase, font);
 		drawList.put(name, text);
 	}
 
@@ -403,8 +417,12 @@ public class ElementPanel extends Panel{
 	 * @param font - Font object describing the font with which to draw the provided String phrase
 	 */
 	
-	public void addTextEntry(String name, int priority, int x, int y, int width, int height, int code, Font font) {
-		DrawnTextArea dTA = new DrawnTextArea(x, y, x + width, y + height, priority, code, font);
+	public void addTextEntry(String name, int priority, int x, int y, int width, int height, int code, Font font, boolean centered) {
+		DrawnTextArea dTA;
+		if(!centered)
+			dTA = new DrawnTextArea(x, y, x + width, y + height, priority, code, font);
+		else
+			dTA = new DrawnTextArea(x - width/2, y - width/2, x + width/2, y + height/2, priority, code, font);
 		drawList.put(name, dTA);
 		clickList.put(name,  dTA.getDetectionRegion());
 		updateClickRegions();
@@ -424,8 +442,12 @@ public class ElementPanel extends Panel{
 	 * @param col - Color object describing the color with which to draw this DrawnRectangle Element
 	 */
 	
-	public void addRectangle(String name, int priority, int x, int y, int width, int height, Color col) {
-		DrawnRectangle rect = new DrawnRectangle(x, y, x + width, y + height, priority, col);
+	public void addRectangle(String name, int priority, int x, int y, int width, int height, Color col, boolean centered) {
+		DrawnRectangle rect;
+		if(!centered)
+			rect = new DrawnRectangle(x, y, x + width, y + height, priority, col);
+		else
+			rect = new DrawnRectangle(x - width/2, y - height/2, x + width/2, y + height/2, priority, col);
 		drawList.put(name, rect);
 	}
 	
@@ -443,8 +465,12 @@ public class ElementPanel extends Panel{
 	 * @param borderColor - Color object describing the color with which to draw the outline of this DrawnRectangle Element
 	 */
 	
-	public void addRectangle(String name, int priority, int x, int y, int width, int height, Color fillColor, Color borderColor) {
-		DrawnRectangle rect = new DrawnRectangle(x, y, x + width, y + height, priority, fillColor, borderColor);
+	public void addRectangle(String name, int priority, int x, int y, int width, int height, Color fillColor, Color borderColor, boolean centered) {
+		DrawnRectangle rect;
+		if(!centered)
+			rect = new DrawnRectangle(x, y, x + width, y + height, priority, fillColor, borderColor);
+		else
+			rect = new DrawnRectangle(x - width/2, y - height/2, x + width/2, y + height/2, priority, fillColor, borderColor);
 		drawList.put(name, rect);
 	}
 

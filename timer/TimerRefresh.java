@@ -41,4 +41,5 @@ public class TimerRefresh extends TimerTask{
 	public void run(){
 		parent.repaint();
 	}
+
 }

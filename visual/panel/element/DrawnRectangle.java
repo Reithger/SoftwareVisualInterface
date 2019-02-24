@@ -8,13 +8,13 @@ public class DrawnRectangle extends Element{
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** */
-	private int xCorner1;
+	private int xLow;
 	/** */
-	private int yCorner1;
+	private int yLow;
 	/** */
-	private int xCorner2;
+	private int xHigh;
 	/** */
-	private int yCorner2;
+	private int yHigh;
 	/** */
 	private Color colorBorder;
 	/** */
@@ -31,11 +31,11 @@ public class DrawnRectangle extends Element{
 	 * @param color
 	 */
 	
-	public DrawnRectangle(int x1, int y1, int x2, int y2, int prior, Color color) {
-		xCorner1 = x1;
-		yCorner1 = y1;
-		xCorner2 = x2;
-		yCorner2 = y2;
+	public DrawnRectangle(int xL, int yL, int xH, int yH, int prior, Color color) {
+		xLow = xL;
+		yLow = yL;
+		xHigh = xH;
+		yHigh = yH;
 		colorFill = color;
 		colorBorder = color;
 		setDrawPriority(prior);
@@ -51,11 +51,11 @@ public class DrawnRectangle extends Element{
 	 * @param outlineColor
 	 */
 	
-	public DrawnRectangle(int x1, int y1, int x2, int y2, int prior, Color fillColor, Color outlineColor) {
-		xCorner1 = x1;
-		yCorner1 = y1;
-		xCorner2 = x2;
-		yCorner2 = y2;
+	public DrawnRectangle(int xL, int yL, int xH, int yH, int prior, Color fillColor, Color outlineColor) {
+		xLow = xL;
+		yLow = yL;
+		xHigh = xH;
+		yHigh = yH;
 		colorFill = fillColor;
 		colorBorder = outlineColor;
 		setDrawPriority(prior);
@@ -67,9 +67,9 @@ public class DrawnRectangle extends Element{
 	public void drawToScreen(Graphics g) {
 		Color save = g.getColor();
 		g.setColor(colorFill);
-		g.fillRect(xCorner1, yCorner1, xCorner2, yCorner2);
+		g.fillRect(xLow, yLow, xHigh, yHigh);
 		g.setColor(colorBorder);
-		g.drawRect(xCorner1, yCorner1, xCorner2, yCorner2);
+		g.drawRect(xLow, yLow, xHigh, yHigh);
 		g.setColor(save);
 	}
 	
