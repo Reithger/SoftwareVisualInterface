@@ -48,7 +48,7 @@ public class WindowFrame extends Frame{
 	
 	public void addPanel(String title, Panel panel) {
 		windows.put(title, panel);
-		this.add(panel);
+		add(panel);
 		panel.setParentFrame(this);
 	}
 	

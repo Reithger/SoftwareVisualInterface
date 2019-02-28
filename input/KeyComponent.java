@@ -38,7 +38,7 @@ public class KeyComponent implements KeyListener{
 	public KeyComponent(Panel panel){
 		resetSelected();
 		containerFrame = panel;
-		panel.addKeyListener(this);
+		panel.getPanel().addKeyListener(this);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------

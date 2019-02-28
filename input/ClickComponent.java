@@ -44,7 +44,7 @@ public class ClickComponent implements MouseListener{
 		resetSelected();
 		detectionRegions = new ArrayList<Detectable>();
 		containerFrame = panel;
-		panel.addMouseListener(this);
+		panel.getPanel().addMouseListener(this);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -180,7 +180,7 @@ public class ClickComponent implements MouseListener{
 	
 	@Override
 	public void mouseClicked(MouseEvent e){
-		containerFrame.requestFocusInWindow();
+		containerFrame.getPanel().requestFocusInWindow();
 		Integer x = e.getX();
 		Integer y = e.getY();
 		boolean happened = false;

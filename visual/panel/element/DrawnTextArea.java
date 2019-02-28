@@ -53,7 +53,7 @@ public class DrawnTextArea extends Element implements Clickable, TextStorage{
 
 	@Override
 	public Detectable getDetectionRegion() {
-		return new ClickRegionRectangle(xHigh, yHigh, xLow, yLow, codeVal);
+		return new ClickRegionRectangle(xLow, yLow, xHigh, yHigh, codeVal);
 	}
 
 	public void addText(String in) {

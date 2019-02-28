@@ -14,17 +14,17 @@ import visual.panel.Panel;
  *
  */
 
-public abstract class Frame extends JFrame{
+public abstract class Frame{
 	
 //---  Constant Values   ----------------------------------------------------------------------
 	
-	/**	I just wanted the error to go away */
-	private static final long serialVersionUID = 1L;
 	/** int constant value representing the speed at which this Frame calls repaint() to refresh itself*/
 	private static final int REFRESH_RATE = 1000/60;
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
+	/** */
+	protected JFrame frame;
 	/** Timer object to automatically refresh (repaint) this Frame object at a defined frequency*/
 	private Timer timer;
 	
@@ -38,13 +38,14 @@ public abstract class Frame extends JFrame{
 	 * @param height - int value representing the height of this Frame object's window
 	 */
 	
-	public void initiate(int width, int height) {	
+	public void initiate(int width, int height) {
+		frame = new JFrame();
 		timer = new Timer();
 		timer.schedule(new TimerRefresh(this), 0, REFRESH_RATE);
-		setSize(width, height);
-		setVisible(true);
-		setLayout(null);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(width, height);
+		frame.setVisible(true);
+		frame.setLayout(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 //---  Adder Methods   ------------------------------------------------------------------------
@@ -61,4 +62,16 @@ public abstract class Frame extends JFrame{
 	
 	public abstract Panel getPanel(String name);
 	
+	public void repaint() {
+		frame.repaint();
+	}
+	
+	public void add(Panel panel) {
+		frame.add(panel.getPanel());
+	}
+	
+	public void remove(Panel panel) {
+		frame.remove(panel.getPanel());
+	}
+
 }

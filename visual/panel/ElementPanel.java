@@ -22,11 +22,6 @@ import visual.panel.element.*;
 
 public class ElementPanel extends Panel{
 
-//---  Constant Variables   -------------------------------------------------------------------
-
-	/**	 */
-	private static final long serialVersionUID = 1L;
-	
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/

@@ -46,6 +46,4 @@ public class test {
 		fram.addPanel("sas", pan2);
 		}
 	
-
-
 }

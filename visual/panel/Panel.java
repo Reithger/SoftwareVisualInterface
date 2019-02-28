@@ -18,15 +18,12 @@ import visual.frame.Frame;
  *
  */
 
-public abstract class Panel extends JPanel{
+public abstract class Panel{
 
-//---  Constant Variables   -------------------------------------------------------------------
-
-	/**	 */
-	private static final long serialVersionUID = 1L;
-	
 //---  Instance Variables   -------------------------------------------------------------------
 	
+	/** */
+	protected JPanelWrap panel;
 	/** Frame object that houses this Panel object; may be null if unassociated, parentFrame may not always show this Panel*/
 	private Frame parentFrame;
 	/** ClickComponent object that handles the user's mouse inputs, calling mouseEvent() in the Panel object containing it*/
@@ -47,13 +44,14 @@ public abstract class Panel extends JPanel{
 	 */
 	
 	public void initiate(int x, int y, int width, int height) {
+		panel = new JPanelWrap(this);
 		mouseEvent = new ClickComponent(this);
 		keyPress = new KeyComponent(this);
-		setDoubleBuffered(true);
-		setFocusable(true);
-		setLocation(x, y);
-		setSize(width, height);
-		setVisible(true);
+		panel.setDoubleBuffered(true);
+		panel.setFocusable(true);
+		panel.setLocation(x, y);
+		panel.setSize(width, height);
+		panel.setVisible(true);
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -118,7 +116,7 @@ public abstract class Panel extends JPanel{
 	 */
 	
 	public int getPanelXLocation() {
-		return getX();
+		return panel.getX();
 	}
 	
 	/**
@@ -129,7 +127,11 @@ public abstract class Panel extends JPanel{
 	 */
 	
 	public int getPanelYLocation() {
-		return getY();
+		return panel.getY();
+	}
+	
+	public JPanel getPanel() {
+		return panel;
 	}
 	
 //---  Adder Methods   ------------------------------------------------------------------------
@@ -177,6 +179,22 @@ public abstract class Panel extends JPanel{
 	
 	public boolean removeClickRegions(int x, int y) {
 		return mouseEvent.removeDetectionRegions(x, y);
+	}
+	
+//---  Support Class   ------------------------------------------------------------------------
+	
+	class JPanelWrap extends JPanel{
+		
+		private Panel container;
+		
+		public JPanelWrap(Panel pan) {
+			container = pan;
+		}
+		
+		public void paintComponent(Graphics g) {
+			container.paintComponent(g);
+		}
+		
 	}
 	
 }
