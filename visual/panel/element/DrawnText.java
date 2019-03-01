@@ -55,14 +55,31 @@ public class DrawnText extends Element{
 		int x = xLow;
 		int y = yLow + fM.getHeight();
 		String[] words = message.split(" ");
+		top:
 		for(String s : words) {
 			int wid = fM.stringWidth(s + "w");
+			if(wid >= xHigh - xLow) {
+				String[] letters = s.split("");
+				for(String l : letters) {
+					int letWid = fM.stringWidth(l);
+					if(x + 2 * letWid >= xHigh) {
+						x = xLow;
+						y += fM.getHeight();
+					}
+					if(y > yHigh) {
+						break top;
+					}
+					g.drawString(l, x, y);
+					x += letWid;
+				}
+				continue top;
+			}
 			if(x + wid >= xHigh) {
 				x = xLow;
 				y += fM.getHeight();	
 			}
 			if(y > yHigh) {
-				break;
+				break top;
 			}
 			g.drawString(s, x, y);
 			x += wid;

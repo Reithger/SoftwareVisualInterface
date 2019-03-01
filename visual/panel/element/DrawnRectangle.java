@@ -67,9 +67,9 @@ public class DrawnRectangle extends Element{
 	public void drawToScreen(Graphics g) {
 		Color save = g.getColor();
 		g.setColor(colorFill);
-		g.fillRect(xLow, yLow, xHigh, yHigh);
+		g.fillRect(xLow, yLow, xHigh - xLow, yHigh - yLow);
 		g.setColor(colorBorder);
-		g.drawRect(xLow, yLow, xHigh, yHigh);
+		g.drawRect(xLow, yLow, xHigh - xLow, yHigh - yLow);
 		g.setColor(save);
 	}
 	

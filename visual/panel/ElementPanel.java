@@ -417,7 +417,7 @@ public class ElementPanel extends Panel{
 		if(!centered)
 			dTA = new DrawnTextArea(x, y, x + width, y + height, priority, code, font);
 		else
-			dTA = new DrawnTextArea(x - width/2, y - width/2, x + width/2, y + height/2, priority, code, font);
+			dTA = new DrawnTextArea(x - width/2, y - height/2, x + width/2, y + height/2, priority, code, font);
 		drawList.put(name, dTA);
 		clickList.put(name,  dTA.getDetectionRegion());
 		updateClickRegions();

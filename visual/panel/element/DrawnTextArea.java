@@ -18,10 +18,10 @@ public class DrawnTextArea extends Element implements Clickable, TextStorage{
 	private String storedText;
 	
 	public DrawnTextArea (int xL, int yL, int xH, int yH, int prior, int code, Font f) {
-		xHigh = xH;
-		yHigh = yH;
 		xLow = xL;
 		yLow = yL;
+		xHigh = xH;
+		yHigh = yH;
 		font = f;
 		codeVal = code;
 		setDrawPriority(prior);
@@ -36,14 +36,31 @@ public class DrawnTextArea extends Element implements Clickable, TextStorage{
 		int x = xLow;
 		int y = yLow + fM.getHeight();
 		String[] words = storedText.split(" ");
+		top:
 		for(String s : words) {
 			int wid = fM.stringWidth(s + "w");
+			if(wid >= xHigh - xLow) {
+				String[] letters = s.split("");
+				for(String l : letters) {
+					int letWid = fM.stringWidth(l);
+					if(x + 2 * letWid >= xHigh) {
+						x = xLow;
+						y += fM.getHeight();
+					}
+					if(y > yHigh) {
+						break top;
+					}
+					g.drawString(l, x, y);
+					x += letWid;
+				}
+				continue top;
+			}
 			if(x + wid >= xHigh) {
 				x = xLow;
-				y += fM.getHeight();	
+				y += fM.getHeight();
 			}
 			if(y > yHigh) {
-				break;
+				break top;
 			}
 			g.drawString(s, x, y);
 			x += wid;

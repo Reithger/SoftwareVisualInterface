@@ -22,14 +22,14 @@ public class test {
 		ElementPanel pan = new ElementPanel(0, 0, 550, 290) {
 			public void keyBehaviour(char event) {
 				removeElement("rec");
-				Communication.set(event+"");
+				Communication.set("A", event+"");
 			}
 			
 			public void clickBehaviour(int event) {
 				if(event == -1) {
 					System.out.println(this.getElementStoredText("ent"));
 				}
-				System.out.println(Communication.get());
+				System.out.println(Communication.get("A"));
 			} 
 			
 		};
@@ -38,7 +38,7 @@ public class test {
 		pan.addRectangle("rec", 0, 15, 15, 500, 250, new Color(255,255,255), new Color(0,0,0), false);
 		ElementPanel pan2 = new ElementPanel(600, 0, 400, 400) {
 			public void clickBehaviour(int event) {
-				Communication.set("Second");
+				Communication.set("A", "Second");
 			}
 		};
 		pan2.addImage("sas", 100, 200, 200, imagePath);

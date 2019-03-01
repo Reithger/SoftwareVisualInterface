@@ -1,11 +1,13 @@
 package input;
 
+import java.util.HashMap;
+
 /**
  * This static class permits String information to be shared between disjoint classes
  * without having explicit relationships between one another; intention is for usage
  * when defining the nature of a Panel object's interactivity to the broader project.
  * 
- * In a project using the SWI library, the broader project can have information communicated
+ * In a project using the SVI library, the broader project can have information communicated
  * to it by getting the information stored in this class after the Panel object has had
  * its predefined behavior store information here.
  * 
@@ -25,8 +27,8 @@ public class Communication {
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
-	/** Static String object representing the data stored by one class scope for usage by another class' scope*/
-	private static String data;
+	/** Static HashMap<String, String> object representing the data stored by one class scope for usage by another class' scope*/
+	private static HashMap<String, String> data;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -36,8 +38,8 @@ public class Communication {
 	 * 
 	 */
 	
-	protected Communication() {
-		data = "";
+	private Communication() {
+		data = new HashMap<String, String>();
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -45,11 +47,14 @@ public class Communication {
 	/**
 	 * Getter method to access whatever data is stored internally by the static Communication object.
 	 * 
+	 * @param label - 
 	 * @return - Returns a String object representing the information stored by the static Communication object.
 	 */
 	
-	public static String get() {
-		return data;
+	public static String get(String label) {
+		if(data == null)
+			data = new HashMap<String, String>();
+		return data.get(label);
 	}
 	
 //---  Setter Methods   -----------------------------------------------------------------------
@@ -57,11 +62,14 @@ public class Communication {
 	/**
 	 * Setter method to assign a new String object as the data stored internally by the static Communication object.
 	 * 
+	 * @param label - 
 	 * @param in - String object representing the new data to be stored by the static Communication object.
 	 */
 	
-	public static void set(String in) {
-		data = in;
+	public static void set(String label, String in) {
+		if(data == null)
+			data = new HashMap<String, String>();
+		data.put(label, in);
 	}
 	
 }

@@ -130,6 +130,14 @@ public abstract class Panel{
 		return panel.getY();
 	}
 	
+	public int getWidth() {
+		return panel.getWidth();
+	}
+	
+	public int getHeight() {
+		return panel.getHeight();
+	}
+	
 	public JPanel getPanel() {
 		return panel;
 	}

@@ -74,4 +74,12 @@ public abstract class Frame{
 		frame.remove(panel.getPanel());
 	}
 
+	public int getWidth() {
+		return frame.getWidth();
+	}
+	
+	public int getHeight() {
+		return frame.getHeight();
+	}
+	
 }
