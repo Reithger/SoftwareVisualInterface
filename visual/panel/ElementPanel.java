@@ -387,9 +387,9 @@ public class ElementPanel extends Panel{
 	public void addText(String name, int priority, int x, int y, int width, int height, String phrase, Font font, boolean centered){
 		DrawnText text;
 		if(!centered) 
-			text = new DrawnText(x, y, x + width, y + height, priority, phrase, font);
+			text = new DrawnText(x, y, x + width, y + height, priority, centered, phrase, font);
 		else
-			text = new DrawnText(x - width/2, y - height/2, x + width/2, y + height/2, priority, phrase, font);
+			text = new DrawnText(x - width/2, y - height/2, x + width/2, y + height/2, priority, centered, phrase, font);
 		drawList.put(name, text);
 	}
 
