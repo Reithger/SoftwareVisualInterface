@@ -142,6 +142,10 @@ public abstract class Panel{
 		return panel;
 	}
 	
+	public Frame getParentFrame() {
+		return parentFrame;
+	}
+	
 //---  Adder Methods   ------------------------------------------------------------------------
 	
 	/**

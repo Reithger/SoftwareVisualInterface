@@ -114,4 +114,10 @@ public class WindowFrame extends Frame{
 		}
 	}
 	
+	public void hidePanels() {
+		for(Panel p : windows.values()) {
+			this.remove(p);
+		}
+	}
+	
 }

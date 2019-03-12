@@ -25,7 +25,7 @@ public class DrawnTextArea extends Element implements Clickable, TextStorage{
 		font = f;
 		codeVal = code;
 		setDrawPriority(prior);
-		storedText = " ";
+		storedText = "";
 	}
 
 	@Override

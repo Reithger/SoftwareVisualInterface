@@ -68,6 +68,7 @@ public abstract class Frame{
 	
 	public void add(Panel panel) {
 		frame.add(panel.getPanel());
+		panel.setParentFrame(this);
 	}
 	
 	public void remove(Panel panel) {
@@ -80,6 +81,19 @@ public abstract class Frame{
 	
 	public int getHeight() {
 		return frame.getHeight();
+	}
+	
+	public void remove() {
+		frame.dispose();
+	}
+
+	public void setExitOnClose(boolean decide) {
+		if(decide) {
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		}
+		else {
+			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		}
 	}
 	
 }
