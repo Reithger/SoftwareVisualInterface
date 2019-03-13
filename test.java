@@ -19,7 +19,7 @@ public class test {
 	public static void main(String[] args) {
 		String imagePath = "src\\Saskia_Portrait.jpg";
 		WindowFrame fram = new WindowFrame(1200, 500);
-		ElementPanel pan = new ElementPanel(0, 0, 550, 290) {
+		ElementPanel pan = new ElementPanel(0, 0, 550, 500) {
 			public void keyBehaviour(char event) {
 				removeElement("rec");
 				Communication.set("A", event+"");
@@ -33,9 +33,11 @@ public class test {
 			} 
 			
 		};
-		pan.addText("tex", 10, 300, 250, 500, 250, "Wel", new Font("Arial Bold", Font.BOLD, 18), true);
+		pan.addText("tex", 10, 300, 150, 100, 250, "Welcome to this long phrase I will write", new Font("Arial Bold", Font.BOLD, 18), true);
+		
+		designReactiveButton(pan, "cont", new Color(255, 255, 255), new Font("Arial Bold", Font.BOLD, 14), "Start", 550/2, 3*500/5, 550/10, 500/20, 5, 6, true);
 		pan.addTextEntry("ent", 5, 15, 15, 500, 250, 1, new Font("Arial Bold", Font.BOLD, 18), false);
-		pan.addRectangle("rec", 0, 15, 15, 500, 250, new Color(255,255,255), new Color(0,0,0), false);
+		pan.addRectangle("rec", 0, 300, 150, 100, 250, new Color(255,255,255), new Color(0,0,0), true);
 		ElementPanel pan2 = new ElementPanel(600, 0, 400, 400) {
 			public void clickBehaviour(int event) {
 				Communication.set("A", "Second");
@@ -45,5 +47,11 @@ public class test {
 		fram.addPanel("fir", pan);
 		fram.addPanel("sas", pan2);
 		}
+	
+	private static void designReactiveButton(ElementPanel pan, String name, Color col, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered) {
+		pan.addRectangle(name + "_rect", priority * 10, x, y, wid, hei, col, true);
+		pan.addButton(name + "_but",     priority * 10 + 1, x, y, wid, hei, code, true);
+		pan.addText(name + "_text_but",  priority * 10 + 2, x, y,  wid, hei, message, font, true);
+	}
 	
 }

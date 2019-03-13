@@ -3,6 +3,7 @@ package visual.panel.element;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 public class DrawnText extends Element{
 
@@ -57,7 +58,7 @@ public class DrawnText extends Element{
 		g.setFont(font);
 		FontMetrics fM = g.getFontMetrics();
 		int x = xLow;
-		int y = yLow + fM.getHeight();
+		int y = yLow + fM.getAscent();
 		String[] words = message.split(" ");
 		if(centered)
 			drawCentered(g, x, y, words, fM);
@@ -100,6 +101,7 @@ public class DrawnText extends Element{
 	
 	private void drawCentered(Graphics g, int x, int y, String[] words, FontMetrics fM) {
 		String currentDraw = "";
+		ArrayList<String> finalSet = new ArrayList<String>();
 		top:
 			for(String s : words) {
 				int wid = fM.stringWidth(s + "w");
@@ -121,9 +123,8 @@ public class DrawnText extends Element{
 				}
 				if(x + wid >= xHigh) {
 					x = xLow;
-					int outWid = fM.stringWidth(currentDraw);
-					System.out.println(outWid);
-					g.drawString(currentDraw, xLow + ((xHigh - xLow) - outWid)/2, y);
+					finalSet.add(currentDraw);
+					//g.drawString(currentDraw, xLow + ((xHigh - xLow) - outWid)/2, y);
 					currentDraw = "";
 					y += fM.getHeight();	
 				}
@@ -131,11 +132,18 @@ public class DrawnText extends Element{
 					break top;
 				}
 				currentDraw += " " + s;
-				//g.drawString(s, x, y);
 				x += wid;
 			}
 		if(!currentDraw.equals("")){
-			g.drawString(currentDraw, xLow + ((xHigh - xLow) - fM.stringWidth(currentDraw))/2, y);
+			finalSet.add(currentDraw);//g.drawString(currentDraw, xLow + ((xHigh - xLow) - fM.stringWidth(currentDraw))/2, y);
+		}
+		int eachHeight = fM.getHeight();
+		int totalHeight = eachHeight * finalSet.size();
+		int start = yLow + ((yHigh - yLow) - totalHeight)/2 + fM.getAscent();
+		for(String s : finalSet) {
+			int outWid = fM.stringWidth(s);
+			g.drawString(s, xLow + ((xHigh - xLow) - outWid)/2, start);
+			start += eachHeight;
 		}
 	}
 	

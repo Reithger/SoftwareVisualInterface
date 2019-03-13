@@ -3,6 +3,7 @@ package visual.panel.element;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 import input.ClickRegionRectangle;
 import input.Detectable;
@@ -16,14 +17,16 @@ public class DrawnTextArea extends Element implements Clickable, TextStorage{
 	private int codeVal;
 	private Font font;
 	private String storedText;
+	private boolean centered;
 	
-	public DrawnTextArea (int xL, int yL, int xH, int yH, int prior, int code, Font f) {
+	public DrawnTextArea (int xL, int yL, int xH, int yH, int prior, int code, boolean center, Font f) {
 		xLow = xL;
 		yLow = yL;
 		xHigh = xH;
 		yHigh = yH;
 		font = f;
 		codeVal = code;
+		centered = center;
 		setDrawPriority(prior);
 		storedText = "";
 	}
@@ -34,40 +37,94 @@ public class DrawnTextArea extends Element implements Clickable, TextStorage{
 		g.setFont(font);
 		FontMetrics fM = g.getFontMetrics();
 		int x = xLow;
-		int y = yLow + fM.getHeight();
+		int y = yLow + fM.getAscent();
 		String[] words = storedText.split(" ");
-		top:
-		for(String s : words) {
-			int wid = fM.stringWidth(s + "w");
-			if(wid >= xHigh - xLow) {
-				String[] letters = s.split("");
-				for(String l : letters) {
-					int letWid = fM.stringWidth(l);
-					if(x + 2 * letWid >= xHigh) {
-						x = xLow;
-						y += fM.getHeight();
-					}
-					if(y > yHigh) {
-						break top;
-					}
-					g.drawString(l, x, y);
-					x += letWid;
-				}
-				continue top;
-			}
-			if(x + wid >= xHigh) {
-				x = xLow;
-				y += fM.getHeight();
-			}
-			if(y > yHigh) {
-				break top;
-			}
-			g.drawString(s, x, y);
-			x += wid;
-		}
+		if(centered)
+			drawCentered(g, x, y, words, fM);
+		else
+			drawNonCentered(g, x, y, words, fM);
 		g.setFont(save);
 	}
-
+	
+	private void drawNonCentered(Graphics g, int x, int y, String[] words, FontMetrics fM) {
+		top:
+			for(String s : words) {
+				int wid = fM.stringWidth(s + "w");
+				if(wid >= xHigh - xLow) {
+					String[] letters = s.split("");
+					for(String l : letters) {
+						int letWid = fM.stringWidth(l);
+						if(x + 2 * letWid >= xHigh) {
+							x = xLow;
+							y += fM.getHeight();
+						}
+						if(y > yHigh) {
+							break top;
+						}
+						g.drawString(l, x, y);
+						x += letWid;
+					}
+					continue top;
+				}
+				if(x + wid >= xHigh) {
+					x = xLow;
+					y += fM.getHeight();	
+				}
+				if(y > yHigh) {
+					break top;
+				}
+				g.drawString(s, x, y);
+				x += wid;
+			}
+	}
+	
+	private void drawCentered(Graphics g, int x, int y, String[] words, FontMetrics fM) {
+		String currentDraw = "";
+		ArrayList<String> finalSet = new ArrayList<String>();
+		top:
+			for(String s : words) {
+				int wid = fM.stringWidth(s + "w");
+				if(wid >= xHigh - xLow) {
+					String[] letters = s.split("");
+					for(String l : letters) {
+						int letWid = fM.stringWidth(l);
+						if(x + 2 * letWid >= xHigh) {
+							x = xLow;
+							y += fM.getHeight();
+						}
+						if(y > yHigh) {
+							break top;
+						}
+						g.drawString(l, x, y);
+						x += letWid;
+					}
+					continue top;
+				}
+				if(x + wid >= xHigh) {
+					x = xLow;
+					finalSet.add(currentDraw);
+					currentDraw = "";
+					y += fM.getHeight();	
+				}
+				if(y > yHigh) {
+					break top;
+				}
+				currentDraw += " " + s;
+				x += wid;
+			}
+		if(!currentDraw.equals("")){
+			finalSet.add(currentDraw);
+		}
+		int eachHeight = fM.getHeight();
+		int totalHeight = eachHeight * finalSet.size();
+		int start = yLow + ((yHigh - yLow) - totalHeight)/2 + fM.getAscent();
+		for(String s : finalSet) {
+			int outWid = fM.stringWidth(s);
+			g.drawString(s, xLow + ((xHigh - xLow) - outWid)/2, start);
+			start += eachHeight;
+		}
+	}
+	
 	@Override
 	public Detectable getDetectionRegion() {
 		return new ClickRegionRectangle(xLow, yLow, xHigh, yHigh, codeVal);
