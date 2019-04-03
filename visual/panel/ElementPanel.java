@@ -412,12 +412,13 @@ public class ElementPanel extends Panel{
 	 * @param font - Font object describing the font with which to draw the provided String phrase
 	 */
 	
-	public void addTextEntry(String name, int priority, int x, int y, int width, int height, int code, Font font, boolean centered) {
+	public void addTextEntry(String name, int priority, int x, int y, int width, int height, int code, Font font, String defaultText, boolean centered) {
 		DrawnTextArea dTA;
 		if(!centered)
 			dTA = new DrawnTextArea(x, y, x + width, y + height, priority, code, centered, font);
 		else
 			dTA = new DrawnTextArea(x - width/2, y - height/2, x + width/2, y + height/2, priority, code, centered, font);
+		dTA.addText(defaultText);
 		drawList.put(name, dTA);
 		clickList.put(name,  dTA.getDetectionRegion());
 		updateClickRegions();

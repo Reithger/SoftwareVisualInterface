@@ -36,7 +36,7 @@ public class test {
 		pan.addText("tex", 10, 300, 150, 100, 250, "Welcome to this long phrase I will write", new Font("Arial Bold", Font.BOLD, 18), true);
 		
 		designReactiveButton(pan, "cont", new Color(255, 255, 255), new Font("Arial Bold", Font.BOLD, 14), "Start", 550/2, 3*500/5, 550/10, 500/20, 5, 6, true);
-		pan.addTextEntry("ent", 5, 15, 15, 500, 250, 1, new Font("Arial Bold", Font.BOLD, 18), false);
+		pan.addTextEntry("ent", 5, 15, 15, 500, 250, 1, new Font("Arial Bold", Font.BOLD, 18), "", false);
 		pan.addRectangle("rec", 0, 300, 150, 100, 250, new Color(255,255,255), new Color(0,0,0), true);
 		ElementPanel pan2 = new ElementPanel(600, 0, 400, 400) {
 			public void clickBehaviour(int event) {
