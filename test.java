@@ -37,10 +37,11 @@ public class test {
 			} 
 			
 		};
-		pan.addRectangle("rec", 0, 300, 150, 100, 250, true, new Color(80, 80, 80));
-		pan.addText("tex", 10, 300, 150, 100, 250, "Welcome to this long phrase I will write", new Font("Arial Bold", Font.BOLD, 18), true);
+		pan.addRectangle("rec", 8, 150, 150, 250, 250, true, new Color(180, 0, 180));
+		//pan.addRectangle("rec_1", 3, 300, 150, 250, 100, true, new Color(80, 180, 80));
+		pan.addText("tex", 10, 150, 150, 250, 250, "Welcome to this long phrase I will write", new Font("Arial Bold", Font.BOLD, 18), true, true, true);
 		
-		designReactiveButton(pan, "cont", new Color(255, 255, 255), new Font("Arial Bold", Font.BOLD, 14), "Start", pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() / 8, pan.getHeight() / 10, 5, 6, true);
+//		designReactiveButton(pan, "cont", new Color(200, 30, 30), new Font("Arial Bold", Font.BOLD, 14), "Start", pan.getWidth() / 2, pan.getHeight() / 2, 200, 80, 5, 6, true, true);
 //		pan.addTextEntry("ent", 5, 15, 15, 500, 250, 1, new Font("Arial Bold", Font.BOLD, 18), "words", true);
 		//pan.addRectangle("rec", 0, 300, 150, 100, 250, false, new Color(255,255,255), new Color(0,0,0));
 		ElementPanel pan2 = new ElementPanel(600, 0, 400, 400) {
@@ -53,10 +54,10 @@ public class test {
 		fram.reservePanel("sas", pan2);
 		}
 	
-	private static void designReactiveButton(ElementPanel pan, String name, Color col, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered) {
+	private static void designReactiveButton(ElementPanel pan, String name, Color col, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered, boolean centeredText) {
 		pan.addRectangle(name + "_rect", priority * 10, x, y, wid, hei, centered, col);
 		pan.addButton(name + "_but",     priority * 10 + 1, x, y, wid, hei, code, centered);
-		pan.addText(name + "_text_but",  priority * 10 + 2, x, y,  wid, hei, message, font, centered);
+		pan.addText(name + "_text_but",  priority * 10 - 2, x, y,  wid, hei, message, font, centered, centered, centeredText);
 	}
 	
 }

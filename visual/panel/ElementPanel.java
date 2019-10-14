@@ -375,8 +375,8 @@ public class ElementPanel extends Panel{
 	 * @param font - Font object describing the font with which to draw the provided String phrase
 	 */
 	
-	public void addText(String name, int priority, int x, int y, int width, int height, String phrase, Font font, boolean centered){
-		DrawnText text = new DrawnText(x, y, width, height, priority, centered, phrase, font);
+	public void addText(String name, int priority, int x, int y, int width, int height, String phrase, Font font, boolean centeredX, boolean centeredY, boolean centeredText){
+		DrawnText text = new DrawnText(x, y, width, height, priority, centeredX, centeredY, centeredText, phrase, font);
 		drawList.put(name, text);
 	}
 
