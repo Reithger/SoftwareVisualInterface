@@ -133,7 +133,7 @@ public class WindowFrame extends Frame{
 //---  Operations   ---------------------------------------------------------------------------
 	
 	public void repaint() {
-		removeScreenContents();
+		//removeScreenContents();
 		showWindow();
 		super.repaint();
 	}

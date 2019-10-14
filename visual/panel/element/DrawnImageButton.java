@@ -69,7 +69,7 @@ public class DrawnImageButton extends Element implements Clickable{
 	public Detectable getDetectionRegion() {
 		int wid = image.getWidth(null) * scaleFactor;
 		int hei = image.getHeight(null) * scaleFactor;
-		return new ClickRegionRectangle(xLocation - (center ? wid / 2 : 0), yLocation - (center ? hei / 2 : 0), xLocation + (center ? wid / 2 : 0), yLocation + (center ? hei / 2 : 0), code);
+		return new ClickRegionRectangle(xLocation - (center ? wid / 2 : 0), yLocation - (center ? hei / 2 : 0), wid, hei, code);
 	}
 
 //---  Operations   ---------------------------------------------------------------------------

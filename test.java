@@ -25,21 +25,23 @@ public class test {
 		
 		ElementPanel pan = new ElementPanel(0, 0, 550, 500) {
 			public void keyBehaviour(char event) {
+				System.out.println(event);
 				removeElement("rec");
 				Communication.set("A", event+"");
+				System.out.println(event);
 			}
 			
 			public void clickBehaviour(int event) {
 				if(event == -1) {
-					System.out.println(this.getElementStoredText("ent"));
+					System.out.println(this.getElementStoredText("tex"));
 				}
 				System.out.println(Communication.get("A"));
 			} 
 			
 		};
-		pan.addRectangle("rec", 8, 150, 150, 250, 250, true, new Color(180, 0, 180));
+		//pan.addRectangle("rec", 8, 150, 150, 250, 250, true, new Color(180, 0, 180));
 		//pan.addRectangle("rec_1", 3, 300, 150, 250, 100, true, new Color(80, 180, 80));
-		pan.addText("tex", 10, 150, 150, 250, 250, "Welcome to this long phrase I will write", new Font("Arial Bold", Font.BOLD, 18), true, true, true);
+		pan.addTextEntry("tex", 10, 150, 150, 250, 250, 3, "Welcome to this long phrase I will write", new Font("Arial Bold", Font.BOLD, 18), true, true, true);
 		
 //		designReactiveButton(pan, "cont", new Color(200, 30, 30), new Font("Arial Bold", Font.BOLD, 14), "Start", pan.getWidth() / 2, pan.getHeight() / 2, 200, 80, 5, 6, true, true);
 //		pan.addTextEntry("ent", 5, 15, 15, 500, 250, 1, new Font("Arial Bold", Font.BOLD, 18), "words", true);
@@ -47,6 +49,10 @@ public class test {
 		ElementPanel pan2 = new ElementPanel(600, 0, 400, 400) {
 			public void clickBehaviour(int event) {
 				Communication.set("A", "Second");
+			}
+			
+			public void keyBehaviour(char event) {
+				
 			}
 		};
 		pan2.addImage("sas", 100, pan2.getWidth() / 2, pan2.getHeight() / 2, true, imagePath);

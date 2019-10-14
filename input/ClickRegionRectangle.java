@@ -13,13 +13,13 @@ public class ClickRegionRectangle implements Detectable{
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** int value representing the bottom right corner's x coordinate of the specified rectangular region in an arbitrary coordinate plane*/
-	private int xHigh;
+	private int x;
 	/** int value representing the top left corner's x coordinate of the specified rectangular region in an arbitrary coordinate plane*/
-	private int xLow;
+	private int y;
 	/** int value representing the bottom right corner's y coordinate of the specified rectangular region in an arbitrary coordinate plane*/
-	private int yHigh;
+	private int width;
 	/** int value representing the top left corner's y coordinate of the specified rectangular region in an arbitrary coordinate plane*/
-	private int yLow;
+	private int height;
 	/** int value describing the code value that will be generated when this ClickRegionRectangle object is triggered*/
 	private int code;
 	
@@ -38,10 +38,10 @@ public class ClickRegionRectangle implements Detectable{
 	 */
 	
 	public ClickRegionRectangle(int[] in) {
-		xHigh = in[0];
-		yHigh = in[1];
-		xLow = in[2];
-		yLow = in[3];
+		x = in[0];
+		y = in[1];
+		width = in[2];
+		height = in[3];
 		code = in[4];
 	}
 	
@@ -58,11 +58,11 @@ public class ClickRegionRectangle implements Detectable{
 	 * @param inCode - int value describing the code value that will be generated when this ClickRegionRectangle is triggered. 
 	 */
 	
-	public ClickRegionRectangle(int lowX, int lowY, int highX, int highY, int inCode) {
-		xLow = lowX;
-		yLow = lowY;
-		xHigh = highX;
-		yHigh = highY;
+	public ClickRegionRectangle(int inX, int inY, int wid, int hei, int inCode) {
+		x = inX;
+		y = inY;
+		width = wid;
+		height = hei;
 		code = inCode;
 	}
 	
@@ -70,7 +70,7 @@ public class ClickRegionRectangle implements Detectable{
 	
 	@Override
 	public boolean wasClicked(int xPos, int yPos) {
-		return xPos <= xHigh && xPos >= xLow && yPos <= yHigh && yPos >= yLow;
+		return xPos <= x + width && xPos >= x  && yPos <= y + height && yPos >= y;
 	}
 	
 	@Override

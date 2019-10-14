@@ -181,6 +181,7 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public String getElementStoredText(String name) {
+		System.out.println(name);
 		try {
 			return ((TextStorage)drawList.get(name)).getText();
 		}
@@ -399,9 +400,8 @@ public class ElementPanel extends Panel{
 	 * @param font - Font object describing the font with which to draw the provided String phrase
 	 */
 	
-	public void addTextEntry(String name, int priority, int x, int y, int width, int height, int code, Font font, String defaultText, boolean centered) {
-		DrawnTextArea dTA = new DrawnTextArea(x, y, width, height, priority, code, centered, font);
-		dTA.addText(defaultText);
+	public void addTextEntry(String name, int priority, int x, int y, int width, int height, int code, String defaultText, Font font, boolean centeredX, boolean centeredY, boolean centeredText) {
+		DrawnTextArea dTA = new DrawnTextArea(x, y, width, height, priority, centeredX, centeredY, centeredText, defaultText, font, code);
 		drawList.put(name, dTA);
 		clickList.put(name,  dTA.getDetectionRegion());
 		updateClickRegions();

@@ -19,7 +19,7 @@ public abstract class Frame{
 //---  Constant Values   ----------------------------------------------------------------------
 	
 	/** int constant value representing the speed at which this Frame calls repaint() to refresh itself*/
-	private static final int REFRESH_RATE = 1000/60;
+	private static final int REFRESH_RATE = 1000/30;
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
