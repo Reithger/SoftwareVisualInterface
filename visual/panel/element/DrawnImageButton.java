@@ -22,6 +22,8 @@ public class DrawnImageButton extends Element implements Clickable{
 	/** */
 	private int code;
 	
+	private boolean center;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
@@ -33,12 +35,13 @@ public class DrawnImageButton extends Element implements Clickable{
 	 * @param scale
 	 */
 	
-	public DrawnImageButton(int x, int y, int prior, Image img, int key, int scale) {
+	public DrawnImageButton(int x, int y, int prior, boolean inCenter, Image img, int key, int scale) {
 		xLocation = x;
 		yLocation = y;
 		scaleFactor = scale;
 		image = img;
 		code = key;
+		center = inCenter;
 		setDrawPriority(prior);
 	}
 
@@ -50,12 +53,13 @@ public class DrawnImageButton extends Element implements Clickable{
 	 * @param key
 	 */
 	
-	public DrawnImageButton(int x, int y, int prior, Image img, int key) {
+	public DrawnImageButton(int x, int y, int prior, boolean inCenter, Image img, int key) {
 		xLocation = x;
 		yLocation = y;
 		scaleFactor = 1;
 		image = img;
 		code = key;
+		center = inCenter;
 		setDrawPriority(prior);
 	}
 	
@@ -65,7 +69,7 @@ public class DrawnImageButton extends Element implements Clickable{
 	public Detectable getDetectionRegion() {
 		int wid = image.getWidth(null) * scaleFactor;
 		int hei = image.getHeight(null) * scaleFactor;
-		return new ClickRegionRectangle(xLocation - wid / 2, yLocation - hei / 2, xLocation + wid / 2, yLocation + hei / 2, code);
+		return new ClickRegionRectangle(xLocation - (center ? wid / 2 : 0), yLocation - (center ? hei / 2 : 0), xLocation + (center ? wid / 2 : 0), yLocation + (center ? hei / 2 : 0), code);
 	}
 
 //---  Operations   ---------------------------------------------------------------------------
@@ -75,7 +79,7 @@ public class DrawnImageButton extends Element implements Clickable{
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		image = image.getScaledInstance(image.getWidth(null) * scaleFactor, image.getHeight(null) * scaleFactor, Image.SCALE_DEFAULT);
 		while(!tk.prepareImage(image, -1, -1, null)){	}
-		g.drawImage(image, xLocation - image.getWidth(null)/2, yLocation - image.getHeight(null)/2, null);
+		g.drawImage(image, xLocation - (center ? image.getWidth(null)/2 : 0), yLocation - (center ? image.getHeight(null)/2 : 0), null);
 	}
 
 	

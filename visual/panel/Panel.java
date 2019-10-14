@@ -43,7 +43,7 @@ public abstract class Panel{
 	 * @param height - int value representing the height of this Panel object
 	 */
 	
-	public void initiate(int x, int y, int width, int height) {
+	public Panel(int x, int y, int width, int height) {
 		panel = new JPanelWrap(this);
 		mouseEvent = new ClickComponent(this);
 		keyPress = new KeyComponent(this);

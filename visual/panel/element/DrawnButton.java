@@ -27,6 +27,8 @@ public class DrawnButton extends Element implements Clickable{
 	private int code;
 	/** */
 	private Color color;
+	
+	private boolean center;
 
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -40,13 +42,14 @@ public class DrawnButton extends Element implements Clickable{
 	 * @param col
 	 */
 	
-	public DrawnButton(int x, int y, int wid, int hei, int prior, int key, Color col) {
+	public DrawnButton(int x, int y, int wid, int hei, int prior, boolean inCenter, int key, Color col) {
 		cornerX = x;
 		cornerY = y;
 		width = wid;
 		height = hei;
 		code = key;
 		color = col;
+		center = inCenter;
 		setDrawPriority(prior);
 	}
 
@@ -59,12 +62,13 @@ public class DrawnButton extends Element implements Clickable{
 	 * @param key
 	 */
 	
-	public DrawnButton(int x, int y, int wid, int hei, int prior, int key) {
+	public DrawnButton(int x, int y, int wid, int hei, int prior, boolean inCenter, int key) {
 		cornerX = x;
 		cornerY = y;
 		width = wid;
 		height = hei;
 		code = key;
+		center = inCenter;
 		setDrawPriority(prior);
 		color = null;
 	}
@@ -76,7 +80,7 @@ public class DrawnButton extends Element implements Clickable{
 		if(color != null) {
 			Color maintain = g.getColor();
 			g.setColor(color);
-			g.fillRect(cornerX, cornerY, width, height);
+			g.fillRect(cornerX - (center ? width / 2 : 0), cornerY - (center ? height / 2 : 0), width, height);
 			g.setColor(maintain);
 		}
 	}
@@ -89,7 +93,7 @@ public class DrawnButton extends Element implements Clickable{
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public ClickRegionRectangle getDetectionRegion() {
-		return new ClickRegionRectangle(cornerX , cornerY , cornerX + width , cornerY + height , code);
+		return new ClickRegionRectangle(cornerX - (center ? width / 2 : 0), cornerY - (center ? height / 2 : 0), cornerX + width / (center ? 2 : 1), cornerY + height / (center ? 2 : 1), code);
 	}
 
 }

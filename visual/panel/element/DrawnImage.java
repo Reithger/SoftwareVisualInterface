@@ -17,6 +17,8 @@ public class DrawnImage extends Element{
 	/** */
 	private Image image;
 	
+	private boolean center;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
@@ -27,11 +29,12 @@ public class DrawnImage extends Element{
 	 * @param scale
 	 */
 	
-	public DrawnImage(int x, int y, int prior, Image img, int scale) {
+	public DrawnImage(int x, int y, int prior, boolean inCenter, Image img, int scale) {
 		xLocation = x;
 		yLocation = y;
 		image = img;
 		scaleFactor = scale;
+		center = inCenter;
 		setDrawPriority(prior);
 	}	
 
@@ -42,11 +45,13 @@ public class DrawnImage extends Element{
 	 * @param img
 	 */
 	
-	public DrawnImage(int x, int y, Image img) {
+	public DrawnImage(int x, int y, int prior, boolean inCenter, Image img) {
 		xLocation = x;
 		yLocation = y;
 		image = img;
+		center = inCenter;
 		scaleFactor = 1;
+		setDrawPriority(prior);
 	}	
 
 //---  Operations   ---------------------------------------------------------------------------
@@ -55,7 +60,7 @@ public class DrawnImage extends Element{
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		image = image.getScaledInstance(image.getWidth(null) * scaleFactor, image.getHeight(null) * scaleFactor, Image.SCALE_DEFAULT);
 		while(!tk.prepareImage(image, -1, -1, null)){	}
-		g.drawImage(image, xLocation - image.getWidth(null)/2, yLocation - image.getHeight(null)/2, null);
+		g.drawImage(image, xLocation - (center ? image.getWidth(null)/2 : 0), yLocation - (center ? image.getHeight(null)/2 : 0), null);
 	}
 	
 }

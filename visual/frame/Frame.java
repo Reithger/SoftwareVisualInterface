@@ -28,17 +28,9 @@ public abstract class Frame{
 	/** Timer object to automatically refresh (repaint) this Frame object at a defined frequency*/
 	private Timer timer;
 	
-//---  Constructor Support   ------------------------------------------------------------------
+//---  Constructors  --------------------------------------------------------------------------
 	
-	/**
-	 * This method handles some aspects of the creation of Frame objects that are common across
-	 * all Frames and are not expected to be actions Frames will want to do differently.
-	 * 
-	 * @param width - int value representing the width of this Frame object's window
-	 * @param height - int value representing the height of this Frame object's window
-	 */
-	
-	public void initiate(int width, int height) {
+	public Frame(int width, int height) {
 		frame = new JFrame();
 		timer = new Timer();
 		timer.schedule(new TimerRefresh(this), 0, REFRESH_RATE);
@@ -49,43 +41,23 @@ public abstract class Frame{
 	}
 	
 //---  Adder Methods   ------------------------------------------------------------------------
-	
-	/**
-	 * All Frame objects need to be able to have Panel objects added to them; the addition
-	 * of a name allows for multiple Panels to be used distinctly.
-	 * 
-	 * @param name - String object representing the desired name of the provided Panel object
-	 * @param panel - Panel object being added to this Frame object
-	 */
-	
-	public abstract void addPanel(String name, Panel panel);
-	
-	public abstract Panel getPanel(String name);
-	
-	public void repaint() {
-		frame.repaint();
-	}
-	
-	public void add(Panel panel) {
+
+	public void addPanelToScreen(Panel panel) {
 		frame.add(panel.getPanel());
 		panel.setParentFrame(this);
 	}
 	
-	public void remove(Panel panel) {
+//---  Remover Methods   ----------------------------------------------------------------------
+	
+	public void removePanelFromScreen(Panel panel) {
 		frame.remove(panel.getPanel());
 	}
 
-	public int getWidth() {
-		return frame.getWidth();
+	public void removeScreenContents() {
+		frame.getContentPane().removeAll();
 	}
 	
-	public int getHeight() {
-		return frame.getHeight();
-	}
-	
-	public void remove() {
-		frame.dispose();
-	}
+//---  Setter Methods   -----------------------------------------------------------------------
 
 	public void setExitOnClose(boolean decide) {
 		if(decide) {
@@ -96,4 +68,36 @@ public abstract class Frame{
 		}
 	}
 	
+//---  Getter Methods   -----------------------------------------------------------------------
+	
+	public abstract Panel getPanel(String name);
+
+	public int getWidth() {
+		return frame.getWidth();
+	}
+	
+	public int getHeight() {
+		return frame.getHeight();
+	}
+	
+//---  Operations   ---------------------------------------------------------------------------
+	
+	public void repaint() {
+		frame.repaint();
+	}
+
+	public void disposeFrame() {
+		frame.dispose();
+	}
+	
+	/**
+	 * All Frame objects need to be able to have Panel objects added to them; the addition
+	 * of a name allows for multiple Panels to be used distinctly.
+	 * 
+	 * @param name - String object representing the desired name of the provided Panel object
+	 * @param panel - Panel object being added to this Frame object
+	 */
+	
+	public abstract void reservePanel(String name, Panel panel);
+
 }

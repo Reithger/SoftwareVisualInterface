@@ -13,10 +13,10 @@ import visual.panel.element.*;
  * This class implements the Panel abstract class to provide a suite of drawing tools and interactivity
  * to the programmer via the element package, as well as handling some low-level complexities that arise.
  * 
- * If using the SWI library, you should not need to look any deeper than this unless you wish to change
+ * If using the SVI library, you should not need to look any deeper than this unless you wish to change
  * base functionality. All features are provided by methods describing those features.
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 
@@ -44,8 +44,7 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public ElementPanel(int x, int y, int width, int height){
-		super();
-		initiate(x, y, width, height);
+		super(x, y, width, height);
 		drawList = new HashMap<String, Element>();
 		clickList = new HashMap<String, Detectable>();
 	}
@@ -240,8 +239,8 @@ public class ElementPanel extends Panel{
 	 * @param path - String object representing the file path that the Image is located at in memory.
 	 */
 	
-	public void addImage(String name, int priority, int x, int y, String path){
-		drawList.put(name, new DrawnImage(x, y, retrieveImage(path)));
+	public void addImage(String name, int priority, int x, int y, boolean center, String path){
+		drawList.put(name, new DrawnImage(x, y, priority, center, retrieveImage(path)));
 	}
 	
 	/**
@@ -256,8 +255,8 @@ public class ElementPanel extends Panel{
 	 * @param scale - int value describing what scale at which to draw this Image (i.e, 2 would be double the size)
 	 */
 	
-	public void addImage(String name, int priority, int x, int y, String path, int scale){
-		drawList.put(name, new DrawnImage(x, y, priority, retrieveImage(path), scale));
+	public void addImage(String name, int priority, int x, int y, boolean center, String path, int scale){
+		drawList.put(name, new DrawnImage(x, y, priority, center, retrieveImage(path), scale));
 	}
 	
 	//-- Button  ----------------------------------------------
@@ -285,11 +284,7 @@ public class ElementPanel extends Panel{
 	 */
 
 	public void addButton(String name, int priority, int x, int y, int wid, int hei, int key, boolean centered){
-		DrawnButton drawn;
-		if(!centered)
-			drawn = new DrawnButton(x, y, wid, hei, priority, key);
-		else
-			drawn = new DrawnButton(x - wid/2, y - hei/2, wid, hei, priority, key);
+		DrawnButton drawn = new DrawnButton(x, y, wid, hei, priority, centered, key);
 		drawList.put(name, drawn);
 		clickList.put(name, drawn.getDetectionRegion());
 		updateClickRegions();
@@ -318,11 +313,7 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addButton(String name, int priority, int x, int y, int wid, int hei, Color col, int key, boolean centered){
-		DrawnButton drawn;
-		if(!centered)
-			drawn = new DrawnButton(x, y, wid, hei, priority, key, col);
-		else
-			drawn = new DrawnButton(x - wid/2, y - hei/2, wid, hei, priority, key, col);
+		DrawnButton drawn = new DrawnButton(x, y, wid, hei, priority, centered, key, col);
 		drawList.put(name, drawn);
 		clickList.put(name, drawn.getDetectionRegion());
 		updateClickRegions();
@@ -341,8 +332,8 @@ public class ElementPanel extends Panel{
 	 * @param key - int value describing the value that is generated when this DrawnImageButton object is clicked
 	 */
 	
-	public void addImageButton(String name, int priority, int x, int y, String path, int key){
-		DrawnImageButton but = new DrawnImageButton(x, y, priority, retrieveImage(path), key);
+	public void addImageButton(String name, int priority, int x, int y, boolean center, String path, int key){
+		DrawnImageButton but = new DrawnImageButton(x, y, priority, center, retrieveImage(path), key);
 		drawList.put(name, but);
 		clickList.put(name, but.getDetectionRegion());
 		updateClickRegions();
@@ -361,8 +352,8 @@ public class ElementPanel extends Panel{
 	 * @param scale - int value describing what scale at which to draw this DrawnImageButton (i.e, 2 would be double the size)
 	 */
 	
-	public void addImageButton(String name, int priority, int x, int y, String path, int key, int scale){
-		DrawnImageButton but = new DrawnImageButton(x, y, priority, retrieveImage(path), key, scale);
+	public void addImageButton(String name, int priority, int x, int y, boolean center, String path, int key, int scale){
+		DrawnImageButton but = new DrawnImageButton(x, y, priority, center, retrieveImage(path), key, scale);
 		drawList.put(name, but);
 		clickList.put(name, but.getDetectionRegion());
 		updateClickRegions();
@@ -385,11 +376,7 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addText(String name, int priority, int x, int y, int width, int height, String phrase, Font font, boolean centered){
-		DrawnText text;
-		if(!centered) 
-			text = new DrawnText(x, y, x + width, y + height, priority, centered, phrase, font);
-		else
-			text = new DrawnText(x - width/2, y - height/2, x + width/2, y + height/2, priority, centered, phrase, font);
+		DrawnText text = new DrawnText(x, y, width, height, priority, centered, phrase, font);
 		drawList.put(name, text);
 	}
 
@@ -413,11 +400,7 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addTextEntry(String name, int priority, int x, int y, int width, int height, int code, Font font, String defaultText, boolean centered) {
-		DrawnTextArea dTA;
-		if(!centered)
-			dTA = new DrawnTextArea(x, y, x + width, y + height, priority, code, centered, font);
-		else
-			dTA = new DrawnTextArea(x - width/2, y - height/2, x + width/2, y + height/2, priority, code, centered, font);
+		DrawnTextArea dTA = new DrawnTextArea(x, y, width, height, priority, code, centered, font);
 		dTA.addText(defaultText);
 		drawList.put(name, dTA);
 		clickList.put(name,  dTA.getDetectionRegion());
@@ -438,13 +421,8 @@ public class ElementPanel extends Panel{
 	 * @param col - Color object describing the color with which to draw this DrawnRectangle Element
 	 */
 	
-	public void addRectangle(String name, int priority, int x, int y, int width, int height, Color col, boolean centered) {
-		DrawnRectangle rect;
-		if(!centered)
-			rect = new DrawnRectangle(x, y, x + width, y + height, priority, col);
-		else
-			rect = new DrawnRectangle(x - width/2, y - height/2, x + width/2, y + height/2, priority, col);
-		drawList.put(name, rect);
+	public void addRectangle(String name, int priority, int x, int y, int width, int height, boolean center, Color col) {
+		drawList.put(name, new DrawnRectangle(x, y, width, height, priority, center, col));
 	}
 	
 	/**
@@ -461,13 +439,8 @@ public class ElementPanel extends Panel{
 	 * @param borderColor - Color object describing the color with which to draw the outline of this DrawnRectangle Element
 	 */
 	
-	public void addRectangle(String name, int priority, int x, int y, int width, int height, Color fillColor, Color borderColor, boolean centered) {
-		DrawnRectangle rect;
-		if(!centered)
-			rect = new DrawnRectangle(x, y, x + width, y + height, priority, fillColor, borderColor);
-		else
-			rect = new DrawnRectangle(x - width/2, y - height/2, x + width/2, y + height/2, priority, fillColor, borderColor);
-		drawList.put(name, rect);
+	public void addRectangle(String name, int priority, int x, int y, int width, int height, boolean center, Color fillColor, Color borderColor) {
+		drawList.put(name, new DrawnRectangle(x, y, width, height, priority, center, fillColor, borderColor));
 	}
 
 //---  Remove Elements   ----------------------------------------------------------------------

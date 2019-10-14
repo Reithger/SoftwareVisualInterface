@@ -14,13 +14,13 @@ public class DrawnText extends Element{
 	/** */
 	private Font font;
 	/** */
-	private int xHigh;
-	/** */
-	private int yHigh;
-	/** */
-	private int xLow;
-	/** */
-	private int yLow;
+	private int x;
+	
+	private int y;
+	
+	private int width;
+	
+	private int height;
 	
 	private boolean centered;
 	
@@ -39,11 +39,11 @@ public class DrawnText extends Element{
 	 * @param inFont
 	 */
 	
-	public DrawnText(int xL, int yL, int xH, int yH, int prior, boolean center, String word, Font inFont) {
-		xHigh = xH;
-		yHigh = yH;
-		xLow = xL;
-		yLow = yL;
+	public DrawnText(int inX, int inY, int wid, int hei, int prior, boolean center, String word, Font inFont) {
+		x = inX;
+		y = inY;
+		width = wid;
+		height = hei;
 		font = inFont;
 		message = word;
 		centered = center;
@@ -57,8 +57,6 @@ public class DrawnText extends Element{
 		Font save = g.getFont();
 		g.setFont(font);
 		FontMetrics fM = g.getFontMetrics();
-		int x = xLow;
-		int y = yLow + fM.getAscent();
 		String[] words = message.split(" ");
 		if(centered)
 			drawCentered(g, x, y, words, fM);
@@ -67,82 +65,82 @@ public class DrawnText extends Element{
 		g.setFont(save);
 	}
 	
-	private void drawNonCentered(Graphics g, int x, int y, String[] words, FontMetrics fM) {
+	private void drawNonCentered(Graphics g, int otX, int otY, String[] words, FontMetrics fM) {
 		top:
 			for(String s : words) {
 				int wid = fM.stringWidth(s + "w");
-				if(wid >= xHigh - xLow) {
+				if(wid >= width) {
 					String[] letters = s.split("");
 					for(String l : letters) {
 						int letWid = fM.stringWidth(l);
-						if(x + 2 * letWid >= xHigh) {
-							x = xLow;
-							y += fM.getHeight();
+						if(otX + 2 * letWid >= (x + width)) {
+							otX = x;
+							otY += fM.getHeight();
 						}
-						if(y > yHigh) {
+						if(otY > height) {
 							break top;
 						}
-						g.drawString(l, x, y);
-						x += letWid;
+						g.drawString(l, otX, otY);
+						otX += letWid;
 					}
 					continue top;
 				}
-				if(x + wid >= xHigh) {
-					x = xLow;
-					y += fM.getHeight();	
+				if(otX + wid >= width) {
+					otX = x;
+					otY += fM.getHeight();	
 				}
-				if(y > yHigh) {
+				if(otY > height) {
 					break top;
 				}
-				g.drawString(s, x, y);
-				x += wid;
+				g.drawString(s, otX, otY);
+				otX += wid;
 			}
 	}
 	
-	private void drawCentered(Graphics g, int x, int y, String[] words, FontMetrics fM) {
+	private void drawCentered(Graphics g, int otX, int otY, String[] words, FontMetrics fM) {
 		String currentDraw = "";
 		ArrayList<String> finalSet = new ArrayList<String>();
 		top:
 			for(String s : words) {
 				int wid = fM.stringWidth(s + "w");
-				if(wid >= xHigh - xLow) {
+				if(wid >= width) {
 					String[] letters = s.split("");
 					for(String l : letters) {
 						int letWid = fM.stringWidth(l);
-						if(x + 2 * letWid >= xHigh) {
-							x = xLow;
-							y += fM.getHeight();
+						if(otX + 2 * letWid >= width) {
+							otX = x;
+							otY += fM.getHeight();
 						}
-						if(y > yHigh) {
+						if(otY > height) {
 							break top;
 						}
-						g.drawString(l, x, y);
-						x += letWid;
+						g.drawString(l, otX, otY);
+						otX += letWid;
 					}
 					continue top;
 				}
-				if(x + wid >= xHigh) {
-					x = xLow;
+				if(otX + wid >= (x + width)) {
+					otX = x;
 					finalSet.add(currentDraw);
 					//g.drawString(currentDraw, xLow + ((xHigh - xLow) - outWid)/2, y);
 					currentDraw = "";
-					y += fM.getHeight();	
+					otY += fM.getHeight();	
 				}
-				if(y > yHigh) {
+				if(otY > height) {
 					break top;
 				}
 				currentDraw += " " + s;
-				x += wid;
+				otX += wid;
 			}
 		if(!currentDraw.equals("")){
 			finalSet.add(currentDraw);//g.drawString(currentDraw, xLow + ((xHigh - xLow) - fM.stringWidth(currentDraw))/2, y);
 		}
 		int eachHeight = fM.getHeight();
 		int totalHeight = eachHeight * finalSet.size();
-		int start = yLow + ((yHigh - yLow) - totalHeight)/2 + fM.getAscent();
+		int start = y - (height - totalHeight)/2 + fM.getAscent();
 		for(String s : finalSet) {
 			int outWid = fM.stringWidth(s);
-			g.drawString(s, xLow + ((xHigh - xLow) - outWid)/2, start);
+			g.drawString(s, otX - (width - outWid)/2, start);
 			start += eachHeight;
 		}
 	}

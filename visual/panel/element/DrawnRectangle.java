@@ -8,17 +8,19 @@ public class DrawnRectangle extends Element{
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** */
-	private int xLow;
+	private int x;
 	/** */
-	private int yLow;
+	private int y;
 	/** */
-	private int xHigh;
+	private int width;
 	/** */
-	private int yHigh;
+	private int height;
 	/** */
 	private Color colorBorder;
 	/** */
 	private Color colorFill;
+	
+	private boolean center;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -31,13 +33,14 @@ public class DrawnRectangle extends Element{
 	 * @param color
 	 */
 	
-	public DrawnRectangle(int xL, int yL, int xH, int yH, int prior, Color color) {
-		xLow = xL;
-		yLow = yL;
-		xHigh = xH;
-		yHigh = yH;
+	public DrawnRectangle(int inX, int inY, int inWidth, int inHeight, int prior, boolean inCenter, Color color) {
+		x = inX;
+		y = inY;
+		width = inWidth;
+		height = inHeight;
 		colorFill = color;
 		colorBorder = color;
+		center = inCenter;
 		setDrawPriority(prior);
 	}
 	
@@ -51,13 +54,14 @@ public class DrawnRectangle extends Element{
 	 * @param outlineColor
 	 */
 	
-	public DrawnRectangle(int xL, int yL, int xH, int yH, int prior, Color fillColor, Color outlineColor) {
-		xLow = xL;
-		yLow = yL;
-		xHigh = xH;
-		yHigh = yH;
+	public DrawnRectangle(int xIn, int yIn, int inWidth, int inHeight, int prior, boolean inCenter, Color fillColor, Color outlineColor) {
+		x = xIn;
+		y = yIn;
+		width = inWidth;
+		height = inHeight;
 		colorFill = fillColor;
 		colorBorder = outlineColor;
+		center = inCenter;
 		setDrawPriority(prior);
 	}
 
@@ -67,9 +71,9 @@ public class DrawnRectangle extends Element{
 	public void drawToScreen(Graphics g) {
 		Color save = g.getColor();
 		g.setColor(colorFill);
-		g.fillRect(xLow, yLow, xHigh - xLow, yHigh - yLow);
+		g.fillRect(x - (center ? width / 2 : 0), y - (center ? height / 2 : 0), width, height);
 		g.setColor(colorBorder);
-		g.drawRect(xLow, yLow, xHigh - xLow, yHigh - yLow);
+		g.drawRect(x - (center ? width / 2 : 0), y - (center ? height / 2 : 0), width, height);
 		g.setColor(save);
 	}
 	

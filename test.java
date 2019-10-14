@@ -18,7 +18,11 @@ public class test {
 
 	public static void main(String[] args) {
 		String imagePath = "src\\Saskia_Portrait.jpg";
+		System.out.println("Here");
 		WindowFrame fram = new WindowFrame(1200, 500);
+
+		System.out.println("Here");
+		
 		ElementPanel pan = new ElementPanel(0, 0, 550, 500) {
 			public void keyBehaviour(char event) {
 				removeElement("rec");
@@ -33,25 +37,26 @@ public class test {
 			} 
 			
 		};
+		pan.addRectangle("rec", 0, 300, 150, 100, 250, true, new Color(80, 80, 80));
 		pan.addText("tex", 10, 300, 150, 100, 250, "Welcome to this long phrase I will write", new Font("Arial Bold", Font.BOLD, 18), true);
 		
-		designReactiveButton(pan, "cont", new Color(255, 255, 255), new Font("Arial Bold", Font.BOLD, 14), "Start", 550/2, 3*500/5, 550/10, 500/20, 5, 6, true);
-		pan.addTextEntry("ent", 5, 15, 15, 500, 250, 1, new Font("Arial Bold", Font.BOLD, 18), "", false);
-		pan.addRectangle("rec", 0, 300, 150, 100, 250, new Color(255,255,255), new Color(0,0,0), true);
+		designReactiveButton(pan, "cont", new Color(255, 255, 255), new Font("Arial Bold", Font.BOLD, 14), "Start", pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() / 8, pan.getHeight() / 10, 5, 6, true);
+//		pan.addTextEntry("ent", 5, 15, 15, 500, 250, 1, new Font("Arial Bold", Font.BOLD, 18), "words", true);
+		//pan.addRectangle("rec", 0, 300, 150, 100, 250, false, new Color(255,255,255), new Color(0,0,0));
 		ElementPanel pan2 = new ElementPanel(600, 0, 400, 400) {
 			public void clickBehaviour(int event) {
 				Communication.set("A", "Second");
 			}
 		};
-		pan2.addImage("sas", 100, 200, 200, imagePath);
-		fram.addPanel("fir", pan);
-		fram.addPanel("sas", pan2);
+		pan2.addImage("sas", 100, pan2.getWidth() / 2, pan2.getHeight() / 2, true, imagePath);
+		fram.reservePanel("fir", pan);
+		fram.reservePanel("sas", pan2);
 		}
 	
 	private static void designReactiveButton(ElementPanel pan, String name, Color col, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered) {
-		pan.addRectangle(name + "_rect", priority * 10, x, y, wid, hei, col, true);
-		pan.addButton(name + "_but",     priority * 10 + 1, x, y, wid, hei, code, true);
-		pan.addText(name + "_text_but",  priority * 10 + 2, x, y,  wid, hei, message, font, true);
+		pan.addRectangle(name + "_rect", priority * 10, x, y, wid, hei, centered, col);
+		pan.addButton(name + "_but",     priority * 10 + 1, x, y, wid, hei, code, centered);
+		pan.addText(name + "_text_but",  priority * 10 + 2, x, y,  wid, hei, message, font, centered);
 	}
 	
 }

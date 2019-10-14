@@ -16,7 +16,11 @@ public class WindowFrame extends Frame{
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** HashMap<<r>String, Panel> object containing the Panel objects contained by this WindowFrame and their names*/
-	private HashMap<String, Panel> windows;
+	private HashMap<String, HashMap<String, Panel>> windows;
+	
+	private String activeWindow;
+	
+	private boolean start;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -30,12 +34,17 @@ public class WindowFrame extends Frame{
 	 */
 	
 	public WindowFrame(int width, int height) {
-		super();
-		initiate(width, height);
-		windows = new HashMap<String, Panel>();
+		super(width, height);
+		windows = new HashMap<String, HashMap<String, Panel>>();
+		activeWindow = "";
+		start = true;
 	}
 
 //---  Adder Methods   ------------------------------------------------------------------------
+	
+	public void reserveWindow(String windowName) {
+		windows.put(windowName, new HashMap<String, Panel>());
+	}
 	
 	/**
 	 * This method adds a Panel object to this WindowFrame object, creating an entry
@@ -46,10 +55,18 @@ public class WindowFrame extends Frame{
 	 * 
 	 */
 	
-	public void addPanel(String title, Panel panel) {
-		windows.put(title, panel);
-		add(panel);
-		panel.setParentFrame(this);
+	public void reservePanel(String windowName, String panelName, Panel panel) {
+		if(windows.get(windowName) == null) {
+			windows.put(windowName, new HashMap<String, Panel>());
+		}
+		windows.get(windowName).put(panelName, panel);
+	}
+	
+	public void reservePanel(String panelName, Panel panel) {
+		if(windows.get(activeWindow) == null) {
+			windows.put(activeWindow, new HashMap<String, Panel>());
+		}
+		windows.get(activeWindow).put(panelName, panel);
 	}
 	
 //---  Remover Methods   ----------------------------------------------------------------------
@@ -62,25 +79,64 @@ public class WindowFrame extends Frame{
 	 * @param name - String object representing the name of the Panel to remove from this WindowFrame.
 	 */
 	
-	public void removePanel(String name) {
+	public void removeWindowPanel(String windowName, String panelName) {
 		try {
-			remove(windows.get(name));
-			windows.get(name).setParentFrame(null);
-			windows.remove(name);
+			removePanelFromScreen(windows.get(windowName).get(panelName));
+			windows.get(windowName).get(panelName).setParentFrame(null);
+			windows.get(windowName).remove(panelName);
 		}
 		catch(Exception e) {
 			System.out.println("Error: Attempt to remove non-existant Panel object");
 		}
 	}
 	
+	public void removePanel(String panelName) {
+		try {
+			removePanelFromScreen(windows.get(activeWindow).get(panelName));
+			windows.get(activeWindow).get(panelName).setParentFrame(null);
+			windows.get(activeWindow).remove(panelName);
+		}
+		catch(Exception e) {
+			System.out.println("Error: Attempt to remove non-existant Panel object");
+		}
+	}
+	
+	public void removeWindow(String windowName) {
+		try {
+			windows.remove(windowName);
+		}
+		catch(Exception e) {
+			System.out.println("Error: Attempt to remove non-existant Window collection of Panel objects");
+		}
+	}
+	
+//---  Setter Methods   -----------------------------------------------------------------------
+
+	public void setActiveWindow(String windowName) {
+		activeWindow = windowName;
+	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
-	public Panel getPanel(String name) {
-		return windows.get(name);
+	public String getActiveWindow() {
+		return activeWindow;
+	}
+	
+	public Panel getPanel(String windowName, String panelName) {
+		return windows.get(windowName).get(panelName);
+	}
+	
+	public Panel getPanel(String panelName) {
+		return windows.get(activeWindow).get(panelName);
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
+	
+	public void repaint() {
+		removeScreenContents();
+		showWindow();
+		super.repaint();
+	}
 	
 	/**
 	 * This method removes a designated Panel object from the Frame, but keeps
@@ -89,12 +145,21 @@ public class WindowFrame extends Frame{
 	 * @param name - String object representing the name associated to a Panel object stored by this WindowFrame.
 	 */
 	
-	public void hidePanel(String name) {
+	public void hidePanel(String panelName) {
 		try {
-			remove(windows.get(name));
+			removePanelFromScreen(windows.get(activeWindow).get(panelName));
 		}
 		catch(Exception e) {
 			System.out.println("Error: Attempt to hide non-existant Panel object");
+		}
+	}
+	
+	public void showWindow() {
+		if(!start || windows.get(activeWindow) == null) {
+			return;
+		}
+		for(String p : windows.get(activeWindow).keySet()) {
+			showPanel(p);
 		}
 	}
 	
@@ -105,9 +170,9 @@ public class WindowFrame extends Frame{
 	 * @param name - String object representing the name associated to a Panel object stored by this WindowFrame.
 	 */
 	
-	public void showPanel(String name) {
+	public void showPanel(String panelName) {
 		try {
-			add(windows.get(name));
+			addPanelToScreen(windows.get(activeWindow).get(panelName));
 		}
 		catch(Exception e) {
 			System.out.println("Error: Attempt to show non-existant Panel object");
@@ -115,8 +180,8 @@ public class WindowFrame extends Frame{
 	}
 	
 	public void hidePanels() {
-		for(Panel p : windows.values()) {
-			this.remove(p);
+		for(String p : windows.get(activeWindow).keySet()) {
+			this.hidePanel(p);
 		}
 	}
 	
