@@ -180,6 +180,9 @@ public class WindowFrame extends Frame{
 	}
 	
 	public void hidePanels() {
+		if(windows.get(activeWindow) == null) {
+			return;
+		}
 		for(String p : windows.get(activeWindow).keySet()) {
 			this.hidePanel(p);
 		}
