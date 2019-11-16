@@ -22,6 +22,13 @@ import visual.panel.element.*;
 
 public class ElementPanel extends Panel{
 
+//---  Constant Values   ----------------------------------------------------------------------
+	
+	/** boolean value used to denote the meaning of the boolean value given to many methods*/
+	public static final boolean CENTERED = true;
+	/** boolean value used to denote the meaning of the boolean value given to many methods*/
+	public static final boolean NON_CENTERED = false;
+	
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
@@ -211,11 +218,11 @@ public class ElementPanel extends Panel{
 	private Image retrieveImage(String pathIn) {
 		String path = pathIn.replace("\\", "/");
 		try {
-			return ImageIO.read(ElementPanel.class.getResource(path.substring(path.indexOf("/"))));
+			return(ImageIO.read(ElementPanel.class.getResource(path.substring(path.indexOf("/")))));
 		}
 		catch(Exception e) {
 			try {
-				return ImageIO.read(new File(path));
+				return(ImageIO.read(new File(path)));
 			}
 			catch(Exception e1) {
 				e1.printStackTrace();
@@ -244,6 +251,10 @@ public class ElementPanel extends Panel{
 		drawList.put(name, new DrawnImage(x, y, priority, center, retrieveImage(path)));
 	}
 	
+	public void addImage(String name, int priority, int x, int y, boolean center, Image img) {
+		drawList.put(name, new DrawnImage(x, y, priority, center, img));
+	}
+	
 	/**
 	 * This method is a variation of the addImage() method that allows the drawn image to
 	 * be scaled up in size according to a positive integer amount.
@@ -258,6 +269,10 @@ public class ElementPanel extends Panel{
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, String path, int scale){
 		drawList.put(name, new DrawnImage(x, y, priority, center, retrieveImage(path), scale));
+	}
+	
+	public void addImage(String name, int priority, int x, int y, boolean center, Image img, int scale) {
+		drawList.put(name, new DrawnImage(x, y, priority, center, img, scale));
 	}
 	
 	//-- Button  ----------------------------------------------

@@ -1,6 +1,8 @@
 package visual.panel;
 
 import java.awt.Graphics;
+import java.awt.Insets;
+
 import javax.swing.JPanel;
 import input.ClickComponent;
 import input.Detectable;
@@ -205,6 +207,11 @@ public abstract class Panel{
 		
 		public void paintComponent(Graphics g) {
 			container.paintComponent(g);
+		}
+		
+		@Override
+		public Insets getInsets() {
+			return new Insets(0, 0, 0, 0);
 		}
 		
 	}

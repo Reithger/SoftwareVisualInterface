@@ -58,9 +58,9 @@ public class DrawnImage extends Element{
 	
 	public void drawToScreen(Graphics g) {
 		Toolkit tk = Toolkit.getDefaultToolkit();
-		image = image.getScaledInstance(image.getWidth(null) * scaleFactor, image.getHeight(null) * scaleFactor, Image.SCALE_DEFAULT);
-		while(!tk.prepareImage(image, -1, -1, null)){	}
-		g.drawImage(image, xLocation - (center ? image.getWidth(null)/2 : 0), yLocation - (center ? image.getHeight(null)/2 : 0), null);
+		Image drawImage = image.getScaledInstance(image.getWidth(null) * scaleFactor, image.getHeight(null) * scaleFactor, Image.SCALE_DEFAULT);
+		while(!tk.prepareImage(drawImage, -1, -1, null)){	}
+		g.drawImage(drawImage, xLocation - (center ? drawImage.getWidth(null)/2 : 0), yLocation - (center ? drawImage.getHeight(null)/2 : 0), null);
 	}
 	
 }

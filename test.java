@@ -55,7 +55,7 @@ public class test {
 				
 			}
 		};
-		pan2.addImage("sas", 100, pan2.getWidth() / 2, pan2.getHeight() / 2, true, imagePath);
+		pan2.addImage("sas", 100, pan2.getWidth() / 2, pan2.getHeight() / 2, true, imagePath, 2);
 		fram.reservePanel("fir", pan);
 		fram.reservePanel("sas", pan2);
 		}

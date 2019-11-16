@@ -1,5 +1,6 @@
 package visual.frame;
 
+import java.awt.Insets;
 import java.util.Timer;
 import javax.swing.JFrame;
 import timer.TimerRefresh;
@@ -31,7 +32,12 @@ public abstract class Frame{
 //---  Constructors  --------------------------------------------------------------------------
 	
 	public Frame(int width, int height) {
-		frame = new JFrame();
+		frame = new JFrame() {
+			@Override
+			public Insets getInsets() {
+				return new Insets(0, 0, 0, 0);
+			}
+		};
 		timer = new Timer();
 		timer.schedule(new TimerRefresh(this), 0, REFRESH_RATE);
 		frame.setSize(width, height);
@@ -99,5 +105,5 @@ public abstract class Frame{
 	 */
 	
 	public abstract void reservePanel(String name, Panel panel);
-
+	
 }
