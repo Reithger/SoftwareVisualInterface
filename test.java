@@ -50,6 +50,7 @@ public class test {
 		ElementPanel pan2 = new ElementPanel(600, 0, 400, 400) {
 			public void clickBehaviour(int event) {
 				Communication.set("A", "Second");
+				pan.removeElementPrefixed("rec");
 			}
 			
 			public void keyBehaviour(char event) {

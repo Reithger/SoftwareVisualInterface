@@ -45,7 +45,6 @@ public abstract class Frame{
 		frame.setVisible(true);
 		frame.setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		System.out.println(frame.getInsets());
 	}
 	
 //---  Adder Methods   ------------------------------------------------------------------------

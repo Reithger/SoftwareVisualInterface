@@ -1,8 +1,10 @@
 package visual.panel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.io.File;
 import java.awt.*;
 import javax.imageio.ImageIO;
@@ -471,6 +473,26 @@ public class ElementPanel extends Panel{
 	public void removeElement(String name) {
 		drawList.remove(name);
 		clickList.remove(name);
+		updateClickRegions();
+	}
+	
+	public void removeElementPrefixed(String prefix) {
+		Collection<String> cs = drawList.keySet();
+		HashSet<String> remv = new HashSet<String>();
+		for(String s : cs) {
+			if(s.matches(prefix + ".*")) {
+				remv.add(s);
+			}
+		}
+		cs = clickList.keySet();
+		for(String s : cs) {
+			if(s.matches(prefix + ".*")) {
+				remv.add(s);
+			}
+		}
+		for(String s : remv) {
+			removeElement(s);
+		}
 		updateClickRegions();
 	}
 	

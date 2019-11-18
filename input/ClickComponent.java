@@ -167,11 +167,13 @@ public class ClickComponent implements MouseListener{
 	 */
 	
 	public boolean addClickRegion(Detectable region){
+		/*
 		for(Detectable d : detectionRegions) {
 			if(d.getCode() == region.getCode()) {
 				return false;
 			}
 		}
+		*/
 		detectionRegions.add(region);
 		return true;
 	}
