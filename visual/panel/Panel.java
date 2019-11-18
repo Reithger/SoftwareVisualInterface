@@ -1,5 +1,6 @@
 package visual.panel;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 
@@ -53,6 +54,7 @@ public abstract class Panel{
 		panel.setFocusable(true);
 		panel.setLocation(x, y);
 		panel.setSize(width, height);
+		panel.setPreferredSize(new Dimension(width, height));
 		panel.setVisible(true);
 	}
 	
@@ -207,11 +209,6 @@ public abstract class Panel{
 		
 		public void paintComponent(Graphics g) {
 			container.paintComponent(g);
-		}
-		
-		@Override
-		public Insets getInsets() {
-			return new Insets(0, 0, 0, 0);
 		}
 		
 	}

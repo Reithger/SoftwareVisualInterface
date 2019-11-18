@@ -1,5 +1,6 @@
 package visual.frame;
 
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.Timer;
 import javax.swing.JFrame;
@@ -33,17 +34,18 @@ public abstract class Frame{
 	
 	public Frame(int width, int height) {
 		frame = new JFrame() {
-			@Override
-			public Insets getInsets() {
-				return new Insets(0, 0, 0, 0);
-			}
+			
 		};
 		timer = new Timer();
 		timer.schedule(new TimerRefresh(this), 0, REFRESH_RATE);
-		frame.setSize(width, height);
+		frame.getContentPane().setSize(width, height);
+		frame.getContentPane().setPreferredSize(new Dimension(width, height));
+		frame.setMinimumSize(frame.getSize());
+		frame.setResizable(false);
 		frame.setVisible(true);
 		frame.setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		System.out.println(frame.getInsets());
 	}
 	
 //---  Adder Methods   ------------------------------------------------------------------------
@@ -51,6 +53,7 @@ public abstract class Frame{
 	public void addPanelToScreen(Panel panel) {
 		frame.add(panel.getPanel());
 		panel.setParentFrame(this);
+		frame.pack();
 	}
 	
 //---  Remover Methods   ----------------------------------------------------------------------
