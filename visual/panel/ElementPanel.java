@@ -39,6 +39,8 @@ public class ElementPanel extends Panel{
 	private HashMap<String, Detectable> clickList;
 	/** Clickable object representing the most recently selected interactive Element by the User for directing Key Inputs towards*/
 	private Clickable focusElement;
+	/** */
+	private HashMap<String, Image> images;
 
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -56,6 +58,7 @@ public class ElementPanel extends Panel{
 		super(x, y, width, height);
 		drawList = new HashMap<String, Element>();
 		clickList = new HashMap<String, Detectable>();
+		images = new HashMap<String, Image>();
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -219,18 +222,22 @@ public class ElementPanel extends Panel{
 	
 	private Image retrieveImage(String pathIn) {
 		String path = pathIn.replace("\\", "/");
+		if(images.containsKey(path)) {
+			return images.get(path);
+		}
 		try {
-			return(ImageIO.read(ElementPanel.class.getResource(path.substring(path.indexOf("/")))));
+			images.put(path, ImageIO.read(ElementPanel.class.getResource(path.substring(path.indexOf("/")))));
 		}
 		catch(Exception e) {
 			try {
-				return(ImageIO.read(new File(path)));
+				images.put(path, ImageIO.read(new File(path)));
 			}
 			catch(Exception e1) {
 				e1.printStackTrace();
 				return null;
 			}
 		}
+		return images.get(path);
 	}
 	
 //---  Draw   ---------------------------------------------------------------------------------
