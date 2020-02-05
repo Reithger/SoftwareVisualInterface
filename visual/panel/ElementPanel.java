@@ -467,6 +467,10 @@ public class ElementPanel extends Panel{
 		drawList.put(name, new DrawnRectangle(x, y, width, height, priority, center, fillColor, borderColor));
 	}
 
+	public void addLine(String name, int priority, int x1, int y1, int x2, int y2, int thickness, Color choice) {
+		drawList.put(name, new DrawnLine(x1, y1, x2, y2, thickness, priority, choice));
+	}
+	
 //---  Remove Elements   ----------------------------------------------------------------------
 	
 	/**
