@@ -12,9 +12,15 @@ public class DrawnLine extends Element{
 	public DrawnLine(int x1, int y1, int x2, int y2, int thick, int prior, Color in) {
 		color = in;
 		setDrawPriority(prior);
-		double angle = Math.atan(-1 / ((double)(y2 - y1) / (double)(x2 - x1)));
-		int offsetX = (int)(Math.sin(angle) * thick/2.0);
-		int offsetY = (int)(Math.cos(angle) * thick/2.0);
+		double angle = 0;
+		int offsetX = 0;
+		int offsetY = 0;
+		double rise = y2 - y1;
+		double run = x2 - x1;
+		
+		angle = Math.atan(-1.0 / (rise / run));
+		offsetX = (int)(Math.cos(angle) * thick/2.0);
+		offsetY = (int)(Math.sin(angle) * thick/2.0);
 		p = new Polygon(new int[] {x1 - offsetX, x1 + offsetX, x2 + offsetX, x2 - offsetX}, new int[] {y1 - offsetY, y1 + offsetY, y2 + offsetY, y2 - offsetY}, 4);
 		
 	}

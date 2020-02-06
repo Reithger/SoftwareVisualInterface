@@ -27,6 +27,7 @@ public class test {
 			public void keyBehaviour(char event) {
 				System.out.println(event);
 				removeElement("rec");
+				removeElementPrefixed("lin");
 				Communication.set("A", event+"");
 				System.out.println(event);
 			}
@@ -39,7 +40,11 @@ public class test {
 			} 
 			
 		};
-		pan.addLine("line", 10, 150, 50, 70, 170, 10, Color.BLUE);
+		pan.addLine("line", 10, 50, 50, 50, 100, 10, Color.BLUE);
+		pan.addLine("line2", 10, 50, 50, 100, 50, 10, Color.BLUE);
+		pan.addLine("line3", 10, 50, 50, 170, 170, 10, Color.BLUE);
+		pan.addLine("line4", 10, 50, 170, 170, 50, 10, Color.BLUE);
+		pan.addLine("line4", 10, 50, 50, 170, 100, 10, Color.BLUE);
 		//pan.addRectangle("rec", 8, 150, 150, 250, 250, true, new Color(180, 0, 180));
 		//pan.addRectangle("rec_1", 3, 300, 150, 250, 100, true, new Color(80, 180, 80));
 		pan.addTextEntry("tex", 10, 150, 150, 250, 250, 3, "Welcome to this long phrase I will write", new Font("Arial Bold", Font.BOLD, 18), true, true, true);
