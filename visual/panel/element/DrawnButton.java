@@ -96,4 +96,8 @@ public class DrawnButton extends Element implements Clickable{
 		return new ClickRegionRectangle(cornerX - (center ? width / 2 : 0), cornerY - (center ? height / 2 : 0), width, height, code);
 	}
 
+	public int getCode() {
+		return code;
+	}
+	
 }

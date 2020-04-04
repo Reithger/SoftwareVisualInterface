@@ -36,7 +36,9 @@ public class ElementPanel extends Panel{
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
 	private HashMap<String, Element> drawList;
 	/** HashMap that assigns a name to defined regions of the screen that generate a specified code upon interaction*/
-	private HashMap<String, Detectable> clickList;
+	private HashSet<String> clickList;
+	
+	private HashMap<Integer, String> codeElements;
 	/** Clickable object representing the most recently selected interactive Element by the User for directing Key Inputs towards*/
 	private Clickable focusElement;
 	/** */
@@ -57,7 +59,8 @@ public class ElementPanel extends Panel{
 	public ElementPanel(int x, int y, int width, int height){
 		super(x, y, width, height);
 		drawList = new HashMap<String, Element>();
-		clickList = new HashMap<String, Detectable>();
+		clickList = new HashSet<String>();
+		codeElements = new HashMap<Integer, String>();
 		images = new HashMap<String, Image>();
 	}
 	
@@ -71,17 +74,13 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void clickEvent(int event){
-		focusElement = null;
-		top:
-		for(Detectable d : clickList.values()) {
-			if(d.getCode() == event) {
-				for(String s : drawList.keySet()) {
-					if(clickList.get(s) != null && clickList.get(s).equals(d)) {
-						focusElement = (Clickable)drawList.get(s);
-						break top;
-					}
-				}
-			}
+		getParentFrame().dispenseAttention();
+		setAttention(true);
+		if(codeElements.get(event) != null && clickList.contains(codeElements.get(event))) {
+			focusElement = (Clickable)drawList.get(codeElements.get(event));
+		}
+		else {
+			focusElement = null;
 		}
 		clickBehaviour(event);
 	}
@@ -154,11 +153,8 @@ public class ElementPanel extends Panel{
 	
 	private void updateClickRegions() {
 		resetDetectionRegions();
-		for(Detectable d : clickList.values()) {
-			if(!addClickRegion(d)) {
-				removeClickRegion(d.getCode());
-				addClickRegion(d);
-			}
+		for(String d : clickList) {
+			addClickRegion(((Clickable)(drawList.get(d))).getDetectionRegion());
 		}
 	}
 
@@ -193,7 +189,6 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public String getElementStoredText(String name) {
-		System.out.println(name);
 		try {
 			return ((TextStorage)drawList.get(name)).getText();
 		}
@@ -201,6 +196,10 @@ public class ElementPanel extends Panel{
 			System.out.println("Illegal Cast Exception; Element object specified was not of type TextStorage");
 			return "";
 		}
+	}
+	
+	public Clickable getFocusElement() {
+		return focusElement;
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------
@@ -311,7 +310,8 @@ public class ElementPanel extends Panel{
 	public void addButton(String name, int priority, int x, int y, int wid, int hei, int key, boolean centered){
 		DrawnButton drawn = new DrawnButton(x, y, wid, hei, priority, centered, key);
 		drawList.put(name, drawn);
-		clickList.put(name, drawn.getDetectionRegion());
+		clickList.add(name);
+		codeElements.put(key, name);
 		updateClickRegions();
 	}	
 	
@@ -340,7 +340,8 @@ public class ElementPanel extends Panel{
 	public void addButton(String name, int priority, int x, int y, int wid, int hei, Color col, int key, boolean centered){
 		DrawnButton drawn = new DrawnButton(x, y, wid, hei, priority, centered, key, col);
 		drawList.put(name, drawn);
-		clickList.put(name, drawn.getDetectionRegion());
+		clickList.add(name);
+		codeElements.put(key, name);
 		updateClickRegions();
 	}
 	
@@ -360,7 +361,8 @@ public class ElementPanel extends Panel{
 	public void addImageButton(String name, int priority, int x, int y, boolean center, String path, int key){
 		DrawnImageButton but = new DrawnImageButton(x, y, priority, center, retrieveImage(path), key);
 		drawList.put(name, but);
-		clickList.put(name, but.getDetectionRegion());
+		clickList.add(name);
+		codeElements.put(key, name);
 		updateClickRegions();
 	}
 	
@@ -380,7 +382,8 @@ public class ElementPanel extends Panel{
 	public void addImageButton(String name, int priority, int x, int y, boolean center, String path, int key, int scale){
 		DrawnImageButton but = new DrawnImageButton(x, y, priority, center, retrieveImage(path), key, scale);
 		drawList.put(name, but);
-		clickList.put(name, but.getDetectionRegion());
+		clickList.add(name);
+		codeElements.put(key, name);
 		updateClickRegions();
 	}
 	
@@ -425,9 +428,10 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addTextEntry(String name, int priority, int x, int y, int width, int height, int code, String defaultText, Font font, boolean centeredX, boolean centeredY, boolean centeredText) {
-		DrawnTextArea dTA = new DrawnTextArea(x, y, width, height, priority, centeredX, centeredY, centeredText, defaultText, font, code);
+		DrawnTextEntry dTA = new DrawnTextEntry(x, y, width, height, priority, centeredX, centeredY, centeredText, defaultText, font, code);
 		drawList.put(name, dTA);
-		clickList.put(name,  dTA.getDetectionRegion());
+		clickList.add(name);
+		codeElements.put(code, name);
 		updateClickRegions();
 	}
 	
@@ -484,18 +488,11 @@ public class ElementPanel extends Panel{
 	public void removeElement(String name) {
 		drawList.remove(name);
 		clickList.remove(name);
-		updateClickRegions();
 	}
 	
 	public void removeElementPrefixed(String prefix) {
 		Collection<String> cs = drawList.keySet();
 		HashSet<String> remv = new HashSet<String>();
-		for(String s : cs) {
-			if(s.matches(prefix + ".*")) {
-				remv.add(s);
-			}
-		}
-		cs = clickList.keySet();
 		for(String s : cs) {
 			if(s.matches(prefix + ".*")) {
 				remv.add(s);

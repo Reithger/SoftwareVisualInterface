@@ -8,7 +8,7 @@ import input.Detectable;
  * regions and have reactions to user key-input after being selected. (Can
  * just do nothing if you like.)
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 
@@ -24,6 +24,8 @@ public interface Clickable {
 	 */
 	
 	public abstract Detectable getDetectionRegion();
+	
+	public abstract int getCode();
 	
 //---  Operations   ---------------------------------------------------------------------------
 	

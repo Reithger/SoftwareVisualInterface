@@ -25,7 +25,8 @@ public class test {
 		
 		ElementPanel pan = new ElementPanel(0, 0, 550, 500) {
 			public void keyBehaviour(char event) {
-				System.out.println(event);
+				System.out.println("Char: " + event);
+				System.out.println(getFocusElement() == null ? "Null focus" : getFocusElement().getCode());
 				removeElement("rec");
 				removeElementPrefixed("lin");
 				Communication.set("A", event+"");
@@ -33,30 +34,32 @@ public class test {
 			}
 			
 			public void clickBehaviour(int event) {
-				if(event == -1) {
-					System.out.println(this.getElementStoredText("tex"));
-				}
+				System.out.println("Event: " + event);
+
 				System.out.println(Communication.get("A"));
 			} 
 			
 		};
+		
 		pan.addLine("line", 10, 50, 50, 50, 100, 10, Color.BLUE);
 		pan.addLine("line2", 10, 50, 50, 100, 50, 10, Color.BLUE);
 		pan.addLine("line3", 10, 50, 50, 170, 170, 10, Color.BLUE);
 		pan.addLine("line4", 10, 50, 170, 170, 50, 10, Color.BLUE);
 		pan.addLine("line4", 10, 50, 50, 170, 100, 10, Color.BLUE);
-		//pan.addRectangle("rec", 8, 150, 150, 250, 250, true, new Color(180, 0, 180));
+		pan.addRectangle("rec", 8, 150, 150, 120, 120, true, new Color(180, 0, 180));
+		pan.addLine("line5", 9, 90, 150, 210, 150, 2, Color.BLUE);
 		//pan.addRectangle("rec_1", 3, 300, 150, 250, 100, true, new Color(80, 180, 80));
-		pan.addTextEntry("tex", 10, 150, 150, 250, 250, 3, "Welcome to this long phrase I will write", new Font("Arial Bold", Font.BOLD, 18), true, true, true);
-		pan.addRectangle("rec", 0, 0, 0, pan.getWidth(), pan.getHeight(), false,  new Color(155, 155, 155));
-		pan.addRectangle("rec2", 0, 10, 10, pan.getWidth() - 20, pan.getHeight() - 20, false,  new Color(55, 55, 55));
+		pan.addTextEntry("tex", 10, 150, 150, 120, 120, 3, "Welcome\nWelcome", new Font("Arial Bold", Font.BOLD, 18), true, true, true);
+		//pan.addRectangle("rec", 0, 0, 0, pan.getWidth(), pan.getHeight(), false,  new Color(190, 190, 190));
+		//pan.addRectangle("rec2", 0, 10, 10, pan.getWidth() - 20, pan.getHeight() - 20, false,  new Color(55, 55, 55));
 //		designReactiveButton(pan, "cont", new Color(200, 30, 30), new Font("Arial Bold", Font.BOLD, 14), "Start", pan.getWidth() / 2, pan.getHeight() / 2, 200, 80, 5, 6, true, true);
 //		pan.addTextEntry("ent", 5, 15, 15, 500, 250, 1, new Font("Arial Bold", Font.BOLD, 18), "words", true);
 		//pan.addRectangle("rec", 0, 300, 150, 100, 250, false, new Color(255,255,255), new Color(0,0,0));
+		
 		ElementPanel pan2 = new ElementPanel(600, 0, 400, 400) {
 			public void clickBehaviour(int event) {
 				Communication.set("A", "Second");
-				pan.removeElementPrefixed("rec");
+				//pan.removeElementPrefixed("rec");
 			}
 			
 			public void keyBehaviour(char event) {
@@ -64,6 +67,7 @@ public class test {
 			}
 		};
 		pan2.addImage("sas", 100, pan2.getWidth() / 2, pan2.getHeight() / 2, true, imagePath, 2);
+		pan2.addTextEntry("tex", 105, 150, 150, 250, 250, 3, "Welcome to\n this long ph\nrase\n I will write", new Font("Arial Bold", Font.BOLD, 18), true, true, true);
 		fram.reservePanel("fir", pan);
 		fram.reservePanel("sas", pan2);
 		}

@@ -166,16 +166,8 @@ public class ClickComponent implements MouseListener{
 	 * @return - Returns a boolean value representing whether or not the Detectable object was successfully added.
 	 */
 	
-	public boolean addClickRegion(Detectable region){
-		/*
-		for(Detectable d : detectionRegions) {
-			if(d.getCode() == region.getCode()) {
-				return false;
-			}
-		}
-		*/
+	public void addClickRegion(Detectable region){
 		detectionRegions.add(region);
-		return true;
 	}
 	
 //---  Events   -------------------------------------------------------------------------------

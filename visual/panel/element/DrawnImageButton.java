@@ -72,6 +72,10 @@ public class DrawnImageButton extends Element implements Clickable{
 		return new ClickRegionRectangle(xLocation - (center ? wid / 2 : 0), yLocation - (center ? hei / 2 : 0), wid, hei, code);
 	}
 
+	public int getCode() {
+		return code;
+	}
+	
 //---  Operations   ---------------------------------------------------------------------------
 	
 	@Override

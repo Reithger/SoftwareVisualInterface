@@ -7,7 +7,7 @@ import visual.panel.Panel;
  * This class implements the Frame abstract class to store a collection of named Panel objects
  * that can be hidden and shown by referencing their names.
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 
@@ -185,6 +185,12 @@ public class WindowFrame extends Frame{
 		}
 		for(String p : windows.get(activeWindow).keySet()) {
 			this.hidePanel(p);
+		}
+	}
+	
+	public void dispenseAttention() {
+		for(Panel p : windows.get(activeWindow).values()) {
+			p.setAttention(false);
 		}
 	}
 	

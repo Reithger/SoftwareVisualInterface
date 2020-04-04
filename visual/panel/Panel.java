@@ -3,6 +3,8 @@ package visual.panel;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.JPanel;
 import input.ClickComponent;
@@ -34,6 +36,8 @@ public abstract class Panel{
 	/** KeyComponent object that handles the user's key inputs, calling keyEvent() in the Panel object containing it*/
 	private KeyComponent keyPress;
 	
+	private boolean attention;
+	
 //---  Constructor Support   ------------------------------------------------------------------
 	
 	/**
@@ -48,14 +52,30 @@ public abstract class Panel{
 	
 	public Panel(int x, int y, int width, int height) {
 		panel = new JPanelWrap(this);
-		mouseEvent = new ClickComponent(this);
-		keyPress = new KeyComponent(this);
 		panel.setDoubleBuffered(true);
 		panel.setFocusable(true);
 		panel.setLocation(x, y);
 		panel.setSize(width, height);
 		panel.setPreferredSize(new Dimension(width, height));
 		panel.setVisible(true);
+		mouseEvent = new ClickComponent(this);
+		keyPress = new KeyComponent(this);
+		attention = true;
+		panel.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if(attention) {
+					panel.requestFocusInWindow();
+				}
+			}
+			
+		});
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -110,6 +130,10 @@ public abstract class Panel{
 		
 	}
 	
+	public void setAttention(boolean atten) {
+		attention = atten;
+	}
+		
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	/**
@@ -164,8 +188,8 @@ public abstract class Panel{
 	 * @return - returns a boolean value representing the result of this operation; true if detect was added, false otherwise.
 	 */
 	
-	public boolean addClickRegion(Detectable detect) {
-		return mouseEvent.addClickRegion(detect);
+	public void addClickRegion(Detectable detect) {
+		mouseEvent.addClickRegion(detect);
 	}
 	
 //---  Remove Methods   -----------------------------------------------------------------------

@@ -49,7 +49,7 @@ public class DrawnText extends Element{
 		width = wid;
 		height = hei;
 		font = inFont;
-		message = word;
+		message = word.replaceAll("\n", " \n ");
 		centeredX = centerX;
 		centeredY = centerY;
 		centeredText = centerText;
@@ -74,7 +74,10 @@ public class DrawnText extends Element{
 	private void drawNonCentered(Graphics g, int otX, int otY, String[] words, FontMetrics fM) {
 		for(String s : words) {
 			int wordWidth = fM.stringWidth(s + "w");
-			if(otX + wordWidth >= x + width / (centeredX ? 2 : 1)) {
+			if(otX + wordWidth >= x + width / (centeredX ? 2 : 1) || s.contains("\n")) {
+				if(s.contains("\n")) {
+					s = s.substring(0, s.indexOf("\n")) + s.substring(s.indexOf("\n"), s.length());
+				}
 				if(wordWidth < width / 2) {
 					otY += fM.getHeight();
 					otX = x - (centeredX ? width / 2 : 0);
@@ -109,7 +112,10 @@ public class DrawnText extends Element{
 		ArrayList<String> lines = new ArrayList<String>();
 		for(String s : words) {
 			int wordWidth = fM.stringWidth(s + "w");
-			if(otX + wordWidth >= x + width / (centeredX ? 2 : 1)) {
+			if(otX + wordWidth >= x + width / (centeredX ? 2 : 1) || s.contains("\n")) {
+				if(s.contains("\n")) {
+					s = s.substring(0, s.indexOf("\n")) + s.substring(s.indexOf("\n"), s.length());
+				}
 				if(wordWidth < width / 2) {
 					lines.add(sB.toString());
 					otY += fM.getHeight();
@@ -147,8 +153,14 @@ public class DrawnText extends Element{
 		}
 		int i = 0;
 		for(String s : lines) {
-			g.drawString(s, x - (centeredX ? width / 2 : 0) + (width - fM.stringWidth(s)) / 2, y - (centeredY ? height / 2 : 0) + (height - fM.getHeight() * lines.size()) / 2 + i++ * fM.getHeight());
+			int drawX = x - (centeredX ? width / 2 : 0) + (width - fM.stringWidth(s)) / 2;
+			int drawY = y - (centeredY ? height / 2 : 0) + (height - fM.getHeight() * (lines.size() - 1)) / 2 + i++ * fM.getHeight() + fM.getAscent() / 2;
+			g.drawString(s, drawX, drawY);
 		}
+	}
+	
+	public void changeText(String in) {
+		message = in.replaceAll("\n", " \n ");
 	}
 	
 }

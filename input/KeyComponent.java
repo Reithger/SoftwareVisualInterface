@@ -11,7 +11,7 @@ import java.awt.event.*;
  * 
  * Also detects the Shift key being pressed to specify lowercase or uppercase letters.
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 
@@ -84,8 +84,8 @@ public class KeyComponent implements KeyListener{
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyCode() == 16)
 			toggleCapital = true;
-		String c = e.getKeyChar() + "";
-		activeSelect = toggleCapital ? c.toUpperCase().charAt(0) : c.toLowerCase().charAt(0); 
+		char c = e.getKeyChar();
+		activeSelect = toggleCapital ? (char)(((int)c) - 32) : c;
 		containerFrame.keyEvent(getSelected());
 	}
 

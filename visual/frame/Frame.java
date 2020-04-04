@@ -36,15 +36,16 @@ public abstract class Frame{
 		frame = new JFrame() {
 			
 		};
-		timer = new Timer();
-		timer.schedule(new TimerRefresh(this), 0, REFRESH_RATE);
 		frame.getContentPane().setSize(width, height);
 		frame.getContentPane().setPreferredSize(new Dimension(width, height));
 		frame.setMinimumSize(frame.getSize());
 		frame.setResizable(false);
 		frame.setVisible(true);
 		frame.setLayout(null);
+		frame.toFront();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		timer = new Timer();
+		timer.schedule(new TimerRefresh(this), 0, REFRESH_RATE);
 	}
 	
 //---  Adder Methods   ------------------------------------------------------------------------
@@ -88,6 +89,10 @@ public abstract class Frame{
 		return frame.getHeight();
 	}
 	
+	public JFrame getFrame() {
+		return frame;
+	}
+	
 //---  Operations   ---------------------------------------------------------------------------
 	
 	public void repaint() {
@@ -107,5 +112,7 @@ public abstract class Frame{
 	 */
 	
 	public abstract void reservePanel(String name, Panel panel);
+	
+	public abstract void dispenseAttention();
 	
 }
