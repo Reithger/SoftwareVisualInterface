@@ -68,7 +68,7 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 	
 	@Override
 	public Detectable getDetectionRegion() {
-		return new ClickRegionRectangle(x - (centeredX ? width / 2 : 0), y - (centeredY ? width / 2 : 0), width, height, code);
+		return new ClickRegionRectangle(x - (centeredX ? width / 2 : 0), y - (centeredY ? height / 2 : 0), width, height, code);
 	}
 
 	public void addText(char in) {

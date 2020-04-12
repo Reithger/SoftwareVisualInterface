@@ -23,8 +23,6 @@ public class KeyComponent implements KeyListener{
 	public char activeSelect;
 	/** Panel object providing reference to the Panel to which this KeyComponent is attached*/
 	public Panel containerFrame;
-	/** boolean value describing whether or not the user has specified via the Shift-key that provided input is upper or lowercase*/
-	public boolean toggleCapital;
 	
 //---  Constructors   -------------------------------------------------------------------------
 
@@ -82,17 +80,13 @@ public class KeyComponent implements KeyListener{
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyCode() == 16)
-			toggleCapital = true;
-		char c = e.getKeyChar();
-		activeSelect = toggleCapital ? (char)(((int)c) - 32) : c;
+		activeSelect = e.getKeyChar();
 		containerFrame.keyEvent(getSelected());
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if(e.getKeyCode() == 16)
-			toggleCapital = false;
+		//This space intentionally left blank, but doesn't need to be
 	}
 
 	@Override

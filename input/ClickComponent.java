@@ -182,11 +182,11 @@ public class ClickComponent implements MouseListener{
 			if(d.wasClicked(x, y)) {
 				happened = true;
 				activeSelect = d.getCode();
-				containerFrame.clickEvent(getSelected());
+				containerFrame.clickEvent(getSelected(), x, y);
 			}
 		}
 		if(!happened)
-			containerFrame.clickEvent(getSelected());
+			containerFrame.clickEvent(getSelected(), x, y);
 	}
 	
 	@Override
