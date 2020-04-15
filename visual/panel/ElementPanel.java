@@ -136,8 +136,8 @@ public class ElementPanel extends Panel{
 	public void paintComponent(Graphics g) {
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
 		Collections.sort(elements);
-		for(Element d : elements) {
-			d.drawToScreen(g);
+		for(int i = 0; i < elements.size(); i++) {
+			elements.get(i).drawToScreen(g);
 		}
 	}
 	
