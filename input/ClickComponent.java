@@ -30,6 +30,8 @@ public class ClickComponent implements MouseListener{
 	private ArrayList<Detectable> detectionRegions;
 	/** Panel object representing the Panel to which this ClickComponent is attached (the Panel that is being clicked)*/
 	private Panel containerFrame;
+	
+	boolean mutex;
 
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -45,6 +47,7 @@ public class ClickComponent implements MouseListener{
 		detectionRegions = new ArrayList<Detectable>();
 		containerFrame = panel;
 		panel.getPanel().addMouseListener(this);
+		mutex = false;
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -99,7 +102,9 @@ public class ClickComponent implements MouseListener{
 		for(int i = 0; i < detectionRegions.size(); i++) {
 			Detectable d = detectionRegions.get(i);
 			if(d.getCode() == code) {
+				mutex = true;
 				detectionRegions.remove(i);
+				mutex = false;
 				return true;
 			}
 		}
@@ -122,7 +127,9 @@ public class ClickComponent implements MouseListener{
 		for(int i = 0; i < detectionRegions.size(); i++) {
 			Detectable d = detectionRegions.get(i);
 			if(d.wasClicked(x, y)) {
+				mutex = true;
 				detectionRegions.remove(i);
+				mutex = false;
 				out = true;
 			}
 		}
@@ -167,6 +174,7 @@ public class ClickComponent implements MouseListener{
 	 */
 	
 	public void addClickRegion(Detectable region){
+		while(mutex) { }
 		detectionRegions.add(region);
 	}
 	
@@ -178,7 +186,7 @@ public class ClickComponent implements MouseListener{
 		Integer x = e.getX();
 		Integer y = e.getY();
 		boolean happened = false;
-		for(Detectable d : detectionRegions) {
+		for(Detectable d : new ArrayList<Detectable>(detectionRegions)) {
 			if(d.wasClicked(x, y)) {
 				happened = true;
 				activeSelect = d.getCode();

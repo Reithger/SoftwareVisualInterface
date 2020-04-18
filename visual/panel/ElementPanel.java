@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.io.File;
 import java.awt.*;
 import javax.imageio.ImageIO;
@@ -35,6 +36,10 @@ public class ElementPanel extends Panel{
 	
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
 	private HashMap<String, Element> drawList;
+	
+	private LinkedList<String> queueName;
+	private LinkedList<Element> queueElement;
+	private LinkedList<String> removeQueue;
 	/** HashMap that assigns a name to defined regions of the screen that generate a specified code upon interaction*/
 	private HashSet<String> clickList;
 	
@@ -43,6 +48,8 @@ public class ElementPanel extends Panel{
 	private Clickable focusElement;
 	/** */
 	private HashMap<String, Image> images;
+	
+	private boolean mutex;
 
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -62,6 +69,10 @@ public class ElementPanel extends Panel{
 		clickList = new HashSet<String>();
 		codeElements = new HashMap<Integer, String>();
 		images = new HashMap<String, Image>();
+		queueName = new LinkedList<String>();
+		queueElement = new LinkedList<Element>();
+		removeQueue = new LinkedList<String>();
+		mutex = false;
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -134,6 +145,20 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void paintComponent(Graphics g) {
+		mutex = true;
+		while(removeQueue.size() > 0) {
+			String n = removeQueue.poll();
+			drawList.remove(n);
+			clickList.remove(n);
+		}
+		boolean trig = queueName.size() > 0;
+		while(queueName.size() > 0) {
+			drawList.put(queueName.poll(), queueElement.poll());
+		}
+		mutex = false;
+		if(trig) {
+			updateClickRegions();
+		}
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
 		Collections.sort(elements);
 		for(int i = 0; i < elements.size(); i++) {
@@ -154,7 +179,9 @@ public class ElementPanel extends Panel{
 	private void updateClickRegions() {
 		resetDetectionRegions();
 		for(String d : clickList) {
-			addClickRegion(((Clickable)(drawList.get(d))).getDetectionRegion());
+			if(drawList.get(d) != null) {
+				addClickRegion(((Clickable)(drawList.get(d))).getDetectionRegion());
+			}
 		}
 	}
 
@@ -200,6 +227,10 @@ public class ElementPanel extends Panel{
 	
 	public Clickable getFocusElement() {
 		return focusElement;
+	}
+	
+	public int getNumberActiveElements() {
+		return drawList.values().size();
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------
@@ -256,11 +287,11 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, String path){
-		drawList.put(name, new DrawnImage(x, y, priority, center, retrieveImage(path)));
+		queueName.add(name); queueElement.add( new DrawnImage(x, y, priority, center, retrieveImage(path)));
 	}
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, Image img) {
-		drawList.put(name, new DrawnImage(x, y, priority, center, img));
+		queueName.add(name); queueElement.add( new DrawnImage(x, y, priority, center, img));
 	}
 	
 	/**
@@ -276,11 +307,11 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, String path, int scale){
-		drawList.put(name, new DrawnImage(x, y, priority, center, retrieveImage(path), scale));
+		queueName.add(name); queueElement.add( new DrawnImage(x, y, priority, center, retrieveImage(path), scale));
 	}
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, Image img, int scale) {
-		drawList.put(name, new DrawnImage(x, y, priority, center, img, scale));
+		queueName.add(name); queueElement.add( new DrawnImage(x, y, priority, center, img, scale));
 	}
 	
 	//-- Button  ----------------------------------------------
@@ -309,7 +340,7 @@ public class ElementPanel extends Panel{
 
 	public void addButton(String name, int priority, int x, int y, int wid, int hei, int key, boolean centered){
 		DrawnButton drawn = new DrawnButton(x, y, wid, hei, priority, centered, key);
-		drawList.put(name, drawn);
+		queueName.add(name); queueElement.add( drawn);
 		clickList.add(name);
 		codeElements.put(key, name);
 		updateClickRegions();
@@ -339,7 +370,7 @@ public class ElementPanel extends Panel{
 	
 	public void addButton(String name, int priority, int x, int y, int wid, int hei, Color col, int key, boolean centered){
 		DrawnButton drawn = new DrawnButton(x, y, wid, hei, priority, centered, key, col);
-		drawList.put(name, drawn);
+		queueName.add(name); queueElement.add( drawn);
 		clickList.add(name);
 		codeElements.put(key, name);
 		updateClickRegions();
@@ -360,7 +391,7 @@ public class ElementPanel extends Panel{
 	
 	public void addImageButton(String name, int priority, int x, int y, boolean center, String path, int key){
 		DrawnImageButton but = new DrawnImageButton(x, y, priority, center, retrieveImage(path), key);
-		drawList.put(name, but);
+		queueName.add(name); queueElement.add( but);
 		clickList.add(name);
 		codeElements.put(key, name);
 		updateClickRegions();
@@ -381,7 +412,7 @@ public class ElementPanel extends Panel{
 	
 	public void addImageButton(String name, int priority, int x, int y, boolean center, String path, int key, int scale){
 		DrawnImageButton but = new DrawnImageButton(x, y, priority, center, retrieveImage(path), key, scale);
-		drawList.put(name, but);
+		queueName.add(name); queueElement.add( but);
 		clickList.add(name);
 		codeElements.put(key, name);
 		updateClickRegions();
@@ -405,7 +436,7 @@ public class ElementPanel extends Panel{
 	
 	public void addText(String name, int priority, int x, int y, int width, int height, String phrase, Font font, boolean centeredX, boolean centeredY, boolean centeredText){
 		DrawnText text = new DrawnText(x, y, width, height, priority, centeredX, centeredY, centeredText, phrase, font);
-		drawList.put(name, text);
+		queueName.add(name); queueElement.add( text);
 	}
 
 	/**
@@ -429,7 +460,8 @@ public class ElementPanel extends Panel{
 	
 	public void addTextEntry(String name, int priority, int x, int y, int width, int height, int code, String defaultText, Font font, boolean centeredX, boolean centeredY, boolean centeredText) {
 		DrawnTextEntry dTA = new DrawnTextEntry(x, y, width, height, priority, centeredX, centeredY, centeredText, defaultText, font, code);
-		drawList.put(name, dTA);
+		queueName.add(name);
+		queueElement.add(dTA);
 		clickList.add(name);
 		codeElements.put(code, name);
 		updateClickRegions();
@@ -450,7 +482,7 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addRectangle(String name, int priority, int x, int y, int width, int height, boolean center, Color col) {
-		drawList.put(name, new DrawnRectangle(x, y, width, height, priority, center, col));
+		queueName.add(name); queueElement.add( new DrawnRectangle(x, y, width, height, priority, center, col));
 	}
 	
 	/**
@@ -468,11 +500,11 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addRectangle(String name, int priority, int x, int y, int width, int height, boolean center, Color fillColor, Color borderColor) {
-		drawList.put(name, new DrawnRectangle(x, y, width, height, priority, center, fillColor, borderColor));
+		queueName.add(name); queueElement.add( new DrawnRectangle(x, y, width, height, priority, center, fillColor, borderColor));
 	}
 
 	public void addLine(String name, int priority, int x1, int y1, int x2, int y2, int thickness, Color choice) {
-		drawList.put(name, new DrawnLine(x1, y1, x2, y2, thickness, priority, choice));
+		queueName.add(name); queueElement.add( new DrawnLine(x1, y1, x2, y2, thickness, priority, choice));
 	}
 	
 //---  Remove Elements   ----------------------------------------------------------------------
@@ -486,12 +518,12 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void removeElement(String name) {
-		drawList.remove(name);
-		clickList.remove(name);
+		removeQueue.add(name);
 	}
 	
 	public void removeElementPrefixed(String prefix) {
-		Collection<String> cs = drawList.keySet();
+		while(mutex) { }
+		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
 		HashSet<String> remv = new HashSet<String>();
 		for(String s : cs) {
 			if(s.matches(prefix + ".*")) {

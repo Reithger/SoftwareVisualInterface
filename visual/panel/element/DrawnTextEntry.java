@@ -30,6 +30,8 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 	private boolean centeredX;
 	
 	private boolean centeredY;
+	
+	private boolean indicator;
 
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -56,6 +58,7 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 		height = hei;
 		centeredX = centerX;
 		centeredY = centerY;
+		indicator = false;
 		setDrawPriority(prior);
 	}
 

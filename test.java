@@ -26,14 +26,14 @@ public class test {
 		ElementPanel pan = new ElementPanel(0, 0, 550, 500) {
 			public void keyBehaviour(char event) {
 				System.out.println("Char: " + event);
-				System.out.println(getFocusElement() == null ? "Null focus" : getFocusElement().getCode());
+				System.out.println(getFocusElement() == null ? "Null focus" : "Code: " + getFocusElement().getCode());
 				removeElement("rec");
 				removeElementPrefixed("lin");
 				Communication.set("A", event+"");
 				System.out.println(event);
 			}
 			
-			public void clickBehaviour(int event) {
+			public void clickBehaviour(int event, int x, int y) {
 				System.out.println("Event: " + event);
 
 				System.out.println(Communication.get("A"));
@@ -57,17 +57,19 @@ public class test {
 		//pan.addRectangle("rec", 0, 300, 150, 100, 250, false, new Color(255,255,255), new Color(0,0,0));
 		
 		ElementPanel pan2 = new ElementPanel(600, 0, 400, 400) {
-			public void clickBehaviour(int event) {
+			public void clickBehaviour(int event, int x, int y) {
+				System.out.println(event);
 				Communication.set("A", "Second");
 				//pan.removeElementPrefixed("rec");
 			}
 			
 			public void keyBehaviour(char event) {
-				
+				System.out.println(event);
 			}
 		};
 		pan2.addImage("sas", 100, pan2.getWidth() / 2, pan2.getHeight() / 2, true, imagePath, 2);
-		pan2.addTextEntry("tex", 105, 150, 150, 250, 250, 3, "Welcome to\n this long ph\nrase\n I will write", new Font("Arial Bold", Font.BOLD, 18), true, true, true);
+		pan2.addRectangle("rec", 102, 350, 150, 120, 120, true, new Color(180, 0, 180));
+		pan2.addTextEntry("tex2", 105, 350, 150, 120, 120, 4, "Welcome to\n this long ph\nrase\n I will write", new Font("Arial Bold", Font.BOLD, 18), true, true, true);
 		fram.reservePanel("fir", pan);
 		fram.reservePanel("sas", pan2);
 		}
