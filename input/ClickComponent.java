@@ -16,7 +16,7 @@ import java.util.*;
  * for future flexibility; likely create an interface for which discrete and 'continuous' reactivity
  * is integrated.
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 
@@ -27,11 +27,12 @@ public class ClickComponent implements MouseListener{
 	/** int value representing the coded value for which event-region is currently selected*/
 	private int activeSelect;
 	/** ArrayList<Integer[]> object containing the coordinates and codes for each event-region*/
-	private ArrayList<Detectable> detectionRegions;
+	private List<Detectable> detectionRegions;
 	/** Panel object representing the Panel to which this ClickComponent is attached (the Panel that is being clicked)*/
 	private Panel containerFrame;
 	
-	boolean mutex;
+	private boolean mutexA;
+	private boolean mutexB;
 
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -47,7 +48,6 @@ public class ClickComponent implements MouseListener{
 		detectionRegions = new ArrayList<Detectable>();
 		containerFrame = panel;
 		panel.getPanel().addMouseListener(this);
-		mutex = false;
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -102,9 +102,10 @@ public class ClickComponent implements MouseListener{
 		for(int i = 0; i < detectionRegions.size(); i++) {
 			Detectable d = detectionRegions.get(i);
 			if(d.getCode() == code) {
-				mutex = true;
+				while(mutexB) {}
+				mutexA = true;
 				detectionRegions.remove(i);
-				mutex = false;
+				mutexA = false;
 				return true;
 			}
 		}
@@ -124,15 +125,16 @@ public class ClickComponent implements MouseListener{
 	
 	public boolean removeDetectionRegions(int x, int y) {
 		boolean out = false;
+		while(mutexB) {}
+		mutexA = true;
 		for(int i = 0; i < detectionRegions.size(); i++) {
 			Detectable d = detectionRegions.get(i);
 			if(d.wasClicked(x, y)) {
-				mutex = true;
 				detectionRegions.remove(i);
-				mutex = false;
 				out = true;
 			}
 		}
+		mutexA = false;
 		return out;
 	}
 	
@@ -174,8 +176,10 @@ public class ClickComponent implements MouseListener{
 	 */
 	
 	public void addClickRegion(Detectable region){
-		while(mutex) { }
+		while(mutexA) {}
+		mutexB = true;
 		detectionRegions.add(region);
+		mutexA = false;
 	}
 	
 //---  Events   -------------------------------------------------------------------------------

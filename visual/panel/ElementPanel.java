@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.io.File;
 import java.awt.*;
 import javax.imageio.ImageIO;
@@ -35,13 +36,13 @@ public class ElementPanel extends Panel{
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
-	private HashMap<String, Element> drawList;
+	private ConcurrentHashMap<String, Element> drawList;
 	
 	private LinkedList<String> queueName;
 	private LinkedList<Element> queueElement;
 	private LinkedList<String> removeQueue;
 	/** HashMap that assigns a name to defined regions of the screen that generate a specified code upon interaction*/
-	private HashSet<String> clickList;
+	private LinkedList<String> clickList;
 	
 	private HashMap<Integer, String> codeElements;
 	/** Clickable object representing the most recently selected interactive Element by the User for directing Key Inputs towards*/
@@ -49,7 +50,6 @@ public class ElementPanel extends Panel{
 	/** */
 	private HashMap<String, Image> images;
 	
-	private boolean mutex;
 
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -65,14 +65,13 @@ public class ElementPanel extends Panel{
 	
 	public ElementPanel(int x, int y, int width, int height){
 		super(x, y, width, height);
-		drawList = new HashMap<String, Element>();
-		clickList = new HashSet<String>();
+		drawList = new ConcurrentHashMap<String, Element>();
+		clickList = new LinkedList<String>();
 		codeElements = new HashMap<Integer, String>();
 		images = new HashMap<String, Image>();
 		queueName = new LinkedList<String>();
 		queueElement = new LinkedList<Element>();
 		removeQueue = new LinkedList<String>();
-		mutex = false;
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -145,7 +144,6 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void paintComponent(Graphics g) {
-		mutex = true;
 		while(removeQueue.size() > 0) {
 			String n = removeQueue.poll();
 			drawList.remove(n);
@@ -155,7 +153,6 @@ public class ElementPanel extends Panel{
 		while(queueName.size() > 0) {
 			drawList.put(queueName.poll(), queueElement.poll());
 		}
-		mutex = false;
 		if(trig) {
 			updateClickRegions();
 		}
@@ -178,7 +175,8 @@ public class ElementPanel extends Panel{
 	
 	private void updateClickRegions() {
 		resetDetectionRegions();
-		for(String d : clickList) {
+		for(int i = 0; i < clickList.size(); i++) {
+			String d = clickList.get(i);
 			if(drawList.get(d) != null) {
 				addClickRegion(((Clickable)(drawList.get(d))).getDetectionRegion());
 			}
@@ -522,7 +520,6 @@ public class ElementPanel extends Panel{
 	}
 	
 	public void removeElementPrefixed(String prefix) {
-		while(mutex) { }
 		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
 		HashSet<String> remv = new HashSet<String>();
 		for(String s : cs) {
