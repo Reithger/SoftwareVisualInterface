@@ -95,6 +95,11 @@ public class ElementPanel extends Panel{
 		clickBehaviour(event, x, y);
 	}
 	
+	@Override
+	public void dragEvent(int x, int y) {
+		
+	}
+	
 	/**
 	 * This method exists to be overwritten on an object-by-object basis by the programmer
 	 * to define the interactive behavior of this ElementPanel object.
@@ -143,7 +148,8 @@ public class ElementPanel extends Panel{
 	 * 
 	 */
 	
-	public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics gIn) {
+		Graphics g = gIn.create();
 		while(removeQueue.size() > 0) {
 			String n = removeQueue.poll();
 			drawList.remove(n);
@@ -161,6 +167,10 @@ public class ElementPanel extends Panel{
 		for(int i = 0; i < elements.size(); i++) {
 			elements.get(i).drawToScreen(g);
 		}
+	}
+
+	public void update(Graphics g) {
+
 	}
 	
 	/**

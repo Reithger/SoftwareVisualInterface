@@ -3,6 +3,7 @@ import java.awt.Font;
 
 import input.Communication;
 import visual.frame.WindowFrame;
+import visual.panel.CanvasPanel;
 import visual.panel.ElementPanel;
 
 public class test {
@@ -41,8 +42,10 @@ public class test {
 			
 		};
 		
-		pan.addLine("line", 10, 50, 50, 50, 100, 10, Color.BLUE);
-		pan.addLine("line2", 10, 50, 50, 100, 50, 10, Color.BLUE);
+		CanvasPanel can = new CanvasPanel(600, 0, 400, 400, 15);
+		can.setColor(new Color(122, 122, 122));
+		pan.addLine("line", 150, 50, 50, 50, 100, 10, Color.BLUE);
+		pan.addLine("line2", 1, 50, 50, 100, 50, 10, Color.BLUE);
 		pan.addLine("line3", 10, 50, 50, 170, 170, 10, Color.BLUE);
 		pan.addLine("line4", 10, 50, 170, 170, 50, 10, Color.BLUE);
 		pan.addLine("line4", 10, 50, 50, 170, 100, 10, Color.BLUE);
@@ -67,11 +70,14 @@ public class test {
 				System.out.println(event);
 			}
 		};
-		pan2.addImage("sas", 100, pan2.getWidth() / 2, pan2.getHeight() / 2, true, imagePath, 2);
+		//pan2.addImage("sas", 100, pan2.getWidth() / 2, pan2.getHeight() / 2, true, imagePath, 2);
 		pan2.addRectangle("rec", 102, 350, 150, 120, 120, true, new Color(180, 0, 180));
 		pan2.addTextEntry("tex2", 105, 350, 150, 120, 120, 4, "Welcome to\n this long ph\nrase\n I will write", new Font("Arial Bold", Font.BOLD, 18), true, true, true);
-		fram.reservePanel("fir", pan);
-		fram.reservePanel("sas", pan2);
+
+		fram.reserveWindow("main");
+		fram.reservePanel("main", "fir", pan);
+		fram.reservePanel("main", "sas", can);
+		//fram.reservePanel("main", "sec", pan2);
 		}
 	
 	private static void designReactiveButton(ElementPanel pan, String name, Color col, Font font, String message, int x, int y, int wid, int hei, int priority, int code, boolean centered, boolean centeredText) {

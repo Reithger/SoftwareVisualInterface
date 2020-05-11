@@ -12,7 +12,7 @@ import visual.panel.Panel;
  * aspects of construction; that they can receive and display Panel objects as a part of UI, and have
  * a refresh-rate for their display.
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 

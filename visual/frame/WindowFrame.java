@@ -36,7 +36,7 @@ public class WindowFrame extends Frame{
 	public WindowFrame(int width, int height) {
 		super(width, height);
 		windows = new HashMap<String, HashMap<String, Panel>>();
-		activeWindow = "";
+		activeWindow = null;
 		start = true;
 	}
 
@@ -44,6 +44,9 @@ public class WindowFrame extends Frame{
 	
 	public void reserveWindow(String windowName) {
 		windows.put(windowName, new HashMap<String, Panel>());
+		if(activeWindow == null) {
+			setActiveWindow(windowName);
+		}
 	}
 	
 	/**
@@ -60,13 +63,18 @@ public class WindowFrame extends Frame{
 			windows.put(windowName, new HashMap<String, Panel>());
 		}
 		windows.get(windowName).put(panelName, panel);
+		showPanel(panelName);
 	}
 	
 	public void reservePanel(String panelName, Panel panel) {
+		if(activeWindow == null) {
+			return;
+		}
 		if(windows.get(activeWindow) == null) {
 			windows.put(activeWindow, new HashMap<String, Panel>());
 		}
 		windows.get(activeWindow).put(panelName, panel);
+		showPanel(panelName);
 	}
 	
 //---  Remover Methods   ----------------------------------------------------------------------
@@ -132,10 +140,14 @@ public class WindowFrame extends Frame{
 	
 //---  Operations   ---------------------------------------------------------------------------
 	
+	@Override
 	public void repaint() {
-		//removeScreenContents();
-		showWindow();
-		super.repaint();
+		if(!start || windows.get(activeWindow) == null) {
+			return;
+		}
+		for(Panel p : windows.get(activeWindow).values()) {
+			p.getPanel().repaint();
+		}
 	}
 	
 	/**

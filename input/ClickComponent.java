@@ -20,7 +20,7 @@ import java.util.*;
  *
  */
 
-public class ClickComponent implements MouseListener{
+public class ClickComponent implements MouseListener, MouseMotionListener{
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -48,6 +48,7 @@ public class ClickComponent implements MouseListener{
 		detectionRegions = new ArrayList<Detectable>();
 		containerFrame = panel;
 		panel.getPanel().addMouseListener(this);
+		panel.getPanel().addMouseMotionListener(this);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -219,6 +220,19 @@ public class ClickComponent implements MouseListener{
 	@Override
 	public void mouseExited(MouseEvent e){
 		//This space intentionally left blank, but doesn't need to be
+	}
+
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		containerFrame.dragEvent(e.getX(), e.getY());
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

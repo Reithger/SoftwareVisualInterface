@@ -51,7 +51,35 @@ public abstract class Panel{
 	 */
 	
 	public Panel(int x, int y, int width, int height) {
-		panel = new JPanelWrap(this);
+		panel = new JPanelWrap(this, false);
+		panel.setDoubleBuffered(true);
+		panel.setFocusable(true);
+		panel.setLocation(x, y);
+		panel.setSize(width, height);
+		panel.setPreferredSize(new Dimension(width, height));
+		panel.setVisible(true);
+		mouseEvent = new ClickComponent(this);
+		keyPress = new KeyComponent(this);
+		attention = true;
+		panel.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if(attention) {
+					panel.requestFocusInWindow();
+				}
+			}
+			
+		});
+	}
+	
+	public Panel(int x, int y, int width, int height, boolean update) {
+		panel = new JPanelWrap(this, update);
 		panel.setDoubleBuffered(true);
 		panel.setFocusable(true);
 		panel.setLocation(x, y);
@@ -82,6 +110,8 @@ public abstract class Panel{
 	
 	public abstract void paintComponent(Graphics g);
 
+	public abstract void update(Graphics g);
+	
 	/**
 	 * This method is triggered whenever the Panel object detects user interaction
 	 * via the Mouse; exact implementation of response is left to the implementation
@@ -92,6 +122,8 @@ public abstract class Panel{
 	 */
 	
 	public abstract void clickEvent(int event, int x, int y);
+	
+	public abstract void dragEvent(int x, int y);
 	
 	/**
 	 * This method is triggered whenever the Panel object detects user interaction
@@ -226,13 +258,23 @@ public abstract class Panel{
 	class JPanelWrap extends JPanel{
 		
 		private Panel container;
+		private boolean update;
 		
-		public JPanelWrap(Panel pan) {
+		public JPanelWrap(Panel pan, boolean change) {
 			container = pan;
+			update = change;
+			this.setIgnoreRepaint(change);
 		}
-		
+				
 		public void paintComponent(Graphics g) {
-			container.paintComponent(g);
+			System.out.println(update + " " + this.getIgnoreRepaint() + " " + container);
+			
+			if(update) {
+				container.update(g);
+			}
+			else {
+				container.paintComponent(g);
+			}
 		}
 		
 	}
