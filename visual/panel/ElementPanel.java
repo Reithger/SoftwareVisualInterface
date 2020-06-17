@@ -225,11 +225,15 @@ public class ElementPanel extends Panel{
 	
 	public String getElementStoredText(String name) {
 		try {
+			if(drawList.get(name) == null) {
+				return null;
+			}
 			return ((TextStorage)drawList.get(name)).getText();
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			System.out.println("Illegal Cast Exception; Element object specified was not of type TextStorage");
-			return "";
+			return null;
 		}
 	}
 	

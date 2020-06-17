@@ -68,7 +68,12 @@ public class CanvasPanel extends Panel{
 		BufferedImage out = new BufferedImage(wid, hei, BufferedImage.TYPE_INT_ARGB);
 		for(int i = 0; i < wid; i++) {
 			for(int j = 0; j < hei; j++) {
-				out.setRGB(i, j, canvas[x * SUB_GRID_SIZE + i][y * SUB_GRID_SIZE + j].getRGB());
+				if(canvas[x * SUB_GRID_SIZE + i][y * SUB_GRID_SIZE + j] == null) {
+					out.setRGB(i, j, Color.white.getRGB());
+				}
+				else {
+					out.setRGB(i, j, canvas[x * SUB_GRID_SIZE + i][y * SUB_GRID_SIZE + j].getRGB());
+				}
 			}
 		}
 		return out;
