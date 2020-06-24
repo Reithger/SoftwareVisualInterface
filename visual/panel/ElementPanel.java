@@ -168,6 +168,10 @@ public class ElementPanel extends Panel{
 			elements.get(i).drawToScreen(g);
 		}
 	}
+	
+	public void repaint() {
+		this.getPanel().repaint();
+	}
 
 	public void update(Graphics g) {
 
@@ -228,6 +232,7 @@ public class ElementPanel extends Panel{
 			if(drawList.get(name) == null) {
 				return null;
 			}
+			System.out.println(name + " " + drawList.get(name) + " " + ((TextStorage)drawList.get(name)).getText());
 			return ((TextStorage)drawList.get(name)).getText();
 		}
 		catch(Exception e) {
