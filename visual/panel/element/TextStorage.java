@@ -4,7 +4,7 @@ package visual.panel.element;
  * This interface describes the behavior of TextStorage objects, which are those that
  * contain some manner of text that it is desirable to retrieve.
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 

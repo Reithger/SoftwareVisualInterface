@@ -25,6 +25,15 @@ public interface Clickable {
 	
 	public abstract Detectable getDetectionRegion();
 	
+	/**
+	 * Getter method to request the integer code that has been associated to this Clickable object;
+	 * this code would be generated whenever this Element object is interacted with, typically by
+	 * clicking on a region of the screen specified by the Detectable object retrieved from
+	 * the getDetectionRegion() function.
+	 * 
+	 * @return - Returns an integer value representing the code value associated to this Clickable object
+	 */
+	
 	public abstract int getCode();
 	
 //---  Operations   ---------------------------------------------------------------------------

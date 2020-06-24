@@ -82,8 +82,10 @@ public abstract class Panel{
 	
 	public abstract void paintComponent(Graphics g);
 
-	public abstract void update(Graphics g);
-	
+	public void repaint() {
+		this.getPanel().repaint();
+	}
+
 	/**
 	 * This method is triggered whenever the Panel object detects user interaction
 	 * via the Mouse; exact implementation of response is left to the implementation

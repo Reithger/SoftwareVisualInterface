@@ -16,7 +16,7 @@ import java.awt.Graphics;
  * Think of Priority as levels of a building: the ground floor may be built first, but the
  * third floor will be on top of it.
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 

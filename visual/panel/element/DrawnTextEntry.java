@@ -85,7 +85,6 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 	}
 	
 	public boolean focusEvent(char in) {
-		System.out.println(getText() + " " + in);
 		if((int) in == 65535)
 			return false;
 		if((int) in == 8){
