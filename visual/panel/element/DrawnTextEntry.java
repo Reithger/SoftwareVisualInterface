@@ -19,10 +19,6 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 
 	private int code;
 	
-	private int x;
-	
-	private int y;
-	
 	private int width;
 	
 	private int height;
@@ -52,8 +48,8 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 		drText = new DrawnText(inX, inY, wid, hei, prior, centerX, centerY, centerText, word, inFont);
 		code = inCode;
 		storedText = new StringBuilder().append(word);
-		x = inX;
-		y = inY;
+		setX(inX);
+		setY(inY);
 		width = wid;
 		height = hei;
 		centeredX = centerX;
@@ -71,7 +67,7 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 	
 	@Override
 	public Detectable getDetectionRegion() {
-		return new ClickRegionRectangle(x - (centeredX ? width / 2 : 0), y - (centeredY ? height / 2 : 0), width, height, code);
+		return new ClickRegionRectangle(getX() - (centeredX ? width / 2 : 0), getY() - (centeredY ? height / 2 : 0), width, height, code);
 	}
 
 	public void addText(char in) {
@@ -100,6 +96,18 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 		}
 		drText.changeText(getText());
 		return false;
+	}
+	
+	@Override
+	public void setX(int inX) {
+		drText.setX(inX);
+		super.setX(inX);
+	}
+	
+	@Override
+	public void setY(int inY) {
+		drText.setY(inY);
+		super.setY(inY);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------

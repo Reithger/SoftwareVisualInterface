@@ -8,10 +8,6 @@ public class DrawnRectangle extends Element{
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** */
-	private int x;
-	/** */
-	private int y;
-	/** */
 	private int width;
 	/** */
 	private int height;
@@ -34,8 +30,8 @@ public class DrawnRectangle extends Element{
 	 */
 	
 	public DrawnRectangle(int inX, int inY, int inWidth, int inHeight, int prior, boolean inCenter, Color color) {
-		x = inX;
-		y = inY;
+		setX(inX);
+		setY(inY);
 		width = inWidth;
 		height = inHeight;
 		colorFill = color;
@@ -55,8 +51,8 @@ public class DrawnRectangle extends Element{
 	 */
 	
 	public DrawnRectangle(int xIn, int yIn, int inWidth, int inHeight, int prior, boolean inCenter, Color fillColor, Color outlineColor) {
-		x = xIn;
-		y = yIn;
+		setX(xIn);
+		setY(yIn);
 		width = inWidth;
 		height = inHeight;
 		colorFill = fillColor;
@@ -71,9 +67,9 @@ public class DrawnRectangle extends Element{
 	public void drawToScreen(Graphics g) {
 		Color save = g.getColor();
 		g.setColor(colorFill);
-		g.fillRect(x - (center ? width / 2 : 0), y - (center ? height / 2 : 0), width, height);
+		g.fillRect(getX() - (center ? width / 2 : 0), getY() - (center ? height / 2 : 0), width, height);
 		g.setColor(colorBorder);
-		g.drawRect(x - (center ? width / 2 : 0), y - (center ? height / 2 : 0), width, height);
+		g.drawRect(getX() - (center ? width / 2 : 0), getY() - (center ? height / 2 : 0), width, height);
 		g.setColor(save);
 	}
 	

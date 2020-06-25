@@ -24,6 +24,9 @@ public abstract class Element implements Comparable<Element>{
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
+	private int x;
+	
+	private int y;
 	/** int value describing the priority of this object for being drawn: the lower this value, the sooner it is drawn relative to other Elements*/
 	private int priority;
 	
@@ -37,8 +40,20 @@ public abstract class Element implements Comparable<Element>{
 	
 	public abstract void drawToScreen(Graphics g);
 	
-//---  Getter Methods   -----------------------------------------------------------------------
+	public void moveElement(int newX, int newY) {
+		
+	}
 	
+//---  Getter Methods   -----------------------------------------------------------------------
+
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
+	}
+
 	/**
 	 * Getter method that requests the numerical priority of this Element for being drawn.
 	 * 
@@ -48,8 +63,17 @@ public abstract class Element implements Comparable<Element>{
 	public int getDrawPriority() {
 		return priority;
 	}
+
 	
 //---  Setter Methods   -----------------------------------------------------------------------
+	
+	public void setX(int newX) {
+		x = newX;
+	}
+	
+	public void setY(int newY) {
+		y = newY;
+	}
 	
 	/**
 	 * Setter method that assigns the provided int value to this Element object as its

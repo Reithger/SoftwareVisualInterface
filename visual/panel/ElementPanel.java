@@ -117,6 +117,16 @@ public class ElementPanel extends Panel{
 		}
 	}
 	
+	public boolean moveElement(String name, int x, int y) {
+		Element e = drawList.get(name);
+		if(e == null) {
+			return false;
+		}
+		e.setX(x);
+		e.setY(y);
+		return true;
+	}
+	
 	/**
 	 * Support method to consolidate the actions necessary when removing an Element from this
 	 * ElementPanel object.
@@ -527,47 +537,7 @@ public class ElementPanel extends Panel{
 		addElementQueue.add(drawn);
 		clickList.add(name);
 	}
-	
-	/**
-	 * This method permits the addition of an image that is interactive; that is, a custom image
-	 * whose filled region will generate a defined code value for the clickEvent() method when
-	 * clicked by the user.
-	 * 
-	 * @param name - String object representing the name of this Element for reference.
-	 * @param priority - int value describing the drawing priority of this Element (what should be drawn first/last in cases of overlap)
-	 * @param x - int value describing the x coordinate of the center of this Element in the ElementPanel object
-	 * @param y - int value describing the y coordinate of the center of this Element in the ElementPanel object
-	 * @param path - String object representing the file path that the Image is located at in memory.
-	 * @param key - int value describing the value that is generated when this DrawnImageButton object is clicked
-	 */
-	
-	public void addImageButton(String name, int priority, int x, int y, boolean center, String path, int key){
-		DrawnImageButton but = new DrawnImageButton(x, y, priority, center, retrieveImage(path), key);
-		addNameQueue.add(name);
-		addElementQueue.add(but);
-		clickList.add(name);
-	}
-	
-	/**
-	 * This method is a version of the addImageButton() method that permits the drawn image to be
-	 * scaled by whole values to increase the image's size.
-	 * 
-	 * @param name - String object representing the name of this Element for reference.
-	 * @param priority - int value describing the drawing priority of this Element (what should be drawn first/last in cases of overlap)
-	 * @param x - int value describing the x coordinate of the center of this Element in the ElementPanel object
-	 * @param y - int value describing the y coordinate of the center of this Element in the ElementPanel object
-	 * @param path - String object representing the file path that the Image is located at in memory.
-	 * @param key - int value describing the value that is generated when this DrawnImageButton object is clicked
-	 * @param scale - int value describing what scale at which to draw this DrawnImageButton (i.e, 2 would be double the size)
-	 */
-	
-	public void addImageButton(String name, int priority, int x, int y, boolean center, String path, int key, int scale){
-		DrawnImageButton but = new DrawnImageButton(x, y, priority, center, retrieveImage(path), key, scale);
-		addNameQueue.add(name);
-		addElementQueue.add(but);
-		clickList.add(name);
-	}
-	
+
 	//-- Text  ------------------------------------------------
 	
 	/**

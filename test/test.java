@@ -40,6 +40,7 @@ public class test {
 				System.out.println("Event: " + event);
 
 				System.out.println(Communication.get("A"));
+				System.out.println(moveElement("tex", 25, 25));
 			} 
 			
 		};

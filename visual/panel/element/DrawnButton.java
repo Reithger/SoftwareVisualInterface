@@ -7,18 +7,14 @@ import input.ClickRegionRectangle;
 /**
  * This class extends the Element class and implements the Clickable interface
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 
 public class DrawnButton extends Element implements Clickable{
 	
 //---  Instance Variables   -------------------------------------------------------------------
-	
-	/** */
-	private int cornerX;
-	/** */
-	private int cornerY;
+
 	/** */
 	private int width;
 	/** */
@@ -43,8 +39,8 @@ public class DrawnButton extends Element implements Clickable{
 	 */
 	
 	public DrawnButton(int x, int y, int wid, int hei, int prior, boolean inCenter, int key, Color col) {
-		cornerX = x;
-		cornerY = y;
+		setX(x);
+		setY(y);
 		width = wid;
 		height = hei;
 		code = key;
@@ -63,8 +59,8 @@ public class DrawnButton extends Element implements Clickable{
 	 */
 	
 	public DrawnButton(int x, int y, int wid, int hei, int prior, boolean inCenter, int key) {
-		cornerX = x;
-		cornerY = y;
+		setX(x);
+		setY(y);
 		width = wid;
 		height = hei;
 		code = key;
@@ -80,7 +76,7 @@ public class DrawnButton extends Element implements Clickable{
 		if(color != null) {
 			Color maintain = g.getColor();
 			g.setColor(color);
-			g.fillRect(cornerX - (center ? width / 2 : 0), cornerY - (center ? height / 2 : 0), width, height);
+			g.fillRect(getX() - (center ? width / 2 : 0), getY() - (center ? height / 2 : 0), width, height);
 			g.setColor(maintain);
 		}
 	}
@@ -93,7 +89,7 @@ public class DrawnButton extends Element implements Clickable{
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public ClickRegionRectangle getDetectionRegion() {
-		return new ClickRegionRectangle(cornerX - (center ? width / 2 : 0), cornerY - (center ? height / 2 : 0), width, height, code);
+		return new ClickRegionRectangle(getX() - (center ? width / 2 : 0), getY() - (center ? height / 2 : 0), width, height, code);
 	}
 
 	public int getCode() {
