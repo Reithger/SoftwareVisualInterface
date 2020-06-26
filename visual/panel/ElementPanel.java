@@ -380,7 +380,7 @@ public class ElementPanel extends Panel{
 	 * @return - Returns an Image object corresponding to the provided file path given as a String.
 	 */
 	
-	private Image retrieveImage(String pathIn) {
+	public Image retrieveImage(String pathIn) {
 		String path = pathIn.replace("\\", "/");
 		if(images.containsKey(path)) {
 			return images.get(path);
