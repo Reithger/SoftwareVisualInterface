@@ -9,7 +9,7 @@ public class DrawnImage extends Element{
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** */
-	private int scaleFactor;
+	private double scaleFactor;
 	/** */
 	private Image image;
 	
@@ -25,7 +25,7 @@ public class DrawnImage extends Element{
 	 * @param scale
 	 */
 	
-	public DrawnImage(int x, int y, int prior, boolean inCenter, Image img, int scale) {
+	public DrawnImage(int x, int y, int prior, boolean inCenter, Image img, double scale) {
 		setX(x);
 		setY(y);
 		image = img;
@@ -54,7 +54,7 @@ public class DrawnImage extends Element{
 	
 	public void drawToScreen(Graphics g) {
 		Toolkit tk = Toolkit.getDefaultToolkit();
-		Image drawImage = image.getScaledInstance(image.getWidth(null) * scaleFactor, image.getHeight(null) * scaleFactor, Image.SCALE_DEFAULT);
+		Image drawImage = image.getScaledInstance((int)(image.getWidth(null) * scaleFactor), (int)(image.getHeight(null) * scaleFactor), Image.SCALE_DEFAULT);
 		while(!tk.prepareImage(drawImage, -1, -1, null)){	}
 		g.drawImage(drawImage, getX() - (center ? drawImage.getWidth(null)/2 : 0), getY() - (center ? drawImage.getHeight(null)/2 : 0), null);
 	}

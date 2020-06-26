@@ -419,7 +419,9 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, String path){
-		addNameQueue.add(name); addElementQueue.add( new DrawnImage(x, y, priority, center, retrieveImage(path)));
+		DrawnImage d = new DrawnImage(x, y, priority, center, retrieveImage(path));
+		addNameQueue.add(name);
+		addElementQueue.add(d);
 	}
 	
 	/**
@@ -438,7 +440,9 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, Image img) {
-		addNameQueue.add(name); addElementQueue.add( new DrawnImage(x, y, priority, center, img));
+		DrawnImage d = new DrawnImage(x, y, priority, center, img);
+		addNameQueue.add(name);
+		addElementQueue.add(d);
 	}
 	
 	/**
@@ -455,8 +459,10 @@ public class ElementPanel extends Panel{
 	 * @param scale - int value describing what scale at which to draw this Image (i.e, 2 would be double the size)
 	 */
 	
-	public void addImage(String name, int priority, int x, int y, boolean center, String path, int scale){
-		addNameQueue.add(name); addElementQueue.add( new DrawnImage(x, y, priority, center, retrieveImage(path), scale));
+	public void addImage(String name, int priority, int x, int y, boolean center, String path, double scale){
+		DrawnImage d = new DrawnImage(x, y, priority, center, retrieveImage(path), scale);
+		addNameQueue.add(name);
+		addElementQueue.add(d);
 	}
 	
 	/**
@@ -474,8 +480,10 @@ public class ElementPanel extends Panel{
 	 * @param scale
 	 */
 	
-	public void addImage(String name, int priority, int x, int y, boolean center, Image img, int scale) {
-		addNameQueue.add(name); addElementQueue.add( new DrawnImage(x, y, priority, center, img, scale));
+	public void addImage(String name, int priority, int x, int y, boolean center, Image img, double scale) {
+		DrawnImage d = new DrawnImage(x, y, priority, center, img, scale);
+		addNameQueue.add(name);
+		addElementQueue.add(d);
 	}
 	
 	//-- Button  ----------------------------------------------
