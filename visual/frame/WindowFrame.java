@@ -22,6 +22,8 @@ public class WindowFrame extends Frame{
 	
 	private boolean start;
 	
+	private boolean mutex;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
@@ -38,12 +40,15 @@ public class WindowFrame extends Frame{
 		windows = new HashMap<String, HashMap<String, Panel>>();
 		activeWindow = null;
 		start = true;
+		mutex = false;
 	}
 
 //---  Adder Methods   ------------------------------------------------------------------------
 	
 	public void reserveWindow(String windowName) {
+		openLock();
 		windows.put(windowName, new HashMap<String, Panel>());
+		closeLock();
 		if(activeWindow == null) {
 			setActiveWindow(windowName);
 		}
@@ -60,9 +65,13 @@ public class WindowFrame extends Frame{
 	
 	public void reservePanel(String windowName, String panelName, Panel panel) {
 		if(windows.get(windowName) == null) {
+			openLock();
 			windows.put(windowName, new HashMap<String, Panel>());
+			closeLock();
 		}
+		openLock();
 		windows.get(windowName).put(panelName, panel);
+		closeLock();
 		showPanel(panelName);
 	}
 	
@@ -71,9 +80,13 @@ public class WindowFrame extends Frame{
 			return;
 		}
 		if(windows.get(activeWindow) == null) {
+			openLock();
 			windows.put(activeWindow, new HashMap<String, Panel>());
+			closeLock();
 		}
+		openLock();
 		windows.get(activeWindow).put(panelName, panel);
+		closeLock();
 		showPanel(panelName);
 	}
 	
@@ -145,9 +158,11 @@ public class WindowFrame extends Frame{
 		if(!start || windows.get(activeWindow) == null) {
 			return;
 		}
+		openLock();
 		for(Panel p : windows.get(activeWindow).values()) {
 			p.getPanel().repaint();
 		}
+		closeLock();
 	}
 	
 	/**
@@ -170,9 +185,11 @@ public class WindowFrame extends Frame{
 		if(!start || windows.get(activeWindow) == null) {
 			return;
 		}
+		openLock();
 		for(String p : windows.get(activeWindow).keySet()) {
 			showPanel(p);
 		}
+		closeLock();
 	}
 	
 	/**
@@ -195,15 +212,31 @@ public class WindowFrame extends Frame{
 		if(windows.get(activeWindow) == null) {
 			return;
 		}
+		openLock();
 		for(String p : windows.get(activeWindow).keySet()) {
 			this.hidePanel(p);
 		}
+		closeLock();
 	}
 	
 	public void dispenseAttention() {
+		openLock();
 		for(Panel p : windows.get(activeWindow).values()) {
 			p.setAttention(false);
 		}
+		closeLock();
+	}
+	
+//---  Mechanics   ----------------------------------------------------------------------------
+	
+	private void openLock() {
+		while(mutex) {
+		}
+		mutex = true;
+	}
+	
+	private void closeLock() {
+		mutex = false;
 	}
 	
 }

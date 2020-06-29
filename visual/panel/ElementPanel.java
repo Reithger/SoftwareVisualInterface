@@ -124,7 +124,19 @@ public class ElementPanel extends Panel{
 		}
 		e.setX(x);
 		e.setY(y);
+		if(clickList.contains(name)) {
+			updateClickRegions();
+		}
 		return true;
+	}
+	
+	public void moveElementPrefixed(String prefix, int x, int y) {
+		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
+		for(String s : cs) {
+			if(s.matches(prefix + ".*")) {
+				moveElement(s, x, y);
+			}
+		}
 	}
 	
 	/**
