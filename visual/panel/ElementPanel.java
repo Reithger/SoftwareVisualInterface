@@ -63,6 +63,8 @@ public class ElementPanel extends Panel{
 	/** HashMap linking String system paths to Images to cache images that may be used repeatedly*/
 	private HashMap<String, Image> images;
 	
+	private boolean mutex;
+	
 
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -84,6 +86,7 @@ public class ElementPanel extends Panel{
 		addNameQueue = new LinkedList<String>();
 		addElementQueue = new LinkedList<Element>();
 		removeQueue = new LinkedList<String>();
+		mutex = false;
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -100,17 +103,9 @@ public class ElementPanel extends Panel{
 	
 	public void paintComponent(Graphics gIn) {
 		Graphics g = gIn.create();
-		while(removeQueue.size() > 0) {
-			handleRemoveElement(removeQueue.poll());
-		}
-		boolean trig = addNameQueue.size() > 0;
-		while(addNameQueue.size() > 0) {
-			handleAddElement(addNameQueue.poll(), addElementQueue.poll());
-		}
-		if(trig) {
-			updateClickRegions();
-		}
+		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		closeLock();
 		Collections.sort(elements);
 		for(int i = 0; i < elements.size(); i++) {
 			elements.get(i).drawToScreen(g);
@@ -118,7 +113,7 @@ public class ElementPanel extends Panel{
 	}
 	
 	public boolean moveElement(String name, int x, int y) {
-		Element e = drawList.get(name);
+		Element e = getElement(name);
 		if(e == null) {
 			return false;
 		}
@@ -131,26 +126,16 @@ public class ElementPanel extends Panel{
 	}
 	
 	public void moveElementPrefixed(String prefix, int x, int y) {
+		openLock();
 		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
+		closeLock();
 		for(String s : cs) {
 			if(s.matches(prefix + ".*")) {
 				moveElement(s, x, y);
 			}
 		}
 	}
-	
-	/**
-	 * Support method to consolidate the actions necessary when removing an Element from this
-	 * ElementPanel object.
-	 * 
-	 * @param n - String object representing the name of the Element to remove from the screen
-	 */
-	
-	private void handleRemoveElement(String n) {
-		drawList.remove(n);
-		clickList.remove(n);
-	}
-	
+
 	/**
 	 * Support method to consolidate the actions necessary when adding an Element to this
 	 * ElementPanel object.
@@ -160,7 +145,13 @@ public class ElementPanel extends Panel{
 	 */
 	
 	private void handleAddElement(String n, Element e) {
+		if(n == null || e == null) {
+			System.out.println("Error: Null added to drawList for pair <" + n + ", " + e.toString() + ">");
+			return;
+		}
+		openLock();
 		drawList.put(n, e);
+		closeLock();
 	}
 	
 	/**
@@ -285,7 +276,10 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public Element getElement(String name) {
-		return drawList.get(name);
+		openLock();
+		Element e = drawList.get(name);
+		closeLock();
+		return e;
 	}
 	
 	/**
@@ -299,11 +293,18 @@ public class ElementPanel extends Panel{
 	
 	public Clickable getClickableElement(String name) {
 		try {
-			return (Clickable)drawList.get(name);
+			Element e = getElement(name);
+			if(e != null) {
+				return (Clickable)e;
+			}
+			else {
+				return null;
+			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 			System.out.println("Failure to retrieve Clickable implementing Element object; \"getClickableElement(String name)\" function.");
+			System.out.println("Attempted to retrieve " + name);
 			return null;
 		}
 	}
@@ -319,7 +320,7 @@ public class ElementPanel extends Panel{
 	
 	public TextStorage getStoredTextElement(String name) {
 		try {
-			return (TextStorage)drawList.get(name);
+			return (TextStorage)getElement(name);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -372,7 +373,10 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public int getNumberActiveElements() {
-		return drawList.values().size();
+		openLock();
+		int out = drawList.values().size();
+		closeLock();
+		return out;
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------
@@ -432,8 +436,7 @@ public class ElementPanel extends Panel{
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, String path){
 		DrawnImage d = new DrawnImage(x, y, priority, center, retrieveImage(path));
-		addNameQueue.add(name);
-		addElementQueue.add(d);
+		handleAddElement(name, d);
 	}
 	
 	/**
@@ -453,8 +456,7 @@ public class ElementPanel extends Panel{
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, Image img) {
 		DrawnImage d = new DrawnImage(x, y, priority, center, img);
-		addNameQueue.add(name);
-		addElementQueue.add(d);
+		handleAddElement(name, d);
 	}
 	
 	/**
@@ -473,8 +475,7 @@ public class ElementPanel extends Panel{
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, String path, double scale){
 		DrawnImage d = new DrawnImage(x, y, priority, center, retrieveImage(path), scale);
-		addNameQueue.add(name);
-		addElementQueue.add(d);
+		handleAddElement(name, d);
 	}
 	
 	/**
@@ -494,8 +495,7 @@ public class ElementPanel extends Panel{
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, Image img, double scale) {
 		DrawnImage d = new DrawnImage(x, y, priority, center, img, scale);
-		addNameQueue.add(name);
-		addElementQueue.add(d);
+		handleAddElement(name, d);
 	}
 	
 	//-- Button  ----------------------------------------------
@@ -524,8 +524,7 @@ public class ElementPanel extends Panel{
 
 	public void addButton(String name, int priority, int x, int y, int wid, int hei, int key, boolean centered){
 		DrawnButton drawn = new DrawnButton(x, y, wid, hei, priority, centered, key);
-		addNameQueue.add(name);
-		addElementQueue.add(drawn);
+		handleAddElement(name, drawn);
 		clickList.add(name);
 	}	
 	
@@ -553,8 +552,7 @@ public class ElementPanel extends Panel{
 	
 	public void addButton(String name, int priority, int x, int y, int wid, int hei, Color col, int key, boolean centered){
 		DrawnButton drawn = new DrawnButton(x, y, wid, hei, priority, centered, key, col);
-		addNameQueue.add(name);
-		addElementQueue.add(drawn);
+		handleAddElement(name, drawn);
 		clickList.add(name);
 	}
 
@@ -576,7 +574,7 @@ public class ElementPanel extends Panel{
 	
 	public void addText(String name, int priority, int x, int y, int width, int height, String phrase, Font font, boolean centeredX, boolean centeredY, boolean centeredText){
 		DrawnText text = new DrawnText(x, y, width, height, priority, centeredX, centeredY, centeredText, phrase, font);
-		addNameQueue.add(name); addElementQueue.add( text);
+		handleAddElement(name, text);
 	}
 
 	/**
@@ -600,8 +598,7 @@ public class ElementPanel extends Panel{
 	
 	public void addTextEntry(String name, int priority, int x, int y, int width, int height, int code, String defaultText, Font font, boolean centeredX, boolean centeredY, boolean centeredText) {
 		DrawnTextEntry dTA = new DrawnTextEntry(x, y, width, height, priority, centeredX, centeredY, centeredText, defaultText, font, code);
-		addNameQueue.add(name);
-		addElementQueue.add(dTA);
+		handleAddElement(name, dTA);
 		clickList.add(name);
 	}
 	
@@ -620,7 +617,8 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addRectangle(String name, int priority, int x, int y, int width, int height, boolean center, Color col) {
-		addNameQueue.add(name); addElementQueue.add( new DrawnRectangle(x, y, width, height, priority, center, col));
+		DrawnRectangle d = new DrawnRectangle(x, y, width, height, priority, center, col);
+		handleAddElement(name, d);
 	}
 	
 	/**
@@ -638,7 +636,8 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addRectangle(String name, int priority, int x, int y, int width, int height, boolean center, Color fillColor, Color borderColor) {
-		addNameQueue.add(name); addElementQueue.add( new DrawnRectangle(x, y, width, height, priority, center, fillColor, borderColor));
+		DrawnRectangle d = new DrawnRectangle(x, y, width, height, priority, center, fillColor, borderColor);
+		handleAddElement(name, d);
 	}
 
 	/**
@@ -656,7 +655,8 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void addLine(String name, int priority, int x1, int y1, int x2, int y2, int thickness, Color choice) {
-		addNameQueue.add(name); addElementQueue.add( new DrawnLine(x1, y1, x2, y2, thickness, priority, choice));
+		DrawnLine d = new DrawnLine(x1, y1, x2, y2, thickness, priority, choice);
+		handleAddElement(name, d);
 	}
 	
 //---  Remove Elements   ----------------------------------------------------------------------
@@ -670,7 +670,10 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void removeElement(String name) {
-		removeQueue.add(name);
+		openLock();
+		drawList.remove(name);
+		closeLock();
+		clickList.remove(name);
 	}
 	
 	/**
@@ -684,16 +687,34 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void removeElementPrefixed(String prefix) {
+		openLock();
 		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
 		HashSet<String> remv = new HashSet<String>();
-		for(String s : cs) {
+		for(int i = 0; i < cs.size(); i++) {
+			String s = cs.get(i);
+			if(s == null) {
+				continue;
+			}
 			if(s.matches(prefix + ".*")) {
 				remv.add(s);
 			}
 		}
+		closeLock();
 		for(String s : remv) {
 			removeElement(s);
 		}
+	}
+	
+//---  Mechanics   ----------------------------------------------------------------------------
+	
+	private void openLock() {
+		while(mutex) {
+		}
+		mutex = true;
+	}
+	
+	private void closeLock() {
+		mutex = false;
 	}
 	
 }
