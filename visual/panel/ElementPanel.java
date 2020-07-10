@@ -110,6 +110,7 @@ public class ElementPanel extends Panel{
 		for(int i = 0; i < elements.size(); i++) {
 			elements.get(i).drawToScreen(g);
 		}
+		updateClickRegions();
 	}
 	
 	public boolean moveElement(String name, int x, int y) {

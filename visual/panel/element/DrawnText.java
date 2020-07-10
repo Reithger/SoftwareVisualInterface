@@ -144,13 +144,16 @@ public class DrawnText extends Element{
 			    break;
 			}
 		}
-		if(!sB.toString().equals("")) {
+		if(!sB.toString().equals("") && otY <= getY() + height / (centeredY ? 2 : 1)) {
 			lines.add(sB.toString());
 		}
 		int i = 0;
 		for(String s : lines) {
 			int drawX = getX() - (centeredX ? width / 2 : 0) + (width - fM.stringWidth(s)) / 2;
 			int drawY = getY() - (centeredY ? height / 2 : 0) + (height - fM.getHeight() * (lines.size() - 1)) / 2 + i++ * fM.getHeight() + fM.getAscent() / 2;
+			if(drawY > getY() + height / (centeredY ? 2 : 1)) {
+				break;
+			}
 			g.drawString(s, drawX, drawY);
 		}
 	}
