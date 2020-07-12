@@ -67,7 +67,7 @@ public class test {
 		
 		pan2.addImage("sas", 15, pan2.getWidth() / 2, pan2.getHeight() * 2 / 3, true, imagePath, .5);
 		
-		CanvasPanel can = new CanvasPanel(800, 0, 300, 500, 5) {
+		CanvasPanel can = new CanvasPanel(800, 0, 300, 500, 1) {
 			private boolean grid;
 			
 			@Override
@@ -95,7 +95,7 @@ public class test {
 			}
 		};
 		
-		can.setColor(Color.blue);
+		can.setPenColor(Color.blue);
 		
 		drawFrame(pan);
 		drawFrame(pan2);

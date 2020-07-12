@@ -65,7 +65,7 @@ public class CanvasPanel extends Panel{
 	private void initialize() {
 		for(int i = 0; i < canvas.length / zoom; i++) {
 			for(int j = 0; j < canvas[i].length / zoom; j++) {
-				canvas[i][j] =  new Color(i % 255, j  % 255, (i * j) % 255);
+				canvas[i][j] =  new Color(i  % 255, j % 255, (i * j) % 255);
 
 			}
 		}
@@ -113,11 +113,9 @@ public class CanvasPanel extends Panel{
 	
 	@Override
 	public void clickEvent(int event, int x, int y) {
-		System.out.println(x + " " + y);
 		if(x >= 0 && x <= width && y >= 0 && y <= height) {
 			canvas[x / zoom][y / zoom] = new Color(draw.getRGB());
 			update[x  / subGridSize][y / subGridSize] = true;
-			System.out.println(x / subGridSize);
 		}
 	}
 	
@@ -134,8 +132,18 @@ public class CanvasPanel extends Panel{
 	
 //---  Setter Methods   -----------------------------------------------------------------------
 	
-	public void setColor(Color drawSet) {
+	public void setPenColor(Color drawSet) {
 		draw = drawSet;
+	}
+	
+	public void setPixelColor(int x, int y, Color col) {
+		canvas[x / zoom][y / zoom] = col;
+		update[x  / subGridSize][y / subGridSize] = true;
+	}
+	
+	public void setCanvasColor(int x, int y, Color col) {
+		canvas[x][y] = col;
+		update[x * zoom / subGridSize][y * zoom / subGridSize] = true;
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
