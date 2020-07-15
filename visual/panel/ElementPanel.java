@@ -20,6 +20,8 @@ import visual.panel.element.*;
  * base functionality. All features are provided by methods describing those features.
  * 
  * @author Ada Clevinger
+ * 
+ * TODO: Small pixel font options for text
  *
  */
 
@@ -108,7 +110,7 @@ public class ElementPanel extends Panel{
 		closeLock();
 		Collections.sort(elements);
 		for(int i = 0; i < elements.size(); i++) {
-			elements.get(i).drawToScreen(g);
+			elements.get(i).drawToScreen(g, getOffsetX(), getOffsetY());
 		}
 		updateClickRegions();
 	}

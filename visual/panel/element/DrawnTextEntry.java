@@ -61,8 +61,8 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 //---  Operations   ---------------------------------------------------------------------------
 	
 	@Override
-	public void drawToScreen(Graphics g) {
-		drText.drawToScreen(g);
+	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
+		drText.drawToScreen(g, offsetX, offsetY);
 	}
 	
 	@Override

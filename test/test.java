@@ -61,6 +61,9 @@ public class test {
 			
 		};
 		
+		pan2.setOffsetX(45);
+		pan2.setOffsetY(-30);
+		
 		pan2.addRectangle("rect", 1, pan2.getWidth() /20, pan2.getHeight() / 20, pan2.getWidth() * 18/20, pan2.getHeight() * 18/20, false, Color.red);
 		pan2.addRectangle("rect2", 8, pan2.getWidth() / 2,  pan2.getHeight() / 6, pan2.getWidth() * 16 / 18,  pan2.getHeight() * 2 / 18, true, Color.white, Color.black);
 		pan2.addTextEntry("texEn", 10, pan2.getWidth() / 2, pan2.getHeight() / 6, pan2.getWidth() * 16 / 18, pan2.getHeight() * 2 / 18, 15, "This is a text entry area", defaultFont, true, true, true);

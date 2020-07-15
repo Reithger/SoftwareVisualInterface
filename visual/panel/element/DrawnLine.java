@@ -13,6 +13,8 @@ public class DrawnLine extends Element{
 	private int x2;
 	private int y2;
 	private int thick;
+	private int offsetX;
+	private int offsetY;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -24,14 +26,21 @@ public class DrawnLine extends Element{
 		x2 = inx2;
 		y2 = iny2;
 		thick = inThick;
+		offsetX = 0;
+		offsetY = 0;
 		generatePolygon();
 	}
 
 //---  Operations   ---------------------------------------------------------------------------
 
 	@Override
-	public void drawToScreen(Graphics g) {
+	public void drawToScreen(Graphics g, int offsetXIn, int offsetYIn) {
 		Color save = g.getColor();
+		if(offsetX != offsetXIn || offsetY != offsetYIn) {
+			offsetX = offsetXIn;
+			offsetY = offsetYIn;
+			generatePolygon();
+		}
 		g.setColor(color);
 		g.fillPolygon(p);
 		g.drawPolygon(p);
@@ -40,17 +49,17 @@ public class DrawnLine extends Element{
 	
 	private void generatePolygon() {
 		double angle = 0;
-		int offsetX = 0;
-		int offsetY = 0;
+		int adjustX = 0;
+		int adjustY = 0;
 		int x1 = getX();
 		int y1 = getY();
 		double rise = y2 - y1;
 		double run = x2 - x1;
 		
 		angle = Math.atan(-1.0 / (rise / run));
-		offsetX = (int)(Math.cos(angle) * thick/2.0);
-		offsetY = (int)(Math.sin(angle) * thick/2.0);
-		p = new Polygon(new int[] {x1 - offsetX, x1 + offsetX, x2 + offsetX, x2 - offsetX}, new int[] {y1 - offsetY, y1 + offsetY, y2 + offsetY, y2 - offsetY}, 4);
+		adjustX = (int)(Math.cos(angle) * thick/2.0);
+		adjustY = (int)(Math.sin(angle) * thick/2.0);
+		p = new Polygon(new int[] {x1 - adjustX + offsetX, x1 + adjustX + offsetX, x2 + adjustX + offsetX, x2 - adjustX + offsetX}, new int[] {y1 - adjustY + offsetY, y1 + adjustY + offsetY, y2 + adjustY + offsetY, y2 - adjustY + offsetY}, 4);
 	}
 	
 //---  Setter Methods   -----------------------------------------------------------------------

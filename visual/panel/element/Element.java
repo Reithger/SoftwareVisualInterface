@@ -38,7 +38,7 @@ public abstract class Element implements Comparable<Element>{
 	 * @param g - Graphics object used to draw this Element to the screen.
 	 */
 	
-	public abstract void drawToScreen(Graphics g);
+	public abstract void drawToScreen(Graphics g, int offsetX, int offsetY);
 	
 	public void moveElement(int newX, int newY) {
 		

@@ -64,12 +64,12 @@ public class DrawnRectangle extends Element{
 //---  Operations   ---------------------------------------------------------------------------
 	
 	@Override
-	public void drawToScreen(Graphics g) {
+	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
 		Color save = g.getColor();
 		g.setColor(colorFill);
-		g.fillRect(getX() - (center ? width / 2 : 0), getY() - (center ? height / 2 : 0), width, height);
+		g.fillRect(getX() - (center ? width / 2 : 0) + offsetX, getY() - (center ? height / 2 : 0) + offsetY, width, height);
 		g.setColor(colorBorder);
-		g.drawRect(getX() - (center ? width / 2 : 0), getY() - (center ? height / 2 : 0), width, height);
+		g.drawRect(getX() - (center ? width / 2 : 0) + offsetX, getY() - (center ? height / 2 : 0) + offsetY, width, height);
 		g.setColor(save);
 	}
 	

@@ -19,7 +19,7 @@ import visual.frame.Frame;
  * Panel objects need to be placed inside of Frame objects, and specific implementations of this abstract class
  * will provide tools for specifying how to manipulate the appearance of the Panel.
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 
@@ -37,6 +37,10 @@ public abstract class Panel{
 	private KeyComponent keyPress;
 	
 	private boolean attention;
+	/** int value representing how displaced along the x-axis elements within this Panel need to be drawn relative to their origin point in the Frame*/
+	private int offsetX;
+	
+	private int offsetY;
 	
 //---  Constructor Support   ------------------------------------------------------------------
 	
@@ -140,6 +144,14 @@ public abstract class Panel{
 		attention = atten;
 	}
 		
+	public void setOffsetX(int inX) {
+		offsetX = inX;
+	}
+	
+	public void setOffsetY(int inY) {
+		offsetY = inY;
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	/**
@@ -178,6 +190,14 @@ public abstract class Panel{
 	
 	public Frame getParentFrame() {
 		return parentFrame;
+	}
+	
+	public int getOffsetX() {
+		return offsetX;
+	}
+	
+	public int getOffsetY() {
+		return offsetY;
 	}
 	
 //---  Adder Methods   ------------------------------------------------------------------------

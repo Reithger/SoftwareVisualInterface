@@ -72,11 +72,11 @@ public class DrawnButton extends Element implements Clickable{
 //---  Operations   ---------------------------------------------------------------------------
 	
 	@Override
-	public void drawToScreen(Graphics g) {
+	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
 		if(color != null) {
 			Color maintain = g.getColor();
 			g.setColor(color);
-			g.fillRect(getX() - (center ? width / 2 : 0), getY() - (center ? height / 2 : 0), width, height);
+			g.fillRect(getX() - (center ? width / 2 : 0) + offsetX, getY() - (center ? height / 2 : 0) + offsetY, width, height);
 			g.setColor(maintain);
 		}
 	}
