@@ -204,7 +204,19 @@ public class ClickComponent implements MouseListener, MouseMotionListener{
 	
 	@Override
 	public void mouseReleased(MouseEvent e){
-		//This space intentionally left blank, but doesn't need to be
+		containerFrame.getPanel().requestFocusInWindow();
+		Integer x = e.getX();
+		Integer y = e.getY();
+		boolean happened = false;
+		for(Detectable d : new ArrayList<Detectable>(detectionRegions)) {
+			if(d.wasClicked(x, y)) {
+				happened = true;
+				activeSelect = d.getCode();
+				containerFrame.clickEvent(getSelected(), x, y);
+			}
+		}
+		if(!happened)
+			containerFrame.clickReleaseEvent(getSelected(), x, y);
 	}
 	
 	@Override

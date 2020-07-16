@@ -95,5 +95,27 @@ public class DrawnButton extends Element implements Clickable{
 	public int getCode() {
 		return code;
 	}
+
+
+	@Override
+	public int getMinimumX() {
+		return center ? getX() - (center ? width / 2 : 0) : getX();
+	}
+
+	@Override
+	public int getMaximumX() {
+		return width + (center ? getX() - (center ? width / 2 : 0) : getX());
+	}
+
+	@Override
+	public int getMinimumY() {
+		return center ? getY() - (center ? height / 2 : 0) : getY();
+	}
+
+	@Override
+	public int getMaximumY() {
+		return height + (center ? getY() - (center ? height / 2 : 0) : getY());
+	}
+	
 	
 }

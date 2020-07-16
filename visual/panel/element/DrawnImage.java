@@ -28,9 +28,12 @@ public class DrawnImage extends Element{
 	public DrawnImage(int x, int y, int prior, boolean inCenter, Image img, double scale) {
 		setX(x);
 		setY(y);
-		image = img;
 		scaleFactor = scale;
 		center = inCenter;
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		Image drawImage = img.getScaledInstance((int)(img.getWidth(null) * scaleFactor), (int)(img.getHeight(null) * scaleFactor), Image.SCALE_DEFAULT);
+		while(!tk.prepareImage(drawImage, -1, -1, null)){	}
+		image = drawImage;
 		setDrawPriority(prior);
 	}	
 
@@ -53,10 +56,28 @@ public class DrawnImage extends Element{
 //---  Operations   ---------------------------------------------------------------------------
 	
 	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		Image drawImage = image.getScaledInstance((int)(image.getWidth(null) * scaleFactor), (int)(image.getHeight(null) * scaleFactor), Image.SCALE_DEFAULT);
-		while(!tk.prepareImage(drawImage, -1, -1, null)){	}
-		g.drawImage(drawImage, getX() - (center ? drawImage.getWidth(null)/2 : 0) + offsetX, getY() - (center ? drawImage.getHeight(null)/2 : 0) + offsetY, null);
+		g.drawImage(image, getX() - (center ? image.getWidth(null)/2 : 0) + offsetX, getY() - (center ? image.getHeight(null)/2 : 0) + offsetY, null);
 	}
+
+//---  Getter Methods   -----------------------------------------------------------------------
 	
+	@Override
+	public int getMinimumX() {
+		return center ? getX() - (center ? image.getWidth(null) / 2 : 0) : getX();
+	}
+
+	@Override
+	public int getMaximumX() {
+		return image.getWidth(null) + (center ? getX() - (center ? image.getWidth(null) / 2 : 0) : getX());
+	}
+
+	@Override
+	public int getMinimumY() {
+		return center ? getY() - (center ? image.getHeight(null) / 2 : 0) : getY();
+	}
+
+	@Override
+	public int getMaximumY() {
+		return image.getHeight(null) + (center ? getY() - (center ? image.getHeight(null) / 2 : 0) : getY());
+	}
 }

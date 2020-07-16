@@ -120,4 +120,23 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 		return code;
 	}
 
+	@Override
+	public int getMinimumX() {
+		return drText.getMinimumX();
+	}
+
+	@Override
+	public int getMaximumX() {
+		return drText.getMaximumX();
+	}
+
+	@Override
+	public int getMinimumY() {
+		return drText.getMinimumY();
+	}
+
+	@Override
+	public int getMaximumY() {
+		return drText.getMaximumY();
+	}
 }

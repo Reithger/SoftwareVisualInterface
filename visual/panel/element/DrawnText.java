@@ -166,4 +166,24 @@ public class DrawnText extends Element{
 		message = in.replaceAll("\n", " \n ");
 	}
 	
+	@Override
+	public int getMinimumX() {
+		return centeredX ? getX() - (centeredX ? width / 2 : 0) : getX();
+	}
+
+	@Override
+	public int getMaximumX() {
+		return width + (centeredX ? getX() - (centeredX ? width / 2 : 0) : getX());
+	}
+
+	@Override
+	public int getMinimumY() {
+		return centeredY ? getY() - (centeredY ? height / 2 : 0) : getY();
+	}
+
+	@Override
+	public int getMaximumY() {
+		return height + (centeredY ? getY() - (centeredY ? height / 2 : 0) : getY());
+	}
+	
 }

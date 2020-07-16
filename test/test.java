@@ -57,18 +57,19 @@ public class test {
 			public void clickBehaviour(int event, int x, int y) {
 				System.out.println(event + " " + x + " " + y);
 				System.out.println(getFocusElement());
+				moveElement("line5", 40, 900);
 			} 
 			
 		};
 		
-		pan2.setOffsetX(45);
-		pan2.setOffsetY(-30);
 		
 		pan2.addRectangle("rect", 1, pan2.getWidth() /20, pan2.getHeight() / 20, pan2.getWidth() * 18/20, pan2.getHeight() * 18/20, false, Color.red);
 		pan2.addRectangle("rect2", 8, pan2.getWidth() / 2,  pan2.getHeight() / 6, pan2.getWidth() * 16 / 18,  pan2.getHeight() * 2 / 18, true, Color.white, Color.black);
 		pan2.addTextEntry("texEn", 10, pan2.getWidth() / 2, pan2.getHeight() / 6, pan2.getWidth() * 16 / 18, pan2.getHeight() * 2 / 18, 15, "This is a text entry area", defaultFont, true, true, true);
 		
 		pan2.addImage("sas", 15, pan2.getWidth() / 2, pan2.getHeight() * 2 / 3, true, imagePath, .5);
+		
+		pan2.addLine("line5", 30, 40, 10, 50, 750, 5, Color.black);
 		
 		CanvasPanel can = new CanvasPanel(800, 0, 300, 500, 1) {
 			private boolean grid;
@@ -106,8 +107,6 @@ public class test {
 		fram.reservePanel("window", "panel1", pan);
 		fram.reservePanel("window", "panel2", pan2);
 		fram.reservePanel("window", "canvas", can);
-		
-		System.out.println(pan.getWidth() + " " + pan.getHeight() + " " + pan2.getWidth() + " " + pan2.getHeight());
 	}
 
 	private static void drawFrame(ElementPanel p) {

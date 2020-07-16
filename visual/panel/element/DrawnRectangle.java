@@ -72,5 +72,24 @@ public class DrawnRectangle extends Element{
 		g.drawRect(getX() - (center ? width / 2 : 0) + offsetX, getY() - (center ? height / 2 : 0) + offsetY, width, height);
 		g.setColor(save);
 	}
-	
+
+	@Override
+	public int getMinimumX() {
+		return center ? getX() - (center ? width / 2 : 0) : getX();
+	}
+
+	@Override
+	public int getMaximumX() {
+		return width + (center ? getX() - (center ? width / 2 : 0) : getX());
+	}
+
+	@Override
+	public int getMinimumY() {
+		return center ? getY() - (center ? height / 2 : 0) : getY();
+	}
+
+	@Override
+	public int getMaximumY() {
+		return height + (center ? getY() - (center ? height / 2 : 0) : getY());
+	}
 }

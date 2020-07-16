@@ -64,6 +64,13 @@ public abstract class Element implements Comparable<Element>{
 		return priority;
 	}
 
+	public abstract int getMinimumX();
+	
+	public abstract int getMaximumX();
+	
+	public abstract int getMinimumY();
+	
+	public abstract int getMaximumY();
 	
 //---  Setter Methods   -----------------------------------------------------------------------
 	

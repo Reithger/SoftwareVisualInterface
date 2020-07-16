@@ -101,6 +101,8 @@ public abstract class Panel{
 	
 	public abstract void clickEvent(int event, int x, int y);
 	
+	public abstract void clickReleaseEvent(int event, int x, int y);
+	
 	public abstract void dragEvent(int x, int y);
 	
 	/**

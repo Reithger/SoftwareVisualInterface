@@ -189,4 +189,10 @@ public class CanvasPanel extends Panel{
 		return out;
 	}
 
+	@Override
+	public void clickReleaseEvent(int event, int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

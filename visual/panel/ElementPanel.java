@@ -34,6 +34,8 @@ public class ElementPanel extends Panel{
 	/** boolean value used to denote the meaning of the boolean value given to many methods*/
 	public static final boolean NON_CENTERED = false;
 	
+	public static final int CODE_SCROLL_BAR_Y = -1;
+	
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	//-- Element Storage/Management  --------------------------
@@ -41,19 +43,7 @@ public class ElementPanel extends Panel{
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
 	private HashMap<String, Element> drawList;
 	/** HashMap that assigns a name to defined regions of the screen that generate a specified code upon interaction*/
-	private LinkedList<String> clickList;
-	
-	//-- Queues  ----------------------------------------------
-	
-	/** LinkedList of String objects containing names of Element objects to add to the drawList and other data structures*/
-	private LinkedList<String> addNameQueue;
-	/** LinkedList of Element objects to add to the drawList and other data structures*/
-	private LinkedList<Element> addElementQueue;
-	/** LinkedList of String objects containing names of Element objects to remove from the drawList and other data structures*/
-	private LinkedList<String> removeQueue;
-	
-	//--
-	
+	private LinkedList<String> clickList;	
 	/** 
 	 * 	Clickable object representing the most recently selected interactive Element by the User for directing Key Inputs towards.
 	 * 
@@ -62,12 +52,72 @@ public class ElementPanel extends Panel{
 	 * 	that input from reaching behavioral functions such as clickBehavior or keyBehavior.
 	 */
 	private Clickable focusElement;
+		
+	//-- 
+
 	/** HashMap linking String system paths to Images to cache images that may be used repeatedly*/
 	private HashMap<String, Image> images;
 	
 	private boolean mutex;
 	
+	//-- Scrollbar  -------------------------------------------
+	
+	private boolean scrollBarHoriz;
+	
+	private boolean scrollBarVert;
+	
+	private boolean vertBarSelect;
+	
+	private int startYVertBar;
+	
+	private int yVertChange;
 
+	//TODO: Get total vertical space used, including below 0 (negative offset)
+		//TODO: Function to get maximum/minimum x/y values from all elements (add to Abstract class)
+		//TODO: Parse all Elements for minimum/maximums, get current origin, calculate maximum/minimum values for origin given Element positions
+	//TODO: Get total horizontal space used, including below 0 (negative offset)
+	//TODO: Based on screen height/width and current offsetX/Y, calculate A) should the bar be displayed B) if so, the proportional size/placement of the scroll bar
+	//TODO: If something is offscreen, make a scrollbar to allow the user to adjust the offsets to see it
+	
+	private void updateScrollBar(Graphics g) {
+		Color save = g.getColor();
+		openLock();
+		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		closeLock();
+		Collections.sort(elements);
+		int minX = 0;
+		int minY = 0;
+		int maxX = 0;
+		int maxY = 0;
+		for(int i = 0; i < elements.size(); i++) {
+			Element e = elements.get(i);
+			if(e.getMinimumX() < minX) {
+				minX = e.getMinimumX();
+			}
+			if(e.getMaximumX() > maxX) {
+				maxX = e.getMaximumX();
+			}
+			if(e.getMinimumY() < minY) {
+				minY = e.getMinimumY();
+			}
+			if(e.getMaximumY() > maxY) {
+				maxY = e.getMaximumY();
+			}
+		}
+		if((getOffsetY() > minY || getOffsetY() + getHeight() < maxY) && scrollBarVert) {
+			int subSpaceY = getOffsetY() - minY;
+			int overSpaceY = maxY - (getOffsetY() + getHeight());
+			int barButtonSizeY = getHeight() - subSpaceY - overSpaceY;
+			boolean minSize = barButtonSizeY < getWidth() / 40;
+			barButtonSizeY = minSize ? getWidth() / 40 : barButtonSizeY;
+			int barTopSizeY = minSize ? (getHeight() - barButtonSizeY) * (subSpaceY / (subSpaceY + overSpaceY)) : subSpaceY;
+			int barBottomSizeY = minSize ? (getHeight() - barButtonSizeY) * (overSpaceY / (subSpaceY + overSpaceY)) : overSpaceY;
+			yVertChange = minSize ? (int)((subSpaceY + overSpaceY) / (double)(getHeight() - barButtonSizeY)) : 1;
+		}
+		g.setColor(save);
+	}
+
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
@@ -85,10 +135,9 @@ public class ElementPanel extends Panel{
 		drawList = new HashMap<String, Element>();
 		clickList = new LinkedList<String>();
 		images = new HashMap<String, Image>();
-		addNameQueue = new LinkedList<String>();
-		addElementQueue = new LinkedList<Element>();
-		removeQueue = new LinkedList<String>();
 		mutex = false;
+		scrollBarHoriz = true;
+		scrollBarVert = true;
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -113,6 +162,8 @@ public class ElementPanel extends Panel{
 			elements.get(i).drawToScreen(g, getOffsetX(), getOffsetY());
 		}
 		updateClickRegions();
+		if(scrollBarHoriz || scrollBarVert)
+			updateScrollBar(g);
 	}
 	
 	public boolean moveElement(String name, int x, int y) {
@@ -187,9 +238,15 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void clickEvent(int event, int x, int y){
+		System.out.println("H: " + event);
 		getParentFrame().dispenseAttention();
 		setAttention(true);
 		focusElement = null;
+		if(event == CODE_SCROLL_BAR_Y) {
+			vertBarSelect = true;
+			startYVertBar = y;
+			return;
+		}
 		for(String s : clickList) {
 			Clickable c = getClickableElement(s);
 			if(c == null) {
@@ -216,6 +273,10 @@ public class ElementPanel extends Panel{
 		System.out.println("Overwrite this method");
 	}
 	
+	public void clickReleaseEvent(int event, int x, int y) {
+		vertBarSelect = false;
+	}
+	
 	/**
 	 * Certain UI Elements have behavior that requires a communication between higher-level
 	 * objects, so that is handled before the dragBehaviour() method which the programmer
@@ -224,7 +285,12 @@ public class ElementPanel extends Panel{
 	
 	@Override
 	public void dragEvent(int x, int y) {
-		
+		System.out.println(x + " " + y + " " + vertBarSelect);
+		if(vertBarSelect == true) {
+			int difY = y - startYVertBar;
+			setOffsetY(getOffsetY() + difY * yVertChange);
+			startYVertBar = y;
+		}
 	}
 	
 	/**
@@ -268,6 +334,17 @@ public class ElementPanel extends Panel{
 		System.out.println("Overwrite this method");
 	}
 	
+//---  Setter Methods   -----------------------------------------------------------------------
+	
+	public void setScrollBarHorizontal(boolean in) {
+		scrollBarHoriz = in;
+	}
+	
+	public void setScrollBarVertical(boolean in) {
+		scrollBarVert = in;
+	}
+	
+
 //---  Getter Methods   -----------------------------------------------------------------------
 
 	/**
@@ -417,6 +494,16 @@ public class ElementPanel extends Panel{
 			}
 		}
 		return images.get(path);
+	}
+	
+	private void openLock() {
+		while(mutex) {
+		}
+		mutex = true;
+	}
+	
+	private void closeLock() {
+		mutex = false;
 	}
 	
 //---  Draw   ---------------------------------------------------------------------------------
@@ -706,18 +793,6 @@ public class ElementPanel extends Panel{
 		for(String s : remv) {
 			removeElement(s);
 		}
-	}
-	
-//---  Mechanics   ----------------------------------------------------------------------------
-	
-	private void openLock() {
-		while(mutex) {
-		}
-		mutex = true;
-	}
-	
-	private void closeLock() {
-		mutex = false;
 	}
 	
 }

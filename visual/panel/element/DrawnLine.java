@@ -59,6 +59,7 @@ public class DrawnLine extends Element{
 		angle = Math.atan(-1.0 / (rise / run));
 		adjustX = (int)(Math.cos(angle) * thick/2.0);
 		adjustY = (int)(Math.sin(angle) * thick/2.0);
+		System.out.println(offsetX + " " + offsetY);
 		p = new Polygon(new int[] {x1 - adjustX + offsetX, x1 + adjustX + offsetX, x2 + adjustX + offsetX, x2 - adjustX + offsetX}, new int[] {y1 - adjustY + offsetY, y1 + adjustY + offsetY, y2 + adjustY + offsetY, y2 - adjustY + offsetY}, 4);
 	}
 	
@@ -77,5 +78,24 @@ public class DrawnLine extends Element{
 		super.setY(inY);
 		generatePolygon();
 	}
-	
+
+	@Override
+	public int getMinimumX() {
+		return getX() < x2 ? getX() - thick/2 : x2 - thick/2;
+	}
+
+	@Override
+	public int getMaximumX() {
+		return getX() > x2 ? getX() + thick/2 : x2 + thick/2;
+	}
+
+	@Override
+	public int getMinimumY() {
+		return getY() < y2 ? getY() - thick/2 : y2 - thick/2;
+	}
+
+	@Override
+	public int getMaximumY() {
+		return getY() > y2 ? getY() + thick/2 : y2 + thick/2;
+	}
 }
