@@ -212,7 +212,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener{
 			if(d.wasClicked(x, y)) {
 				happened = true;
 				activeSelect = d.getCode();
-				containerFrame.clickEvent(getSelected(), x, y);
+				containerFrame.clickReleaseEvent(getSelected(), x, y);
 			}
 		}
 		if(!happened)
@@ -226,7 +226,19 @@ public class ClickComponent implements MouseListener, MouseMotionListener{
 	
 	@Override
 	public void mousePressed(MouseEvent e){
-		//This space intentionally left blank, but doesn't need to be
+		containerFrame.getPanel().requestFocusInWindow();
+		Integer x = e.getX();
+		Integer y = e.getY();
+		boolean happened = false;
+		for(Detectable d : new ArrayList<Detectable>(detectionRegions)) {
+			if(d.wasClicked(x, y)) {
+				happened = true;
+				activeSelect = d.getCode();
+				containerFrame.clickPressEvent(getSelected(), x, y);
+			}
+		}
+		if(!happened)
+			containerFrame.clickPressEvent(getSelected(), x, y);
 	}
 	
 	@Override
@@ -234,10 +246,21 @@ public class ClickComponent implements MouseListener, MouseMotionListener{
 		//This space intentionally left blank, but doesn't need to be
 	}
 
-
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		containerFrame.dragEvent(e.getX(), e.getY());
+		containerFrame.getPanel().requestFocusInWindow();
+		Integer x = e.getX();
+		Integer y = e.getY();
+		boolean happened = false;
+		for(Detectable d : new ArrayList<Detectable>(detectionRegions)) {
+			if(d.wasClicked(x, y)) {
+				happened = true;
+				activeSelect = d.getCode();
+				containerFrame.dragEvent(getSelected(), x, y);
+			}
+		}
+		if(!happened)
+			containerFrame.dragEvent(getSelected(), x, y);
 		
 	}
 

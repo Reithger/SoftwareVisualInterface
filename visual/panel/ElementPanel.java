@@ -10,6 +10,7 @@ import java.awt.*;
 
 import javax.imageio.ImageIO;
 
+import input.ClickRegionRectangle;
 import visual.panel.element.*;
 
 /**
@@ -34,7 +35,7 @@ public class ElementPanel extends Panel{
 	/** boolean value used to denote the meaning of the boolean value given to many methods*/
 	public static final boolean NON_CENTERED = false;
 	
-	public static final int CODE_SCROLL_BAR_Y = -1;
+	public static final int CODE_SCROLL_BAR_Y = -57;
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -68,10 +69,16 @@ public class ElementPanel extends Panel{
 	
 	private boolean vertBarSelect;
 	
+	private boolean horizBarSelect;
+	
 	private int startYVertBar;
+	
+	private int startXHorizBar;
 	
 	private int yVertChange;
 
+	private int xHorizChange;
+	
 	//TODO: Get total vertical space used, including below 0 (negative offset)
 		//TODO: Function to get maximum/minimum x/y values from all elements (add to Abstract class)
 		//TODO: Parse all Elements for minimum/maximums, get current origin, calculate maximum/minimum values for origin given Element positions
@@ -85,38 +92,81 @@ public class ElementPanel extends Panel{
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
 		closeLock();
 		Collections.sort(elements);
+		int minY = getMinimumScreenY();
+		int maxY = getMaximumScreenY();
+		if((getOffsetY() > minY || getOffsetY() + getHeight() < maxY) && scrollBarVert) {
+			removeClickRegion(CODE_SCROLL_BAR_Y);
+			int subSpaceY = Math.abs(getOffsetY() - minY);
+			int overSpaceY = getMaximumScreenY() - getHeight() + getOffsetY();
+			boolean minSize = subSpaceY + overSpaceY + getWidth() / 40 >= getHeight();
+			int barButtonSizeY = minSize ? getWidth() / 40 : getHeight() - subSpaceY - overSpaceY;
+			int barTopSizeY = minSize ? (int)(getHeight() * (double)(subSpaceY / (double)(subSpaceY + overSpaceY + getWidth() / 40))) : subSpaceY;
+			yVertChange = minSize ? (int)((subSpaceY + overSpaceY) / (double)(getHeight() - barButtonSizeY)) : 1;
+			g.drawRect(getWidth() - getWidth() / 40 - 2, 0, getWidth() / 40, getHeight());
+			g.fillRect(getWidth() - getWidth() / 40 - 2, barTopSizeY, getWidth() / 40, barButtonSizeY);
+			addClickRegion(new ClickRegionRectangle(getWidth() - getWidth() / 40 - 2, barTopSizeY, getWidth() / 40, barButtonSizeY, CODE_SCROLL_BAR_Y));
+		}
+		int minX = getMinimumScreenX();
+		int maxX = getMaximumScreenX();
+		g.setColor(save);
+	}
+
+	
+	private int getMinimumScreenX() {
 		int minX = 0;
-		int minY = 0;
-		int maxX = 0;
-		int maxY = 0;
+		openLock();
+		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
 			if(e.getMinimumX() < minX) {
 				minX = e.getMinimumX();
 			}
+		}
+		return minX;
+	}
+	
+	private int getMaximumScreenX() {
+		int maxX = 0;
+		openLock();
+		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		closeLock();
+		for(int i = 0; i < elements.size(); i++) {
+			Element e = elements.get(i);
 			if(e.getMaximumX() > maxX) {
 				maxX = e.getMaximumX();
 			}
+		}
+		return maxX;
+	}
+	
+	private int getMinimumScreenY() {
+		int minY = 0;
+		openLock();
+		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		closeLock();
+		for(int i = 0; i < elements.size(); i++) {
+			Element e = elements.get(i);
 			if(e.getMinimumY() < minY) {
 				minY = e.getMinimumY();
 			}
+		}
+		return minY;
+	}
+	
+	private int getMaximumScreenY() {
+		int maxY = 0;
+		openLock();
+		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		closeLock();
+		for(int i = 0; i < elements.size(); i++) {
+			Element e = elements.get(i);
 			if(e.getMaximumY() > maxY) {
 				maxY = e.getMaximumY();
 			}
 		}
-		if((getOffsetY() > minY || getOffsetY() + getHeight() < maxY) && scrollBarVert) {
-			int subSpaceY = getOffsetY() - minY;
-			int overSpaceY = maxY - (getOffsetY() + getHeight());
-			int barButtonSizeY = getHeight() - subSpaceY - overSpaceY;
-			boolean minSize = barButtonSizeY < getWidth() / 40;
-			barButtonSizeY = minSize ? getWidth() / 40 : barButtonSizeY;
-			int barTopSizeY = minSize ? (getHeight() - barButtonSizeY) * (subSpaceY / (subSpaceY + overSpaceY)) : subSpaceY;
-			int barBottomSizeY = minSize ? (getHeight() - barButtonSizeY) * (overSpaceY / (subSpaceY + overSpaceY)) : overSpaceY;
-			yVertChange = minSize ? (int)((subSpaceY + overSpaceY) / (double)(getHeight() - barButtonSizeY)) : 1;
-		}
-		g.setColor(save);
+		return maxY;
 	}
-
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -228,7 +278,7 @@ public class ElementPanel extends Panel{
 		}
 	}
 
-	//-- Reactions  -----------------------------------
+	//-- Mouse Reactions  -------------------------------------
 	
 	/**
 	 * Certain UI Elements have behavior that requires a communication between higher-level
@@ -238,15 +288,9 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void clickEvent(int event, int x, int y){
-		System.out.println("H: " + event);
 		getParentFrame().dispenseAttention();
 		setAttention(true);
 		focusElement = null;
-		if(event == CODE_SCROLL_BAR_Y) {
-			vertBarSelect = true;
-			startYVertBar = y;
-			return;
-		}
 		for(String s : clickList) {
 			Clickable c = getClickableElement(s);
 			if(c == null) {
@@ -258,7 +302,42 @@ public class ElementPanel extends Panel{
 		}
 		clickBehaviour(event, x, y);
 	}
-
+	
+	public void clickReleaseEvent(int event, int x, int y) {
+		vertBarSelect = false;
+		clickReleaseBehaviour(event, x, y);
+	}
+	
+	@Override
+	public void clickPressEvent(int event, int x, int y) {
+		if(event == CODE_SCROLL_BAR_Y) {
+			vertBarSelect = true;
+			startYVertBar = y;
+			return;
+		}
+		clickPressBehaviour(event, x, y);
+	}
+	
+	/**
+	 * Certain UI Elements have behavior that requires a communication between higher-level
+	 * objects, so that is handled before the dragBehaviour() method which the programmer
+	 * can overwrite to define the interactive behavior of this Panel.
+	 */
+	
+	@Override
+	public void dragEvent(int event, int x, int y) {
+		if(vertBarSelect == true) {
+			int difY = y - startYVertBar;
+			int newOffset = getOffsetY() - difY * yVertChange;
+			newOffset = newOffset > 0 - getMinimumScreenY() ? 0 - getMinimumScreenY() : newOffset < getHeight() - getMaximumScreenY() ? getHeight() - getMaximumScreenY() : newOffset;
+			setOffsetY(newOffset);
+			startYVertBar = y;
+		}
+		dragBehaviour(event, x, y);
+	}
+	
+	//-- Mouse Event Behaviours  ------------------------------
+	
 	/**
 	 * This method exists to be overwritten on an object-by-object basis by the programmer
 	 * to define the interactive behavior of this ElementPanel object in regards to click
@@ -272,27 +351,15 @@ public class ElementPanel extends Panel{
 	public void clickBehaviour(int event, int x, int y) {
 		System.out.println("Overwrite this method");
 	}
-	
-	public void clickReleaseEvent(int event, int x, int y) {
-		vertBarSelect = false;
+
+	public void clickReleaseBehaviour(int event, int x, int y){
+		
 	}
-	
-	/**
-	 * Certain UI Elements have behavior that requires a communication between higher-level
-	 * objects, so that is handled before the dragBehaviour() method which the programmer
-	 * can overwrite to define the interactive behavior of this Panel.
-	 */
-	
-	@Override
-	public void dragEvent(int x, int y) {
-		System.out.println(x + " " + y + " " + vertBarSelect);
-		if(vertBarSelect == true) {
-			int difY = y - startYVertBar;
-			setOffsetY(getOffsetY() + difY * yVertChange);
-			startYVertBar = y;
-		}
+
+	public void clickPressBehaviour(int event, int x, int y) {
+		
 	}
-	
+
 	/**
 	 * This method exists to be overwritten on an object-by-object basis by the programmer
 	 * to define the interactive behavior of this ElementPanel object in regards to drag
@@ -302,9 +369,11 @@ public class ElementPanel extends Panel{
 	 * @param y
 	 */
 	
-	public void dragBehaviour(int x, int y) {
+	public void dragBehaviour(int event, int x, int y) {
 		
 	}
+	
+	//-- Keyboard Reactions  ----------------------------------
 	
 	/**
 	 * Certain UI Elements have behavior that requires a communication between higher-level
@@ -321,6 +390,8 @@ public class ElementPanel extends Panel{
 		}
 		keyBehaviour(event);
 	}
+	
+	//-- Keyboard Event Behaviours  ---------------------------
 	
 	/**
 	 * This method exists to be overwritten on an object-by-object basis by the programmer
@@ -794,5 +865,9 @@ public class ElementPanel extends Panel{
 			removeElement(s);
 		}
 	}
+
+
+
+
 	
 }

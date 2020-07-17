@@ -103,7 +103,9 @@ public abstract class Panel{
 	
 	public abstract void clickReleaseEvent(int event, int x, int y);
 	
-	public abstract void dragEvent(int x, int y);
+	public abstract void clickPressEvent(int event, int x, int y);
+	
+	public abstract void dragEvent(int event, int x, int y);
 	
 	/**
 	 * This method is triggered whenever the Panel object detects user interaction

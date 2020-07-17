@@ -120,7 +120,7 @@ public class CanvasPanel extends Panel{
 	}
 	
 	@Override
-	public void dragEvent(int x, int y) {
+	public void dragEvent(int event, int x, int y) {
 		clickEvent(-1, x, y);
 	}
 
@@ -194,5 +194,13 @@ public class CanvasPanel extends Panel{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void clickPressEvent(int event, int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 
 }

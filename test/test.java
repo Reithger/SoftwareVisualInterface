@@ -62,6 +62,7 @@ public class test {
 			
 		};
 		
+		pan.setScrollBarVertical(false);
 		
 		pan2.addRectangle("rect", 1, pan2.getWidth() /20, pan2.getHeight() / 20, pan2.getWidth() * 18/20, pan2.getHeight() * 18/20, false, Color.red);
 		pan2.addRectangle("rect2", 8, pan2.getWidth() / 2,  pan2.getHeight() / 6, pan2.getWidth() * 16 / 18,  pan2.getHeight() * 2 / 18, true, Color.white, Color.black);
