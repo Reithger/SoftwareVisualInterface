@@ -35,6 +35,7 @@ public class ElementPanel extends Panel{
 	/** boolean value used to denote the meaning of the boolean value given to many methods*/
 	public static final boolean NON_CENTERED = false;
 	
+	public static final int CODE_SCROLL_BAR_X = -58;
 	public static final int CODE_SCROLL_BAR_Y = -57;
 	
 //---  Instance Variables   -------------------------------------------------------------------
@@ -78,96 +79,7 @@ public class ElementPanel extends Panel{
 	private int yVertChange;
 
 	private int xHorizChange;
-	
-	//TODO: Get total vertical space used, including below 0 (negative offset)
-		//TODO: Function to get maximum/minimum x/y values from all elements (add to Abstract class)
-		//TODO: Parse all Elements for minimum/maximums, get current origin, calculate maximum/minimum values for origin given Element positions
-	//TODO: Get total horizontal space used, including below 0 (negative offset)
-	//TODO: Based on screen height/width and current offsetX/Y, calculate A) should the bar be displayed B) if so, the proportional size/placement of the scroll bar
-	//TODO: If something is offscreen, make a scrollbar to allow the user to adjust the offsets to see it
-	
-	private void updateScrollBar(Graphics g) {
-		Color save = g.getColor();
-		openLock();
-		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		closeLock();
-		Collections.sort(elements);
-		int minY = getMinimumScreenY();
-		int maxY = getMaximumScreenY();
-		if((getOffsetY() > minY || getOffsetY() + getHeight() < maxY) && scrollBarVert) {
-			removeClickRegion(CODE_SCROLL_BAR_Y);
-			int subSpaceY = Math.abs(getOffsetY() - minY);
-			int overSpaceY = getMaximumScreenY() - getHeight() + getOffsetY();
-			boolean minSize = subSpaceY + overSpaceY + getWidth() / 40 >= getHeight();
-			int barButtonSizeY = minSize ? getWidth() / 40 : getHeight() - subSpaceY - overSpaceY;
-			int barTopSizeY = minSize ? (int)(getHeight() * (double)(subSpaceY / (double)(subSpaceY + overSpaceY + getWidth() / 40))) : subSpaceY;
-			yVertChange = minSize ? (int)((subSpaceY + overSpaceY) / (double)(getHeight() - barButtonSizeY)) : 1;
-			g.drawRect(getWidth() - getWidth() / 40 - 2, 0, getWidth() / 40, getHeight());
-			g.fillRect(getWidth() - getWidth() / 40 - 2, barTopSizeY, getWidth() / 40, barButtonSizeY);
-			addClickRegion(new ClickRegionRectangle(getWidth() - getWidth() / 40 - 2, barTopSizeY, getWidth() / 40, barButtonSizeY, CODE_SCROLL_BAR_Y));
-		}
-		int minX = getMinimumScreenX();
-		int maxX = getMaximumScreenX();
-		g.setColor(save);
-	}
 
-	
-	private int getMinimumScreenX() {
-		int minX = 0;
-		openLock();
-		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		closeLock();
-		for(int i = 0; i < elements.size(); i++) {
-			Element e = elements.get(i);
-			if(e.getMinimumX() < minX) {
-				minX = e.getMinimumX();
-			}
-		}
-		return minX;
-	}
-	
-	private int getMaximumScreenX() {
-		int maxX = 0;
-		openLock();
-		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		closeLock();
-		for(int i = 0; i < elements.size(); i++) {
-			Element e = elements.get(i);
-			if(e.getMaximumX() > maxX) {
-				maxX = e.getMaximumX();
-			}
-		}
-		return maxX;
-	}
-	
-	private int getMinimumScreenY() {
-		int minY = 0;
-		openLock();
-		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		closeLock();
-		for(int i = 0; i < elements.size(); i++) {
-			Element e = elements.get(i);
-			if(e.getMinimumY() < minY) {
-				minY = e.getMinimumY();
-			}
-		}
-		return minY;
-	}
-	
-	private int getMaximumScreenY() {
-		int maxY = 0;
-		openLock();
-		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		closeLock();
-		for(int i = 0; i < elements.size(); i++) {
-			Element e = elements.get(i);
-			if(e.getMaximumY() > maxY) {
-				maxY = e.getMaximumY();
-			}
-		}
-		return maxY;
-	}
-	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
@@ -216,6 +128,43 @@ public class ElementPanel extends Panel{
 			updateScrollBar(g);
 	}
 	
+	private void updateScrollBar(Graphics g) {
+		Color save = g.getColor();
+		openLock();
+		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		closeLock();
+		Collections.sort(elements);
+		int minY = getMinimumScreenY();
+		int maxY = getMaximumScreenY();
+		if((getOffsetY() > minY || getOffsetY() + getHeight() < maxY) && scrollBarVert) {
+			removeClickRegion(CODE_SCROLL_BAR_Y);
+			int subSpaceY = Math.abs(getOffsetY() - minY);
+			int overSpaceY = getMaximumScreenY() - getHeight() + getOffsetY();
+			boolean minSize = subSpaceY + overSpaceY + getWidth() / 40 >= getHeight();
+			int barButtonSizeY = minSize ? getWidth() / 40 : getHeight() - subSpaceY - overSpaceY;
+			int barTopSizeY = minSize ? (int)(getHeight() * (double)(subSpaceY / (double)(subSpaceY + overSpaceY + getWidth() / 40))) : subSpaceY;
+			yVertChange = minSize ? (int)((subSpaceY + overSpaceY) / (double)(getHeight() - barButtonSizeY)) : 1;
+			g.drawRect(getWidth() - getWidth() / 40 - 2, 0, getWidth() / 40, getHeight());
+			g.fillRect(getWidth() - getWidth() / 40 - 2, barTopSizeY, getWidth() / 40, barButtonSizeY);
+			addClickRegion(new ClickRegionRectangle(getWidth() - getWidth() / 40 - 2, barTopSizeY, getWidth() / 40, barButtonSizeY, CODE_SCROLL_BAR_Y));
+		}
+		int minX = getMinimumScreenX();
+		int maxX = getMaximumScreenX();
+		if((getOffsetX() > minX || getOffsetX() + getHeight() < maxX) && scrollBarHoriz) {
+			removeClickRegion(CODE_SCROLL_BAR_X);
+			int subSpaceX = Math.abs(getOffsetX() - minX);
+			int overSpaceX = getMaximumScreenX() - getWidth() + getOffsetX();
+			boolean minSize = subSpaceX + overSpaceX + getHeight() / 40 >= getWidth();
+			int barButtonSizeX = minSize ? getHeight() / 40 : getWidth() - subSpaceX - overSpaceX;
+			int barTopSizeX = minSize ? (int)(getWidth() * (double)(subSpaceX / (double)(subSpaceX + overSpaceX + getHeight() / 40))) : subSpaceX;
+			xHorizChange = minSize ? (int)((subSpaceX + overSpaceX) / (double)(getWidth() - barButtonSizeX)) : 1;
+			g.drawRect(0, getHeight() - getHeight() / 40 - 2, getWidth(), getHeight() / 40);
+			g.fillRect(barTopSizeX, getHeight() - getHeight() / 40 - 2, barButtonSizeX, getHeight() / 40);
+			addClickRegion(new ClickRegionRectangle(subSpaceX, getHeight() - getHeight() / 40 - 2, barButtonSizeX, getHeight() / 40, CODE_SCROLL_BAR_X));
+		}
+		g.setColor(save);
+	}
+
 	public boolean moveElement(String name, int x, int y) {
 		Element e = getElement(name);
 		if(e == null) {
@@ -305,6 +254,7 @@ public class ElementPanel extends Panel{
 	
 	public void clickReleaseEvent(int event, int x, int y) {
 		vertBarSelect = false;
+		horizBarSelect = false;
 		clickReleaseBehaviour(event, x, y);
 	}
 	
@@ -313,6 +263,11 @@ public class ElementPanel extends Panel{
 		if(event == CODE_SCROLL_BAR_Y) {
 			vertBarSelect = true;
 			startYVertBar = y;
+			return;
+		}
+		if(event == CODE_SCROLL_BAR_X) {
+			horizBarSelect = true;
+			startXHorizBar = x;
 			return;
 		}
 		clickPressBehaviour(event, x, y);
@@ -332,6 +287,13 @@ public class ElementPanel extends Panel{
 			newOffset = newOffset > 0 - getMinimumScreenY() ? 0 - getMinimumScreenY() : newOffset < getHeight() - getMaximumScreenY() ? getHeight() - getMaximumScreenY() : newOffset;
 			setOffsetY(newOffset);
 			startYVertBar = y;
+		}
+		if(horizBarSelect == true) {
+			int difX = x - startXHorizBar;
+			int newOffset = getOffsetX() - difX * xHorizChange;
+			newOffset = newOffset > 0 - getMinimumScreenX() ? 0 - getMinimumScreenX() : newOffset < getWidth() - getMaximumScreenX() ? getWidth() - getMaximumScreenX() : newOffset;
+			setOffsetX(newOffset);
+			startXHorizBar = x;
 		}
 		dragBehaviour(event, x, y);
 	}
@@ -528,6 +490,62 @@ public class ElementPanel extends Panel{
 		int out = drawList.values().size();
 		closeLock();
 		return out;
+	}
+	
+	private int getMinimumScreenX() {
+		int minX = 0;
+		openLock();
+		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		closeLock();
+		for(int i = 0; i < elements.size(); i++) {
+			Element e = elements.get(i);
+			if(e.getMinimumX() < minX) {
+				minX = e.getMinimumX();
+			}
+		}
+		return minX > 0 ? 0 : minX;
+	}
+	
+	private int getMaximumScreenX() {
+		int maxX = 0;
+		openLock();
+		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		closeLock();
+		for(int i = 0; i < elements.size(); i++) {
+			Element e = elements.get(i);
+			if(e.getMaximumX() > maxX) {
+				maxX = e.getMaximumX();
+			}
+		}
+		return maxX < getWidth() ? getWidth() : maxX;
+	}
+	
+	private int getMinimumScreenY() {
+		int minY = 0;
+		openLock();
+		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		closeLock();
+		for(int i = 0; i < elements.size(); i++) {
+			Element e = elements.get(i);
+			if(e.getMinimumY() < minY) {
+				minY = e.getMinimumY();
+			}
+		}
+		return minY > 0 ? 0 : minY;
+	}
+	
+	private int getMaximumScreenY() {
+		int maxY = 0;
+		openLock();
+		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		closeLock();
+		for(int i = 0; i < elements.size(); i++) {
+			Element e = elements.get(i);
+			if(e.getMaximumY() > maxY) {
+				maxY = e.getMaximumY();
+			}
+		}
+		return maxY < getHeight() ? getHeight() : maxY;
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------
@@ -865,9 +883,5 @@ public class ElementPanel extends Panel{
 			removeElement(s);
 		}
 	}
-
-
-
-
 	
 }

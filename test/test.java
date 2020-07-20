@@ -71,6 +71,8 @@ public class test {
 		pan2.addImage("sas", 15, pan2.getWidth() / 2, pan2.getHeight() * 2 / 3, true, imagePath, .5);
 		
 		pan2.addLine("line5", 30, 40, 10, 50, 750, 5, Color.black);
+		pan2.addLine("line6", 30, 40, 10, 50, 50, 5, Color.black);
+		pan2.setScrollBarHorizontal(false);
 		
 		CanvasPanel can = new CanvasPanel(800, 0, 300, 500, 1) {
 			private boolean grid;
