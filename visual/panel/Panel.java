@@ -204,6 +204,14 @@ public abstract class Panel{
 		return offsetY;
 	}
 	
+	public abstract int getMinimumScreenX();
+	
+	public abstract int getMaximumScreenX();
+	
+	public abstract int getMinimumScreenY();
+	
+	public abstract int getMaximumScreenY();
+	
 //---  Adder Methods   ------------------------------------------------------------------------
 	
 	/**

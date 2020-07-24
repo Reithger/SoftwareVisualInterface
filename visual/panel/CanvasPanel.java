@@ -151,7 +151,27 @@ public class CanvasPanel extends Panel{
 	public int getZoom() {
 		return zoom;
 	}
-	
+
+	@Override
+	public int getMinimumScreenX() {
+		return 0;
+	}
+
+	@Override
+	public int getMaximumScreenX() {
+		return getWidth();
+	}
+
+	@Override
+	public int getMinimumScreenY() {
+		return 0;
+	}
+
+	@Override
+	public int getMaximumScreenY() {
+		return getHeight();
+	}
+
 //---  Mechanics   ----------------------------------------------------------------------------
 
 	private void formatSubImages() {
@@ -200,7 +220,5 @@ public class CanvasPanel extends Panel{
 		// TODO Auto-generated method stub
 		
 	}
-
-
 
 }
