@@ -21,7 +21,8 @@ public class test {
 	 */
 
 	public static void main(String[] args) {
-		String imagePath = "src\\Saskia_Portrait.jpg";
+		String imagePath = "src\\test\\assets\\Saskia_Portrait.jpg";
+		String[] imagesPaths = new String[] {"src\\test\\assets\\burner5.png","src\\test\\assets\\burner6.png","src\\test\\assets\\burner7.png"};
 		
 		WindowFrame fram = new WindowFrame(1200, 500);
 
@@ -48,6 +49,7 @@ public class test {
 		pan.addText("tex2", 10, pan.getWidth() / 2, pan.getHeight() /  2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "F F F", defaultFont, false, false, false);
 		pan.addText("tex3", 10, pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T F T", defaultFont, true, false, true);
 		
+		pan.addAnimation("anim", 23, pan.getWidth() / 2, pan.getHeight() * 3 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
 		
 		ElementPanel pan2 = new ElementPanel(400, 0, 300, 500) {
 			public void keyBehaviour(char event) {
@@ -70,9 +72,9 @@ public class test {
 		
 		pan2.addImage("sas", 15, pan2.getWidth() / 2, pan2.getHeight() * 2 / 3, true, imagePath, .5);
 		
-		pan2.addLine("line5", 30, 40, 10, 50, 750, 5, Color.black);
-		pan2.addLine("line6", 30, 40, 10, 50, 50, 5, Color.black);
-		pan2.setScrollBarHorizontal(false);
+		pan2.addLine("line5", 30, 40, -70, 50, 750, 5, Color.black);
+		pan2.addLine("line6", 30, -40, 10, 500, 50, 5, Color.black);
+		pan2.setScrollBarHorizontal(true);
 		
 		CanvasPanel can = new CanvasPanel(800, 0, 300, 500, 1) {
 			private boolean grid;

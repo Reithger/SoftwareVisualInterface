@@ -23,7 +23,7 @@ public interface Clickable {
 	 * @return - Returns the Detectable object for this Clickable object.
 	 */
 	
-	public abstract Detectable getDetectionRegion();
+	public abstract Detectable getDetectionRegion(int offsetX, int offsetY);
 	
 	/**
 	 * Getter method to request the integer code that has been associated to this Clickable object;

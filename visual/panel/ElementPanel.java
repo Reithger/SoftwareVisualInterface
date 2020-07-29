@@ -23,6 +23,7 @@ import visual.panel.element.*;
  * @author Ada Clevinger
  * 
  * TODO: Small pixel font options for text
+ * TODO: Region categories with scroll implementation, 'sub-panels'? Ugh, tricky to do.
  *
  */
 
@@ -62,7 +63,6 @@ public class ElementPanel extends Panel{
 	
 	private Scrollbar scrollbar;
 	
-
 
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -167,7 +167,7 @@ public class ElementPanel extends Panel{
 		for(int i = 0; i < clickList.size(); i++) {
 			Clickable c = getClickableElement(clickList.get(i));
 			if(c != null) {
-				addClickRegion(c.getDetectionRegion());
+				addClickRegion(c.getDetectionRegion(getOffsetX(), getOffsetY()));
 			}
 		}
 	}
@@ -598,6 +598,35 @@ public class ElementPanel extends Panel{
 	
 	public void addImage(String name, int priority, int x, int y, boolean center, Image img, double scale) {
 		DrawnImage d = new DrawnImage(x, y, priority, center, img, scale);
+		handleAddElement(name, d);
+	}
+	
+	
+	public void addAnimation(String name, int priority, int x, int y, boolean center, int period, int scale, String[] images) {
+		Image[] rec = new Image[images.length];
+		for(int i = 0; i < rec.length; i++) {
+			rec[i] = retrieveImage(images[i]);
+		}
+		DrawnAnimation d = new DrawnAnimation(x, y, priority, period, center, scale, rec);
+		handleAddElement(name, d);
+	}
+	
+	public void addAnimation(String name, int priority, int x, int y, boolean center, int[] period, int scale, String[] images) {
+		Image[] rec = new Image[images.length];
+		for(int i = 0; i < rec.length; i++) {
+			rec[i] = retrieveImage(images[i]);
+		}
+		DrawnAnimation d = new DrawnAnimation(x, y, priority, period, center, scale, rec);
+		handleAddElement(name, d);
+	}
+	
+	public void addAnimation(String name, int priority, int x, int y, boolean center, int period, int scale, Image[] images) {
+		DrawnAnimation d = new DrawnAnimation(x, y, priority, period, center, scale, images);
+		handleAddElement(name, d);
+	}
+	
+	public void addAnimation(String name, int priority, int x, int y, boolean center, int[] period, int scale, Image[] images) {
+		DrawnAnimation d = new DrawnAnimation(x, y, priority, period, center, scale, images);
 		handleAddElement(name, d);
 	}
 	
