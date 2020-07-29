@@ -72,7 +72,6 @@ public class Scrollbar {
 			int butWid = (int)((double)wid * BAR_SIZE_PROPORTION);
 			
 			int subSpaceY = Math.abs(minY + offY);
-			System.out.println("B:" + subSpaceY + " " + minY + " " + offY);
 			int overSpaceY = maxY - hei + offY;
 			boolean minSize = (subSpaceY + overSpaceY + butWid) >= hei;
 			int barButtonSizeY = minSize ? butWid : hei - subSpaceY - overSpaceY;
@@ -97,10 +96,8 @@ public class Scrollbar {
 			
 			int subSpaceX = Math.abs(offX + minX);
 			int overSpaceX = maxX - wid + offX;
-			System.out.println(offX + " " + minX + " " + maxX);
 			boolean minSize = (subSpaceX + overSpaceX + butHei) >= wid;
 			int barButtonSizeX = minSize ? butHei : wid - subSpaceX - overSpaceX;
-			System.out.println("H:" + barButtonSizeX + " " + subSpaceX + " " + overSpaceX);
 			int barTopSizeX = minSize ? (int)(wid * (double)(subSpaceX / (double)(subSpaceX + overSpaceX)) - barButtonSizeX / 2) : subSpaceX;
 			xHorizChange = minSize ? (int)((subSpaceX + overSpaceX) / (double)(wid - barButtonSizeX)) : 1;
 			g.drawRect(0, hei - butHei - 1, wid - (liveVert ? (int)((double)panel.getWidth() * BAR_SIZE_PROPORTION) : 0) - 1, butHei);

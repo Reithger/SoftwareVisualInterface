@@ -59,7 +59,6 @@ public class DrawnLine extends Element{
 		angle = Math.atan(-1.0 / (rise / run));
 		adjustX = (int)(Math.cos(angle) * thick/2.0);
 		adjustY = (int)(Math.sin(angle) * thick/2.0);
-		System.out.println(offsetX + " " + offsetY);
 		p = new Polygon(new int[] {x1 - adjustX + offsetX, x1 + adjustX + offsetX, x2 + adjustX + offsetX, x2 - adjustX + offsetX}, new int[] {y1 - adjustY + offsetY, y1 + adjustY + offsetY, y2 + adjustY + offsetY, y2 - adjustY + offsetY}, 4);
 	}
 	
