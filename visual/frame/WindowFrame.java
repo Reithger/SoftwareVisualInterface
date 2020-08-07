@@ -65,9 +65,7 @@ public class WindowFrame extends Frame{
 	
 	public void reservePanel(String windowName, String panelName, Panel panel) {
 		if(windows.get(windowName) == null) {
-			openLock();
-			windows.put(windowName, new HashMap<String, Panel>());
-			closeLock();
+			reserveWindow(windowName);
 		}
 		openLock();
 		windows.get(windowName).put(panelName, panel);

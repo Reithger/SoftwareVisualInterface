@@ -66,7 +66,6 @@ public class CanvasPanel extends Panel{
 		for(int i = 0; i < canvas.length / zoom; i++) {
 			for(int j = 0; j < canvas[i].length / zoom; j++) {
 				canvas[i][j] =  new Color(i  % 255, j % 255, (i * j) % 255);
-
 			}
 		}
 	}
@@ -105,10 +104,27 @@ public class CanvasPanel extends Panel{
 	}
 
 	public void updateSize(int newWidth, int newHeight) {
-		//TODO: Retain as much information as possible
+		width = newWidth;
+		height = newHeight;
+		Color[][] out = new Color[newWidth][newHeight];
+		for(int i = 0; i < newWidth; i++) {
+			for(int j = 0; j < newHeight; j++) {
+				if(i < canvas.length && j < canvas[i].length) {
+					out[i][j] = canvas[i][j];
+				}
+			}
+		}
+		canvas = out;
 		formatSubImages();
 	}
 
+	public void updateCanvas(Color[][] newCan) {
+		canvas = newCan;
+		width = newCan.length;
+		height = newCan[0].length;
+		formatSubImages();
+	}
+	
 	//-- Reactions  -----------------------------------
 	
 	@Override
@@ -172,6 +188,28 @@ public class CanvasPanel extends Panel{
 		return getHeight();
 	}
 
+	public BufferedImage getImage() {
+		BufferedImage out = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		for(int i = 0; i < canvas.length; i++) {
+			for(int j = 0; j < canvas[i].length; j++) {
+				out.setRGB(i, j, canvas[i][j].getRGB());
+			}
+		}
+		return out;
+	}
+	
+	public BufferedImage getImage(double scale) {
+		int wid = (int)(scale * width);
+		int hei = (int)(scale * height);
+		BufferedImage out = new BufferedImage(wid, hei, BufferedImage.TYPE_INT_ARGB);
+		for(int i = 0; i < out.getWidth(); i++) {
+			for(int j = 0; j < out.getHeight(); j++) {
+				out.setRGB(i, j, canvas[(int)(i / scale)][(int)(j / scale)].getRGB());
+			}
+		}
+		return out;
+	}
+	
 //---  Mechanics   ----------------------------------------------------------------------------
 
 	private void formatSubImages() {

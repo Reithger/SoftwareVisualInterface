@@ -17,9 +17,9 @@ public class DrawnAnimation extends Element{
 	
 	private Image[] images;
 	
-	private int scale;
+	private double scale;
 
-	public DrawnAnimation(int x, int y, int prior, int wait, boolean center, int inScale, Image[] imgs) {
+	public DrawnAnimation(int x, int y, int prior, int wait, boolean center, double inScale, Image[] imgs) {
 		setX(x);
 		setY(y);
 		setDrawPriority(prior);
@@ -34,7 +34,7 @@ public class DrawnAnimation extends Element{
 		scaleImages();
 	}
 	
-	public DrawnAnimation(int x, int y, int prior, int[] wait, boolean center, int inScale, Image[] imgs) {
+	public DrawnAnimation(int x, int y, int prior, int[] wait, boolean center, double inScale, Image[] imgs) {
 		setX(x);
 		setY(y);
 		setDrawPriority(prior);

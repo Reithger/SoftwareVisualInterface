@@ -301,7 +301,6 @@ public class ElementPanel extends Panel{
 		scrollbar.setScrollBarVertical(in);
 	}
 	
-
 //---  Getter Methods   -----------------------------------------------------------------------
 
 	/**
@@ -509,6 +508,11 @@ public class ElementPanel extends Panel{
 		return images.get(path);
 	}
 	
+	public boolean removeCachedImage(String pathIn) {
+		String path = pathIn.replace("\\", "/");
+		return null != images.remove(path);
+	}
+	
 	private void openLock() {
 		while(mutex) {
 		}
@@ -602,7 +606,7 @@ public class ElementPanel extends Panel{
 	}
 	
 	
-	public void addAnimation(String name, int priority, int x, int y, boolean center, int period, int scale, String[] images) {
+	public void addAnimation(String name, int priority, int x, int y, boolean center, int period, double scale, String[] images) {
 		Image[] rec = new Image[images.length];
 		for(int i = 0; i < rec.length; i++) {
 			rec[i] = retrieveImage(images[i]);
@@ -611,7 +615,7 @@ public class ElementPanel extends Panel{
 		handleAddElement(name, d);
 	}
 	
-	public void addAnimation(String name, int priority, int x, int y, boolean center, int[] period, int scale, String[] images) {
+	public void addAnimation(String name, int priority, int x, int y, boolean center, int[] period, double scale, String[] images) {
 		Image[] rec = new Image[images.length];
 		for(int i = 0; i < rec.length; i++) {
 			rec[i] = retrieveImage(images[i]);
@@ -620,12 +624,12 @@ public class ElementPanel extends Panel{
 		handleAddElement(name, d);
 	}
 	
-	public void addAnimation(String name, int priority, int x, int y, boolean center, int period, int scale, Image[] images) {
+	public void addAnimation(String name, int priority, int x, int y, boolean center, int period, double scale, Image[] images) {
 		DrawnAnimation d = new DrawnAnimation(x, y, priority, period, center, scale, images);
 		handleAddElement(name, d);
 	}
 	
-	public void addAnimation(String name, int priority, int x, int y, boolean center, int[] period, int scale, Image[] images) {
+	public void addAnimation(String name, int priority, int x, int y, boolean center, int[] period, double scale, Image[] images) {
 		DrawnAnimation d = new DrawnAnimation(x, y, priority, period, center, scale, images);
 		handleAddElement(name, d);
 	}
