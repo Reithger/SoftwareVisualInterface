@@ -110,6 +110,14 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 		super.setY(inY);
 	}
 	
+//---  Setter Methods   -----------------------------------------------------------------------
+	
+	public void setText(String text) {
+		storedText = new StringBuilder();
+		storedText.append(text);
+		drText.changeText(getText());
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public String getText() {

@@ -301,6 +301,14 @@ public class ElementPanel extends Panel{
 		scrollbar.setScrollBarVertical(in);
 	}
 	
+	public void setElementStoredText(String elementName, String newText) {
+		TextStorage sT = getStoredTextElement(elementName);
+		if(sT == null) {
+			return;
+		}
+		sT.setText(newText);
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 
 	/**

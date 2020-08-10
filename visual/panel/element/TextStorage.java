@@ -22,4 +22,6 @@ public interface TextStorage {
 
 	public abstract String getText();
 	
+	public abstract void setText(String newText);
+	
 }
