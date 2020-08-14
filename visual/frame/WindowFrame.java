@@ -225,6 +225,11 @@ public class WindowFrame extends Frame{
 		closeLock();
 	}
 	
+	@Override
+	public void reactToResize() {
+		System.out.println("Overwrite this method: reactToResize() in WindowFrame.java");
+	}
+	
 //---  Mechanics   ----------------------------------------------------------------------------
 	
 	private void openLock() {

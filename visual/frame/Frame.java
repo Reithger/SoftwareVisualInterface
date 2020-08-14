@@ -2,6 +2,8 @@ package visual.frame;
 
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Timer;
 import javax.swing.JFrame;
 import timer.TimerRefresh;
@@ -36,6 +38,11 @@ public abstract class Frame{
 		frame = new JFrame() {
 			
 		};
+		frame.addComponentListener(new ComponentAdapter() {
+			public void componentResized(ComponentEvent componentEvent) {
+				reactToResize();
+			}
+		});
 		frame.getContentPane().setSize(width, height);
 		frame.getContentPane().setPreferredSize(new Dimension(width, height));
 		frame.setMinimumSize(frame.getSize());
@@ -77,6 +84,10 @@ public abstract class Frame{
 		}
 	}
 	
+	public void setResizable(boolean decide) {
+		frame.setResizable(decide);
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public abstract Panel getPanel(String name);
@@ -114,5 +125,7 @@ public abstract class Frame{
 	public abstract void reservePanel(String name, Panel panel);
 	
 	public abstract void dispenseAttention();
+	
+	public abstract void reactToResize();
 	
 }

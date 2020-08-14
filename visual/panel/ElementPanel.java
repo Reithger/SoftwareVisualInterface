@@ -235,7 +235,7 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void clickBehaviour(int event, int x, int y) {
-		System.out.println("Overwrite this method");
+		System.out.println("Overwrite this method: clickBehaviour in ElementPanel");
 	}
 
 	public void clickReleaseBehaviour(int event, int x, int y){
@@ -288,7 +288,7 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void keyBehaviour(char event) {
-		System.out.println("Overwrite this method");
+		System.out.println("Overwrite this method: keyBehaviour in ElementPanel");
 	}
 	
 //---  Setter Methods   -----------------------------------------------------------------------
