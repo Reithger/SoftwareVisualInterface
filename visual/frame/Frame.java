@@ -35,9 +35,7 @@ public abstract class Frame{
 //---  Constructors  --------------------------------------------------------------------------
 	
 	public Frame(int width, int height) {
-		frame = new JFrame() {
-			
-		};
+		frame = new JFrame();
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent componentEvent) {
 				reactToResize();

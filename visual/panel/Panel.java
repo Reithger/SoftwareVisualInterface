@@ -156,6 +156,10 @@ public abstract class Panel{
 		offsetY = inY;
 	}
 	
+	public void resize(int width, int height) {
+		panel.setSize(width, height);
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	/**
