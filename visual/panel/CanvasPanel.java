@@ -146,6 +146,10 @@ public class CanvasPanel extends Panel{
 		
 	}
 	
+	public void mouseWheelEvent(int rotation) {
+		
+	}
+	
 //---  Setter Methods   -----------------------------------------------------------------------
 	
 	public void setPenColor(Color drawSet) {

@@ -24,6 +24,8 @@ import visual.panel.element.*;
  * 
  * TODO: Small pixel font options for text
  * TODO: Region categories with scroll implementation, 'sub-panels'? Ugh, tricky to do.
+ * TODO: Diagnostic output of all Elements, instance variables
+ * TODO: Set some elements as absolutely positioned so offset doesn't move them
  *
  */
 
@@ -222,6 +224,10 @@ public class ElementPanel extends Panel{
 		dragBehaviour(event, x, y);
 	}
 	
+	public void mouseWheelEvent(int rotation) {
+		mouseWheelBehaviour(rotation);
+	}
+	
 	//-- Mouse Event Behaviours  ------------------------------
 	
 	/**
@@ -256,6 +262,10 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void dragBehaviour(int event, int x, int y) {
+		
+	}
+	
+	public void mouseWheelBehaviour(int rotation) {
 		
 	}
 	

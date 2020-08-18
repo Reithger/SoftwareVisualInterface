@@ -107,6 +107,8 @@ public abstract class Panel{
 	
 	public abstract void dragEvent(int event, int x, int y);
 	
+	public abstract void mouseWheelEvent(int rotation);
+	
 	/**
 	 * This method is triggered whenever the Panel object detects user interaction
 	 * via the KeyBoard; exact implementation of response is left to the implementation
@@ -155,6 +157,31 @@ public abstract class Panel{
 	public void setOffsetY(int inY) {
 		offsetY = inY;
 	}
+
+	public void setOffsetXBounded(int inX) {
+		if(inX > -getMinimumScreenX()) {
+			offsetX = -getMinimumScreenX();
+		}
+		else if(inX < getWidth() - getMaximumScreenX()) {
+			offsetX = getWidth() - getMaximumScreenX();
+		}
+		else {
+			offsetX = inX;
+		}
+	}
+	
+	public void setOffsetYBounded(int inY) {
+		if(inY > -getMinimumScreenY()) {
+			offsetY = -getMinimumScreenY();
+		}
+		else if(inY < getHeight() - getMaximumScreenY()) {
+			offsetY = getHeight() - getMaximumScreenY();
+		}
+		else {
+			offsetY = inY;
+		}
+	}
+	
 	
 	public void resize(int width, int height) {
 		panel.setSize(width, height);

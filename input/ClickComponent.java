@@ -20,7 +20,7 @@ import java.util.*;
  *
  */
 
-public class ClickComponent implements MouseListener, MouseMotionListener{
+public class ClickComponent implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -49,6 +49,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener{
 		containerFrame = panel;
 		panel.getPanel().addMouseListener(this);
 		panel.getPanel().addMouseMotionListener(this);
+		panel.getPanel().addMouseWheelListener(this);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -268,6 +269,11 @@ public class ClickComponent implements MouseListener, MouseMotionListener{
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		containerFrame.mouseWheelEvent(e.getWheelRotation());
 	}
 
 }

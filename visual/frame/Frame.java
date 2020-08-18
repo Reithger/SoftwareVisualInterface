@@ -73,6 +73,10 @@ public abstract class Frame{
 	
 //---  Setter Methods   -----------------------------------------------------------------------
 
+	public void setName(String name) {
+		frame.setTitle(name);
+	}
+	
 	public void setExitOnClose(boolean decide) {
 		if(decide) {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

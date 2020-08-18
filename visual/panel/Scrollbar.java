@@ -12,6 +12,7 @@ public class Scrollbar {
 	public static final int CODE_SCROLL_BAR_X = -58;
 	public static final int CODE_SCROLL_BAR_Y = -57;
 	public static final double BAR_SIZE_PROPORTION = 1.0 / 30;
+	private static final int MINIMUM_BAR_SIZE = 8;
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -70,6 +71,7 @@ public class Scrollbar {
 			
 			int wid = panel.getWidth();
 			int butWid = (int)((double)wid * BAR_SIZE_PROPORTION);
+			butWid = butWid < MINIMUM_BAR_SIZE ? MINIMUM_BAR_SIZE : butWid;
 			
 			int subSpaceY = Math.abs(minY + offY);
 			int overSpaceY = maxY - hei + offY;
@@ -92,7 +94,8 @@ public class Scrollbar {
 			panel.removeClickRegion(CODE_SCROLL_BAR_X);
 
 			int hei = panel.getHeight();
-			int butHei = (int)((double)hei * BAR_SIZE_PROPORTION);//// ;
+			int butHei = (int)((double)hei * BAR_SIZE_PROPORTION);
+			butHei = butHei < MINIMUM_BAR_SIZE ? MINIMUM_BAR_SIZE : butHei;
 			
 			int subSpaceX = Math.abs(offX + minX);
 			int overSpaceX = maxX - wid + offX;
