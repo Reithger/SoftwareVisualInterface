@@ -39,17 +39,17 @@ public class test {
 		
 		Font defaultFont = new Font("Serif", Font.BOLD, 18);
 		
-		pan.addRectangle("rect", 1, pan.getWidth() / 20, pan.getHeight() / 10, pan.getWidth() * 18/20, pan.getHeight() * 17/20, false, Color.blue);
+		pan.addRectangle("rect", 1, false, pan.getWidth() / 20, pan.getHeight() / 10, pan.getWidth() * 18/20, pan.getHeight() * 17/20, false, Color.blue);
 		
-		pan.addRectangle("rect2", 8, pan.getWidth() / 18,  pan.getHeight() / 18, pan.getWidth() * 16 / 18,  pan.getHeight() * 2 / 18, false, Color.white, Color.black);
-		pan.addText("tex", 10, pan.getWidth() / 18, pan.getHeight() / 18, pan.getWidth() * 16 / 18, pan.getHeight() * 2 / 18, "This is a test phrase for a text\n object", defaultFont, false, true, true);
+		pan.addRectangle("rect2", 8, false,  pan.getWidth() / 18,  pan.getHeight() / 18, pan.getWidth() * 16 / 18,  pan.getHeight() * 2 / 18, false, Color.white, Color.black);
+		pan.addText("tex", 10, false,  pan.getWidth() / 18, pan.getHeight() / 18, pan.getWidth() * 16 / 18, pan.getHeight() * 2 / 18, "This is a test phrase for a text\n object", defaultFont, false, true, true);
 		
-		pan.addRectangle("rect3", 8, pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, true, Color.white, Color.black);
-		pan.addText("tex1", 10, pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T T T", defaultFont, true, true, true);
-		pan.addText("tex2", 10, pan.getWidth() / 2, pan.getHeight() /  2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "F F F", defaultFont, false, false, false);
-		pan.addText("tex3", 10, pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T F T", defaultFont, true, false, true);
+		pan.addRectangle("rect3", 8, false,  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, true, Color.white, Color.black);
+		pan.addText("tex1", 10, false,  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T T T", defaultFont, true, true, true);
+		pan.addText("tex2", 10, false,  pan.getWidth() / 2, pan.getHeight() /  2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "F F F", defaultFont, false, false, false);
+		pan.addText("tex3", 10, false,  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T F T", defaultFont, true, false, true);
 		
-		pan.addAnimation("anim", 23, pan.getWidth() / 2, pan.getHeight() * 3 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
+		pan.addAnimation("anim", 23, false,  pan.getWidth() / 2, pan.getHeight() * 3 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
 		
 		ElementPanel pan2 = new ElementPanel(400, 0, 300, 500) {
 			public void keyBehaviour(char event) {
@@ -64,17 +64,17 @@ public class test {
 			
 		};
 		
-		pan.setScrollBarVertical(false);
+		pan.setScrollBarVertical(true);
 		
-		pan2.addRectangle("rect", 1, pan2.getWidth() /20, pan2.getHeight() / 20, pan2.getWidth() * 18/20, pan2.getHeight() * 18/20, false, Color.red);
-		pan2.addRectangle("rect2", 8, pan2.getWidth() / 2,  pan2.getHeight() / 6, pan2.getWidth() * 16 / 18,  pan2.getHeight() * 2 / 18, true, Color.white, Color.black);
-		pan2.addTextEntry("texEn", 10, pan2.getWidth() / 2, pan2.getHeight() / 6, pan2.getWidth() * 16 / 18, pan2.getHeight() * 2 / 18, 15, "This is a text entry area", defaultFont, true, true, true);
+		pan2.addRectangle("rect", 1, false,  pan2.getWidth() /20, pan2.getHeight() / 20, pan2.getWidth() * 18/20, pan2.getHeight() * 18/20, false, Color.red);
+		pan2.addRectangle("rect2", 8, false,  pan2.getWidth() / 2,  pan2.getHeight() / 6, pan2.getWidth() * 16 / 18,  pan2.getHeight() * 2 / 18, true, Color.white, Color.black);
+		pan2.addTextEntry("texEn", 10, false,  pan2.getWidth() / 2, pan2.getHeight() / 6, pan2.getWidth() * 16 / 18, pan2.getHeight() * 2 / 18, 15, "This is a text entry area", defaultFont, true, true, true);
 		
-		pan2.addImage("sas", 15, pan2.getWidth() / 2, pan2.getHeight() * 2 / 3, true, imagePath, .5);
+		pan2.addImage("sas", 15, false,  pan2.getWidth() / 2, pan2.getHeight() * 2 / 3, true, imagePath, .5);
 		
-		pan2.addLine("line5", 30, 40, -70, 50, 750, 5, Color.black);
-		pan2.addLine("line6", 30, -40, 10, 500, 50, 5, Color.black);
-		pan2.setScrollBarHorizontal(true);
+		pan2.addLine("line5", 30, false,  40, -70, 50, 750, 5, Color.black);
+		pan2.addLine("line6", 30, false,  -40, 10, 500, 50, 5, Color.black);
+		pan2.setScrollBarVertical(true);
 		
 		CanvasPanel can = new CanvasPanel(800, 0, 300, 500, 1) {
 			private boolean grid;
@@ -115,10 +115,10 @@ public class test {
 	}
 
 	private static void drawFrame(ElementPanel p) {
-		p.addLine("line1", 5, 0, 0, p.getWidth(), 0, 3, Color.black);
-		p.addLine("line2", 5, 0, 0, 0, p.getHeight(), 3, Color.black);
-		p.addLine("line3", 5, p.getWidth(), p.getHeight(), p.getWidth(), 0, 3, Color.black);
-		p.addLine("line4", 5, p.getWidth(), p.getHeight(), 0, p.getHeight(), 3, Color.black);
+		p.addLine("line1", 5, false,  0, 0, p.getWidth(), 0, 3, Color.black);
+		p.addLine("line2", 5, false,  0, 0, 0, p.getHeight(), 3, Color.black);
+		p.addLine("line3", 5, false,  p.getWidth(), p.getHeight(), p.getWidth(), 0, 3, Color.black);
+		p.addLine("line4", 5, false,  p.getWidth(), p.getHeight(), 0, p.getHeight(), 3, Color.black);
 	}
 	
 }

@@ -25,7 +25,7 @@ import visual.panel.element.*;
  * TODO: Small pixel font options for text
  * TODO: Region categories with scroll implementation, 'sub-panels'? Ugh, tricky to do.
  * TODO: Diagnostic output of all Elements, instance variables
- * TODO: Set some elements as absolutely positioned so offset doesn't move them
+ * TODO: Review adding functions, they're getting cluttered
  *
  */
 
@@ -45,6 +45,8 @@ public class ElementPanel extends Panel{
 	
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
 	private HashMap<String, Element> drawList;
+	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
+	private HashMap<String, Element> frameList;
 	/** HashMap that assigns a name to defined regions of the screen that generate a specified code upon interaction*/
 	private LinkedList<String> clickList;	
 	/** 
@@ -81,6 +83,7 @@ public class ElementPanel extends Panel{
 	public ElementPanel(int x, int y, int width, int height){
 		super(x, y, width, height);
 		drawList = new HashMap<String, Element>();
+		frameList = new HashMap<String, Element>();
 		clickList = new LinkedList<String>();
 		images = new HashMap<String, Image>();
 		mutex = false;
@@ -107,6 +110,13 @@ public class ElementPanel extends Panel{
 		Collections.sort(elements);
 		for(int i = 0; i < elements.size(); i++) {
 			elements.get(i).drawToScreen(g, getOffsetX(), getOffsetY());
+		}
+		openLock();
+		elements = new ArrayList<Element>(frameList.values());
+		closeLock();
+		Collections.sort(elements);
+		for(int i = 0; i < elements.size(); i++) {
+			elements.get(i).drawToScreen(g, 0, 0);
 		}
 		updateClickRegions();
 		scrollbar.update(gIn);
@@ -144,13 +154,18 @@ public class ElementPanel extends Panel{
 	 * @param e - Element object being added to the screen associated to the String n
 	 */
 	
-	private void handleAddElement(String n, Element e) {
+	private void handleAddElement(String n, Element e, boolean frame) {
 		if(n == null || e == null) {
-			System.out.println("Error: Null added to drawList for pair <" + n + ", " + e.toString() + ">");
+			System.out.println("Error: Null added to drawList or frameList for pair <" + n + ", " + e.toString() + ">");
 			return;
 		}
 		openLock();
-		drawList.put(n, e);
+		if(!frame) {
+			drawList.put(n, e);
+		}
+		else {
+			frameList.put(n, e);
+		}
 		closeLock();
 	}
 	
@@ -167,9 +182,17 @@ public class ElementPanel extends Panel{
 	private void updateClickRegions() {
 		resetDetectionRegions();
 		for(int i = 0; i < clickList.size(); i++) {
-			Clickable c = getClickableElement(clickList.get(i));
-			if(c != null) {
-				addClickRegion(c.getDetectionRegion(getOffsetX(), getOffsetY()));
+			if(frameList.get(clickList.get(i)) != null) {
+				Clickable c = getClickableElement(clickList.get(i));
+				if(c != null) {
+					addClickRegion(c.getDetectionRegion(0, 0));
+				}
+			}
+			else {
+				Clickable c = getClickableElement(clickList.get(i));
+				if(c != null) {
+					addClickRegion(c.getDetectionRegion(getOffsetX(), getOffsetY()));
+				}
 			}
 		}
 	}
@@ -332,6 +355,9 @@ public class ElementPanel extends Panel{
 	public Element getElement(String name) {
 		openLock();
 		Element e = drawList.get(name);
+		if(e == null) {
+			e = frameList.get(name);
+		}
 		closeLock();
 		return e;
 	}
@@ -437,6 +463,7 @@ public class ElementPanel extends Panel{
 		int minX = 0;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		elements.addAll(frameList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
@@ -451,6 +478,7 @@ public class ElementPanel extends Panel{
 		int maxX = 0;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		elements.addAll(frameList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
@@ -465,6 +493,7 @@ public class ElementPanel extends Panel{
 		int minY = 0;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		elements.addAll(frameList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
@@ -479,6 +508,7 @@ public class ElementPanel extends Panel{
 		int maxY = 0;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		elements.addAll(frameList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
@@ -559,9 +589,9 @@ public class ElementPanel extends Panel{
 	 * @param path - String object representing the file path that the Image is located at in memory.
 	 */
 	
-	public void addImage(String name, int priority, int x, int y, boolean center, String path){
+	public void addImage(String name, int priority, boolean frame, int x, int y, boolean center, String path){
 		DrawnImage d = new DrawnImage(x, y, priority, center, retrieveImage(path));
-		handleAddElement(name, d);
+		handleAddElement(name, d, frame);
 	}
 	
 	/**
@@ -579,9 +609,9 @@ public class ElementPanel extends Panel{
 	 * @param img
 	 */
 	
-	public void addImage(String name, int priority, int x, int y, boolean center, Image img) {
+	public void addImage(String name, int priority, boolean frame, int x, int y, boolean center, Image img) {
 		DrawnImage d = new DrawnImage(x, y, priority, center, img);
-		handleAddElement(name, d);
+		handleAddElement(name, d, frame);
 	}
 	
 	/**
@@ -598,9 +628,9 @@ public class ElementPanel extends Panel{
 	 * @param scale - int value describing what scale at which to draw this Image (i.e, 2 would be double the size)
 	 */
 	
-	public void addImage(String name, int priority, int x, int y, boolean center, String path, double scale){
+	public void addImage(String name, int priority, boolean frame, int x, int y, boolean center, String path, double scale){
 		DrawnImage d = new DrawnImage(x, y, priority, center, retrieveImage(path), scale);
-		handleAddElement(name, d);
+		handleAddElement(name, d, frame);
 	}
 	
 	/**
@@ -618,38 +648,38 @@ public class ElementPanel extends Panel{
 	 * @param scale
 	 */
 	
-	public void addImage(String name, int priority, int x, int y, boolean center, Image img, double scale) {
+	public void addImage(String name, int priority, boolean frame, int x, int y, boolean center, Image img, double scale) {
 		DrawnImage d = new DrawnImage(x, y, priority, center, img, scale);
-		handleAddElement(name, d);
+		handleAddElement(name, d, frame);
 	}
 	
 	
-	public void addAnimation(String name, int priority, int x, int y, boolean center, int period, double scale, String[] images) {
+	public void addAnimation(String name, int priority, boolean frame, int x, int y, boolean center, int period, double scale, String[] images) {
 		Image[] rec = new Image[images.length];
 		for(int i = 0; i < rec.length; i++) {
 			rec[i] = retrieveImage(images[i]);
 		}
 		DrawnAnimation d = new DrawnAnimation(x, y, priority, period, center, scale, rec);
-		handleAddElement(name, d);
+		handleAddElement(name, d, frame);
 	}
 	
-	public void addAnimation(String name, int priority, int x, int y, boolean center, int[] period, double scale, String[] images) {
+	public void addAnimation(String name, int priority, boolean frame, int x, int y, boolean center, int[] period, double scale, String[] images) {
 		Image[] rec = new Image[images.length];
 		for(int i = 0; i < rec.length; i++) {
 			rec[i] = retrieveImage(images[i]);
 		}
 		DrawnAnimation d = new DrawnAnimation(x, y, priority, period, center, scale, rec);
-		handleAddElement(name, d);
+		handleAddElement(name, d, frame);
 	}
 	
-	public void addAnimation(String name, int priority, int x, int y, boolean center, int period, double scale, Image[] images) {
+	public void addAnimation(String name, int priority, boolean frame, int x, int y, boolean center, int period, double scale, Image[] images) {
 		DrawnAnimation d = new DrawnAnimation(x, y, priority, period, center, scale, images);
-		handleAddElement(name, d);
+		handleAddElement(name, d, frame);
 	}
 	
-	public void addAnimation(String name, int priority, int x, int y, boolean center, int[] period, double scale, Image[] images) {
+	public void addAnimation(String name, int priority, boolean frame, int x, int y, boolean center, int[] period, double scale, Image[] images) {
 		DrawnAnimation d = new DrawnAnimation(x, y, priority, period, center, scale, images);
-		handleAddElement(name, d);
+		handleAddElement(name, d, frame);
 	}
 	
 	//-- Button  ----------------------------------------------
@@ -676,9 +706,9 @@ public class ElementPanel extends Panel{
 	 * @param key - int value describing the value that is generated when this DrawnButton object is clicked
 	 */
 
-	public void addButton(String name, int priority, int x, int y, int wid, int hei, int key, boolean centered){
+	public void addButton(String name, int priority, boolean frame, int x, int y, int wid, int hei, int key, boolean centered){
 		DrawnButton drawn = new DrawnButton(x, y, wid, hei, priority, centered, key);
-		handleAddElement(name, drawn);
+		handleAddElement(name, drawn, frame);
 		clickList.add(name);
 	}	
 	
@@ -704,9 +734,9 @@ public class ElementPanel extends Panel{
 	 * @param key - int value describing the value that is generated when this DrawnButton object is clicked
 	 */
 	
-	public void addButton(String name, int priority, int x, int y, int wid, int hei, Color col, int key, boolean centered){
+	public void addButton(String name, int priority, boolean frame, int x, int y, int wid, int hei, Color col, int key, boolean centered){
 		DrawnButton drawn = new DrawnButton(x, y, wid, hei, priority, centered, key, col);
-		handleAddElement(name, drawn);
+		handleAddElement(name, drawn, frame);
 		clickList.add(name);
 	}
 
@@ -726,9 +756,9 @@ public class ElementPanel extends Panel{
 	 * @param font - Font object describing the font with which to draw the provided String phrase
 	 */
 	
-	public void addText(String name, int priority, int x, int y, int width, int height, String phrase, Font font, boolean centeredX, boolean centeredY, boolean centeredText){
+	public void addText(String name, int priority, boolean frame, int x, int y, int width, int height, String phrase, Font font, boolean centeredX, boolean centeredY, boolean centeredText){
 		DrawnText text = new DrawnText(x, y, width, height, priority, centeredX, centeredY, centeredText, phrase, font);
-		handleAddElement(name, text);
+		handleAddElement(name, text, frame);
 	}
 
 	/**
@@ -750,9 +780,9 @@ public class ElementPanel extends Panel{
 	 * @param font - Font object describing the font with which to draw the provided String phrase
 	 */
 	
-	public void addTextEntry(String name, int priority, int x, int y, int width, int height, int code, String defaultText, Font font, boolean centeredX, boolean centeredY, boolean centeredText) {
+	public void addTextEntry(String name, int priority, boolean frame, int x, int y, int width, int height, int code, String defaultText, Font font, boolean centeredX, boolean centeredY, boolean centeredText) {
 		DrawnTextEntry dTA = new DrawnTextEntry(x, y, width, height, priority, centeredX, centeredY, centeredText, defaultText, font, code);
-		handleAddElement(name, dTA);
+		handleAddElement(name, dTA, frame);
 		clickList.add(name);
 	}
 	
@@ -770,9 +800,9 @@ public class ElementPanel extends Panel{
 	 * @param col - Color object describing the color with which to draw this DrawnRectangle Element
 	 */
 	
-	public void addRectangle(String name, int priority, int x, int y, int width, int height, boolean center, Color col) {
+	public void addRectangle(String name, int priority, boolean frame, int x, int y, int width, int height, boolean center, Color col) {
 		DrawnRectangle d = new DrawnRectangle(x, y, width, height, priority, center, col);
-		handleAddElement(name, d);
+		handleAddElement(name, d, frame);
 	}
 	
 	/**
@@ -789,9 +819,9 @@ public class ElementPanel extends Panel{
 	 * @param borderColor - Color object describing the color with which to draw the outline of this DrawnRectangle Element
 	 */
 	
-	public void addRectangle(String name, int priority, int x, int y, int width, int height, boolean center, Color fillColor, Color borderColor) {
+	public void addRectangle(String name, int priority, boolean frame, int x, int y, int width, int height, boolean center, Color fillColor, Color borderColor) {
 		DrawnRectangle d = new DrawnRectangle(x, y, width, height, priority, center, fillColor, borderColor);
-		handleAddElement(name, d);
+		handleAddElement(name, d, frame);
 	}
 
 	/**
@@ -808,9 +838,9 @@ public class ElementPanel extends Panel{
 	 * @param choice
 	 */
 	
-	public void addLine(String name, int priority, int x1, int y1, int x2, int y2, int thickness, Color choice) {
+	public void addLine(String name, int priority, boolean frame, int x1, int y1, int x2, int y2, int thickness, Color choice) {
 		DrawnLine d = new DrawnLine(x1, y1, x2, y2, thickness, priority, choice);
-		handleAddElement(name, d);
+		handleAddElement(name, d, frame);
 	}
 	
 //---  Remove Elements   ----------------------------------------------------------------------
@@ -826,6 +856,7 @@ public class ElementPanel extends Panel{
 	public void removeElement(String name) {
 		openLock();
 		drawList.remove(name);
+		frameList.remove(name);
 		closeLock();
 		clickList.remove(name);
 	}
