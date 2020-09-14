@@ -182,9 +182,9 @@ public abstract class Panel{
 		}
 	}
 	
-	
 	public void resize(int width, int height) {
 		panel.setSize(width, height);
+		panel.setPreferredSize(new Dimension(width, height));
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------

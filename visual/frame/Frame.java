@@ -90,6 +90,10 @@ public abstract class Frame{
 		frame.setResizable(decide);
 	}
 	
+	public void resize(int wid, int hei) {
+		frame.setSize(wid, hei);
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public abstract Panel getPanel(String name);
