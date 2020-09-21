@@ -1,6 +1,7 @@
 package test;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 
@@ -21,6 +22,10 @@ public class test {
 	 */
 
 	public static void main(String[] args) {
+		drawTest1();
+	}
+	
+	private static void drawTest1() {
 		String imagePath = "src\\test\\assets\\Saskia_Portrait.jpg";
 		String[] imagesPaths = new String[] {"src\\test\\assets\\burner5.png","src\\test\\assets\\burner6.png","src\\test\\assets\\burner7.png"};
 		
@@ -73,7 +78,7 @@ public class test {
 		pan2.addImage("sas", 15, false,  pan2.getWidth() / 2, pan2.getHeight() * 2 / 3, true, imagePath, .5);
 		
 		pan2.addLine("line5", 30, false,  40, -70, 50, 750, 5, Color.black);
-		pan2.addLine("line6", 30, false,  -40, 10, 500, 50, 5, Color.black);
+		pan2.addLine("line6", 30, false,  50, 50, 150, 50, 5, Color.black);
 		pan2.setScrollBarVertical(true);
 		
 		CanvasPanel can = new CanvasPanel(800, 0, 300, 500, 1) {
@@ -114,6 +119,40 @@ public class test {
 		fram.reservePanel("window", "canvas", can);
 	}
 
+	private static void drawTest2() {
+		String[] imagesPaths = new String[] {"src\\test\\assets\\burner5.png","src\\test\\assets\\burner6.png","src\\test\\assets\\burner7.png"};
+		int wid = 400;	//400
+		int hei = 250;	//250
+		WindowFrame fra = new WindowFrame(wid, hei) {
+			@Override
+			public void reactToResize() {
+				System.out.println("H");
+				if(this.getPanel("pan") != null) {
+					this.getPanel("pan").resize(this.getWidth(), this.getHeight());
+				}
+			}
+		};
+
+		fra.reserveWindow("window");
+		ElementPanel pan = new ElementPanel(0, 0, wid, hei) {
+			
+			public void clickBehaviour(int code, int x, int y) {
+				System.out.println(y);
+				//fra.resize(300, 400);
+				//resize(300, 400);
+			}
+			
+		};
+		fra.reservePanel("window", "pan", pan);
+
+		pan.resize(150, 400);
+		fra.resize(150, 400);	//17 pixel offset, too small
+		
+		fra.setResizable(true);
+		
+		pan.addAnimation("anim", 23, false,  pan.getWidth() / 2, pan.getHeight() * 6 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
+	}
+	
 	private static void drawFrame(ElementPanel p) {
 		p.addLine("line1", 5, false,  0, 0, p.getWidth(), 0, 3, Color.black);
 		p.addLine("line2", 5, false,  0, 0, 0, p.getHeight(), 3, Color.black);

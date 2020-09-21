@@ -24,6 +24,8 @@ public abstract class Frame{
 	
 	/** int constant value representing the speed at which this Frame calls repaint() to refresh itself*/
 	private static final int REFRESH_RATE = 1000/30;
+	public static final int BULLSHIT_OFFSET_X = 16;
+	public static final int BULLSHIT_OFFSET_Y = 39;
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -91,7 +93,9 @@ public abstract class Frame{
 	}
 	
 	public void resize(int wid, int hei) {
-		frame.setSize(wid, hei);
+		frame.setSize(wid + BULLSHIT_OFFSET_X, hei + BULLSHIT_OFFSET_Y);
+		frame.getContentPane().setPreferredSize(new Dimension(wid + BULLSHIT_OFFSET_X, hei + BULLSHIT_OFFSET_Y));
+		frame.setMinimumSize(frame.getSize());
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------

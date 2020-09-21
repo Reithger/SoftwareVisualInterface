@@ -183,8 +183,8 @@ public abstract class Panel{
 	}
 	
 	public void resize(int width, int height) {
-		panel.setSize(width, height);
-		panel.setPreferredSize(new Dimension(width, height));
+		panel.setSize(width - Frame.BULLSHIT_OFFSET_X, height - Frame.BULLSHIT_OFFSET_Y);
+		panel.setPreferredSize(new Dimension(width - Frame.BULLSHIT_OFFSET_X, height - Frame.BULLSHIT_OFFSET_Y));
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------

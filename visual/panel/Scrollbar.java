@@ -13,6 +13,7 @@ public class Scrollbar {
 	public static final int CODE_SCROLL_BAR_Y = -57;
 	public static final double BAR_SIZE_PROPORTION = 1.0 / 30;
 	private static final int MINIMUM_BAR_SIZE = 8;
+	private static final int MAXIMUM_BAR_SIZE = 24;
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -72,12 +73,13 @@ public class Scrollbar {
 			int wid = panel.getWidth();
 			int butWid = (int)((double)wid * BAR_SIZE_PROPORTION);
 			butWid = butWid < MINIMUM_BAR_SIZE ? MINIMUM_BAR_SIZE : butWid;
+			butWid = butWid > MAXIMUM_BAR_SIZE ? MAXIMUM_BAR_SIZE : butWid;
 			
 			int subSpaceY = Math.abs(minY + offY);
 			int overSpaceY = maxY - hei + offY;
 			boolean minSize = (subSpaceY + overSpaceY + butWid) >= hei;
 			int barButtonSizeY = minSize ? butWid : hei - subSpaceY - overSpaceY;
-			int barTopSizeY = minSize ? (int)(hei * (double)(subSpaceY / (double)(subSpaceY + overSpaceY)) - barButtonSizeY / 2) : subSpaceY;
+			int barTopSizeY = minSize ? (int)((hei - barButtonSizeY) * (double)(subSpaceY / (double)(subSpaceY + overSpaceY))) : subSpaceY;
 			yVertChange = minSize ? (int)((subSpaceY + overSpaceY) / (double)(hei - barButtonSizeY)) : 1;
 			g.drawRect(wid - butWid - 1, 0, butWid, hei);
 			g.fillRect(wid - butWid - 1, barTopSizeY, butWid, barButtonSizeY);
@@ -96,6 +98,7 @@ public class Scrollbar {
 			int hei = panel.getHeight();
 			int butHei = (int)((double)hei * BAR_SIZE_PROPORTION);
 			butHei = butHei < MINIMUM_BAR_SIZE ? MINIMUM_BAR_SIZE : butHei;
+			butHei = butHei > MAXIMUM_BAR_SIZE ? MAXIMUM_BAR_SIZE : butHei;
 			
 			int subSpaceX = Math.abs(offX + minX);
 			int overSpaceX = maxX - wid + offX;
@@ -103,8 +106,14 @@ public class Scrollbar {
 			int barButtonSizeX = minSize ? butHei : wid - subSpaceX - overSpaceX;
 			int barTopSizeX = minSize ? (int)(wid * (double)(subSpaceX / (double)(subSpaceX + overSpaceX)) - barButtonSizeX / 2) : subSpaceX;
 			xHorizChange = minSize ? (int)((subSpaceX + overSpaceX) / (double)(wid - barButtonSizeX)) : 1;
-			g.drawRect(0, hei - butHei - 1, wid - (liveVert ? (int)((double)panel.getWidth() * BAR_SIZE_PROPORTION) : 0) - 1, butHei);
-			double prop = (wid - (liveVert ? ((double)panel.getWidth() * BAR_SIZE_PROPORTION) : 0)) / (double)wid;
+			
+			int butWid = (int)((double)panel.getWidth() * BAR_SIZE_PROPORTION);
+			butWid = butWid < MINIMUM_BAR_SIZE ? MINIMUM_BAR_SIZE : butWid;
+			butWid = butWid > MAXIMUM_BAR_SIZE ? MAXIMUM_BAR_SIZE : butWid;
+			butWid = liveVert ? butWid : 0;
+			
+			g.drawRect(0, hei - butHei - 1, wid - butWid - 1, butHei);
+			double prop = (wid - (liveVert ? butWid : 0)) / (double)wid;
 			int presentBarWid = (int)(prop * barButtonSizeX);
 			g.fillRect((int)(prop * barTopSizeX), hei - butHei - 1, presentBarWid, butHei);
 			panel.addClickRegion(new ClickRegionRectangle(subSpaceX, hei - butHei - 1, barButtonSizeX, butHei, CODE_SCROLL_BAR_X));

@@ -20,6 +20,9 @@ import visual.panel.element.*;
  * If using the SVI library, you should not need to look any deeper than this unless you wish to change
  * base functionality. All features are provided by methods describing those features.
  * 
+ * TODO: All Elements need HashCode function to avoid duplication in HashSet/Maps (probably, might as well try it)
+ * TODO: Big memory leak issues, need to fix that
+ * 
  * @author Ada Clevinger
  * 
  * TODO: Small pixel font options for text

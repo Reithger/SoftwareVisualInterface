@@ -142,10 +142,16 @@ public class WindowFrame extends Frame{
 	}
 	
 	public Panel getPanel(String windowName, String panelName) {
+		if(windows.get(windowName) == null) {
+			return null;
+		}
 		return windows.get(windowName).get(panelName);
 	}
 	
 	public Panel getPanel(String panelName) {
+		if(windows.get(activeWindow) == null) {
+			return null;
+		}
 		return windows.get(activeWindow).get(panelName);
 	}
 	
