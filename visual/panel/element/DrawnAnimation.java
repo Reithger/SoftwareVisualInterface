@@ -7,6 +7,8 @@ import java.awt.Toolkit;
 
 public class DrawnAnimation extends Element{
 	
+//---  Instance Variables   -------------------------------------------------------------------
+	
 	private int frameNumber;
 	
 	private int[] waitPeriod;
@@ -19,6 +21,8 @@ public class DrawnAnimation extends Element{
 	
 	private double scale;
 
+//---  Constructors   -------------------------------------------------------------------------
+	
 	public DrawnAnimation(int x, int y, int prior, int wait, boolean center, double inScale, Image[] imgs) {
 		setX(x);
 		setY(y);
@@ -53,6 +57,18 @@ public class DrawnAnimation extends Element{
 		scaleImages();
 	}
 	
+//---  Operations   ---------------------------------------------------------------------------
+	
+	@Override
+	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
+		Color save = g.getColor();
+		int imgInd = getCurrentImage();
+		Image image = images[imgInd];
+		g.drawImage(image, getX() - (centered ? image.getWidth(null)/2 : 0) + offsetX, getY() - (centered ? image.getHeight(null)/2 : 0) + offsetY, null);
+		g.setColor(save);
+		frameNumber = (frameNumber + 1) % period;
+	}
+
 	private void updatePeriod() {
 		period = 0;
 		for(int i : waitPeriod) {
@@ -69,6 +85,8 @@ public class DrawnAnimation extends Element{
 			images[i] = drawImage;
 		}
 	}
+
+//---  Getter Methods   -----------------------------------------------------------------------
 	
 	private int getCurrentImage() {
 		int count = 0;
@@ -79,16 +97,6 @@ public class DrawnAnimation extends Element{
 			}
 		}
 		return 0;
-	}
-	
-	@Override
-	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
-		Color save = g.getColor();
-		int imgInd = getCurrentImage();
-		Image image = images[imgInd];
-		g.drawImage(image, getX() - (centered ? image.getWidth(null)/2 : 0) + offsetX, getY() - (centered ? image.getHeight(null)/2 : 0) + offsetY, null);
-		g.setColor(save);
-		frameNumber = (frameNumber + 1) % period;
 	}
 
 	@Override

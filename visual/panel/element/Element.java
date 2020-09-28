@@ -27,8 +27,10 @@ public abstract class Element implements Comparable<Element>{
 	private int x;
 	
 	private int y;
-	/** int value describing the priority of this object for being drawn: the lower this value, the sooner it is drawn relative to other Elements*/
+	/** int value describing the priority of this object for being drawn; the lower this value, the sooner it is drawn relative to other Elements*/
 	private int priority;
+	
+	private int hash;
 	
 //---  Operations   ---------------------------------------------------------------------------
 	
@@ -104,4 +106,16 @@ public abstract class Element implements Comparable<Element>{
 			return -1;
 		return 0;
 	}
+
+	public void setHash(String in) {
+		hash = in.hashCode();
+	}
+	
+//---  Mechanics   ----------------------------------------------------------------------------
+	
+	@Override
+	public int hashCode() {
+		return hash;
+	}
+	
 }

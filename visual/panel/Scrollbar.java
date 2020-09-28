@@ -39,18 +39,35 @@ public class Scrollbar {
 
 	private int xHorizChange;
 
+	private boolean updateRange;
+	
+	private int minX;
+	
+	private int maxX;
+	
+	private int minY;
+	
+	private int maxY;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public Scrollbar(Panel in) {
 		scrollBarHoriz = true;
 		scrollBarVert = true;
 		panel = in;
+		updateRange = true;
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
 	
 	public void update(Graphics g) {
 		Color save = g.getColor();
+		if(updateRange) {
+			minY = panel.getMinimumScreenY();
+			maxY = panel.getMaximumScreenY();
+			minX = panel.getMinimumScreenX();
+			maxX = panel.getMaximumScreenX();
+		}
 		if(scrollBarHoriz) {
 			updateHorizontal(g);
 		}
@@ -61,8 +78,6 @@ public class Scrollbar {
 	}
 	
 	private void updateVertical(Graphics g) {
-		int minY = panel.getMinimumScreenY();
-		int maxY = panel.getMaximumScreenY();
 		int offY = panel.getOffsetY();
 		int hei = panel.getHeight(); // 
 		liveVert = false;
@@ -88,8 +103,6 @@ public class Scrollbar {
 	}
 	
 	private void updateHorizontal(Graphics g) {
-		int minX = panel.getMinimumScreenX();
-		int maxX = panel.getMaximumScreenX();
 		int offX = panel.getOffsetX();
 		int wid = panel.getWidth();
 		if((offX > minX || offX + wid < maxX) && scrollBarHoriz) {
@@ -139,19 +152,18 @@ public class Scrollbar {
 		return true;
 	}
 
-	
 	public void processDrag(int event, int x, int y) {
 		if(vertBarSelect == true) {
 			int difY = y - startYVertBar;
 			int newOffset = panel.getOffsetY() - difY * yVertChange;
-			newOffset = newOffset > 0 - panel.getMinimumScreenY() ? 0 - panel.getMinimumScreenY() : newOffset < panel.getHeight() - panel.getMaximumScreenY() ? panel.getHeight() - panel.getMaximumScreenY() : newOffset;
+			newOffset = newOffset > 0 - minY ? 0 - minY : newOffset < panel.getHeight() - maxY ? panel.getHeight() - maxY : newOffset;
 			panel.setOffsetY(newOffset);
 			startYVertBar = y;
 		}
 		if(horizBarSelect == true) {
 			int difX = x - startXHorizBar;
 			int newOffset = panel.getOffsetX() - difX * xHorizChange;
-			newOffset = newOffset > 0 - panel.getMinimumScreenX() ? 0 - panel.getMinimumScreenX() : newOffset < panel.getWidth() - panel.getMaximumScreenX() ? panel.getWidth() - panel.getMaximumScreenX() : newOffset;
+			newOffset = newOffset > 0 - minX ? 0 - minX : newOffset < panel.getWidth() - maxX ? panel.getWidth() - maxX : newOffset;
 			panel.setOffsetX(newOffset);
 			startXHorizBar = x;
 		}
@@ -161,9 +173,14 @@ public class Scrollbar {
 
 //---  Setter Methods   -----------------------------------------------------------------------
 
+	public void designateUpdate() {
+		updateRange = true;
+	}
+	
 	public void setScrollBarHorizontal(boolean in) {
 		scrollBarHoriz = in;
 	}
+	
 	public void setScrollBarVertical(boolean in) {
 		scrollBarVert = in;
 	}

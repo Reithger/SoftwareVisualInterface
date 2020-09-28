@@ -20,7 +20,6 @@ import visual.panel.element.*;
  * If using the SVI library, you should not need to look any deeper than this unless you wish to change
  * base functionality. All features are provided by methods describing those features.
  * 
- * TODO: All Elements need HashCode function to avoid duplication in HashSet/Maps (probably, might as well try it)
  * TODO: Big memory leak issues, need to fix that
  * 
  * @author Ada Clevinger
@@ -135,6 +134,7 @@ public class ElementPanel extends Panel{
 		if(clickList.contains(name)) {
 			updateClickRegions();
 		}
+		scrollbar.designateUpdate();
 		return true;
 	}
 	
@@ -163,12 +163,14 @@ public class ElementPanel extends Panel{
 			return;
 		}
 		openLock();
+		e.setHash(n);
 		if(!frame) {
 			drawList.put(n, e);
 		}
 		else {
 			frameList.put(n, e);
 		}
+		scrollbar.designateUpdate();
 		closeLock();
 	}
 	
@@ -887,10 +889,24 @@ public class ElementPanel extends Panel{
 				remv.add(s);
 			}
 		}
+		cs = new ArrayList<String>(frameList.keySet());
+		for(int i = 0; i < cs.size(); i++) {
+			String s = cs.get(i);
+			if(s == null) {
+				continue;
+			}
+			if(s.matches(prefix + ".*")) {
+				remv.add(s);
+			}
+		}
 		closeLock();
 		for(String s : remv) {
 			removeElement(s);
 		}
+	}
+	
+	public void removeAllElements() {
+		removeElementPrefixed("");
 	}
 	
 }
