@@ -31,8 +31,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	/** Panel object representing the Panel to which this ClickComponent is attached (the Panel that is being clicked)*/
 	private Panel containerFrame;
 	
-	private boolean mutexA;
-	private boolean mutexB;
+	private boolean mutex;
 
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -101,16 +100,16 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	 */
 	
 	public boolean removeDetectionRegion(int code) {
+		openLock();
 		for(int i = 0; i < detectionRegions.size(); i++) {
 			Detectable d = detectionRegions.get(i);
 			if(d.getCode() == code) {
-				while(mutexB) {}
-				mutexA = true;
 				detectionRegions.remove(i);
-				mutexA = false;
+				closeLock();
 				return true;
 			}
 		}
+		closeLock();
 		return false;
 	}
 
@@ -127,8 +126,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	
 	public boolean removeDetectionRegions(int x, int y) {
 		boolean out = false;
-		while(mutexB) {}
-		mutexA = true;
+		openLock();
 		for(int i = 0; i < detectionRegions.size(); i++) {
 			Detectable d = detectionRegions.get(i);
 			if(d.wasClicked(x, y)) {
@@ -136,7 +134,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 				out = true;
 			}
 		}
-		mutexA = false;
+		closeLock();
 		return out;
 	}
 	
@@ -178,10 +176,18 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	 */
 	
 	public void addClickRegion(Detectable region){
-		while(mutexA) {}
-		mutexB = true;
+		openLock();
 		detectionRegions.add(region);
-		mutexA = false;
+		closeLock();
+	}
+	
+	private void openLock() {
+		while(mutex) {}
+		mutex = true;
+	}
+	
+	private void closeLock() {
+		mutex = false;
 	}
 	
 //---  Events   -------------------------------------------------------------------------------
@@ -192,12 +198,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		Integer x = e.getX();
 		Integer y = e.getY();
 		boolean happened = false;
-		for(Detectable d : new ArrayList<Detectable>(detectionRegions)) {
-			if(d.wasClicked(x, y)) {
-				happened = true;
-				activeSelect = d.getCode();
-				containerFrame.clickEvent(getSelected(), x, y);
-			}
+		for(Detectable d : findClicked(x, y)) {
+			activeSelect = d.getCode();
+			containerFrame.clickEvent(getSelected(), x, y);
+			happened = true;
 		}
 		if(!happened)
 			containerFrame.clickEvent(getSelected(), x, y);
@@ -209,12 +213,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		Integer x = e.getX();
 		Integer y = e.getY();
 		boolean happened = false;
-		for(Detectable d : new ArrayList<Detectable>(detectionRegions)) {
-			if(d.wasClicked(x, y)) {
-				happened = true;
-				activeSelect = d.getCode();
-				containerFrame.clickReleaseEvent(getSelected(), x, y);
-			}
+		for(Detectable d : findClicked(x, y)) {
+			happened = true;
+			activeSelect = d.getCode();
+			containerFrame.clickReleaseEvent(getSelected(), x, y);
 		}
 		if(!happened)
 			containerFrame.clickReleaseEvent(getSelected(), x, y);
@@ -231,12 +233,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		Integer x = e.getX();
 		Integer y = e.getY();
 		boolean happened = false;
-		for(Detectable d : new ArrayList<Detectable>(detectionRegions)) {
-			if(d.wasClicked(x, y)) {
-				happened = true;
-				activeSelect = d.getCode();
-				containerFrame.clickPressEvent(getSelected(), x, y);
-			}
+		for(Detectable d : findClicked(x, y)) {
+			happened = true;
+			activeSelect = d.getCode();
+			containerFrame.clickPressEvent(getSelected(), x, y);
 		}
 		if(!happened)
 			containerFrame.clickPressEvent(getSelected(), x, y);
@@ -253,12 +253,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		Integer x = e.getX();
 		Integer y = e.getY();
 		boolean happened = false;
-		for(Detectable d : new ArrayList<Detectable>(detectionRegions)) {
-			if(d.wasClicked(x, y)) {
-				happened = true;
-				activeSelect = d.getCode();
-				containerFrame.dragEvent(getSelected(), x, y);
-			}
+		for(Detectable d : findClicked(x, y)) {
+			happened = true;
+			activeSelect = d.getCode();
+			containerFrame.dragEvent(getSelected(), x, y);
 		}
 		if(!happened)
 			containerFrame.dragEvent(getSelected(), x, y);
@@ -276,4 +274,18 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		containerFrame.mouseWheelEvent(e.getWheelRotation());
 	}
 
+	//-- Support  ---------------------------------------------
+	
+	private ArrayList<Detectable> findClicked(int x, int y) {
+		ArrayList<Detectable> response = new ArrayList<Detectable>();
+		openLock();
+		for(Detectable d : new ArrayList<Detectable>(detectionRegions)) {
+			if(d.wasClicked(x, y)) {
+				response.add(d);
+			}
+		}
+		closeLock();
+		return response;
+	}
+	
 }

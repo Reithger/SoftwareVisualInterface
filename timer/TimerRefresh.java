@@ -10,7 +10,7 @@ import visual.frame.Frame;
  * 
  * Used in the background of the Frame abstract class.
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 
@@ -39,7 +39,13 @@ public class TimerRefresh extends TimerTask{
 	
 	@Override
 	public void run(){
-		parent.repaint();
+		try {
+			parent.repaint();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("Crash at TimerRefresh run function");
+		}
 	}
 
 }

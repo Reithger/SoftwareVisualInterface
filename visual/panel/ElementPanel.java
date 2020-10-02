@@ -521,7 +521,7 @@ public class ElementPanel extends Panel{
 				maxY = e.getMaximumY();
 			}
 		}
-		return maxY < getHeight() ? getHeight() : maxY;
+		return (maxY < getHeight() ? getHeight() : maxY);
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------

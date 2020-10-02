@@ -67,6 +67,7 @@ public class Scrollbar {
 			maxY = panel.getMaximumScreenY();
 			minX = panel.getMinimumScreenX();
 			maxX = panel.getMaximumScreenX();
+			updateRange = false;
 		}
 		if(scrollBarHoriz) {
 			updateHorizontal(g);
@@ -78,27 +79,33 @@ public class Scrollbar {
 	}
 	
 	private void updateVertical(Graphics g) {
-		int offY = panel.getOffsetY();
-		int hei = panel.getHeight(); // 
-		liveVert = false;
-		if((offY > minY || offY + hei < maxY) && scrollBarVert) {
-			liveVert = true;
-			panel.removeClickRegion(CODE_SCROLL_BAR_Y);
-			
-			int wid = panel.getWidth();
-			int butWid = (int)((double)wid * BAR_SIZE_PROPORTION);
-			butWid = butWid < MINIMUM_BAR_SIZE ? MINIMUM_BAR_SIZE : butWid;
-			butWid = butWid > MAXIMUM_BAR_SIZE ? MAXIMUM_BAR_SIZE : butWid;
-			
-			int subSpaceY = Math.abs(minY + offY);
-			int overSpaceY = maxY - hei + offY;
-			boolean minSize = (subSpaceY + overSpaceY + butWid) >= hei;
-			int barButtonSizeY = minSize ? butWid : hei - subSpaceY - overSpaceY;
-			int barTopSizeY = minSize ? (int)((hei - barButtonSizeY) * (double)(subSpaceY / (double)(subSpaceY + overSpaceY))) : subSpaceY;
-			yVertChange = minSize ? (int)((subSpaceY + overSpaceY) / (double)(hei - barButtonSizeY)) : 1;
-			g.drawRect(wid - butWid - 1, 0, butWid, hei);
-			g.fillRect(wid - butWid - 1, barTopSizeY, butWid, barButtonSizeY);
-			panel.addClickRegion(new ClickRegionRectangle(wid - butWid - 1, barTopSizeY, butWid, barButtonSizeY, CODE_SCROLL_BAR_Y));
+		try {
+			int offY = panel.getOffsetY();
+			int hei = panel.getHeight();
+			liveVert = false;
+			if((offY > minY || offY + hei < maxY) && scrollBarVert) {
+				liveVert = true;
+				panel.removeClickRegion(CODE_SCROLL_BAR_Y);
+				
+				int wid = panel.getWidth();
+				int butWid = (int)((double)wid * BAR_SIZE_PROPORTION);
+				butWid = butWid < MINIMUM_BAR_SIZE ? MINIMUM_BAR_SIZE : butWid;
+				butWid = butWid > MAXIMUM_BAR_SIZE ? MAXIMUM_BAR_SIZE : butWid;
+				
+				int subSpaceY = Math.abs(minY + offY);
+				int overSpaceY = maxY - hei + offY;
+				boolean minSize = (subSpaceY + overSpaceY + butWid) >= hei;
+				int barButtonSizeY = minSize ? butWid : hei - subSpaceY - overSpaceY;
+				int barTopSizeY = minSize ? (int)((hei - barButtonSizeY) * (double)(subSpaceY / (double)(subSpaceY + overSpaceY))) : subSpaceY;
+				yVertChange = minSize ? (int)((subSpaceY + overSpaceY) / (double)(hei - barButtonSizeY)) : 1;
+				g.drawRect(wid - butWid - 1, 0, butWid, hei);
+				g.fillRect(wid - butWid - 1, barTopSizeY, butWid, barButtonSizeY);
+				panel.addClickRegion(new ClickRegionRectangle(wid - butWid - 1, barTopSizeY, butWid, barButtonSizeY, CODE_SCROLL_BAR_Y));
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("Crash in Scrollbar at updateVertical");
 		}
 	}
 	
