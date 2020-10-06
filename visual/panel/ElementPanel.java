@@ -658,6 +658,50 @@ public class ElementPanel extends Panel{
 		handleAddElement(name, d, frame);
 	}
 	
+
+
+	/**
+	 * This method permits the addition of a DrawnImage object to the list of objects
+	 * that are drawn during the repaint() of this ElementPanel object at a specified
+	 * location; this allows image files to be drawn to this ElementPanel.
+	 * 
+	 * This method uses a String path to access the Image to be drawn.
+	 * 
+	 * @param name - String object representing the name of this Element for reference.
+	 * @param priority - int value describing the drawing priority of this Element (what should be drawn first/last in cases of overlap)
+	 * @param x - int value describing the x coordinate of the center of this Element in the ElementPanel object
+	 * @param y - int value describing the y coordinate of the center of this Element in the ElementPanel object
+	 * @param path - String object representing the file path that the Image is located at in memory.
+	 */
+	
+	public void addImage(String name, int priority, boolean frame, int x, int y, int width, int height, boolean center, String path, boolean proportion){
+		DrawnImage d = new DrawnImage(x, y, priority, center, retrieveImage(path), width, height, proportion);
+		handleAddElement(name, d, frame);
+	}
+	
+	/**
+	 * This method permits the addition of a DrawnImage object to the list of objects
+	 * that are drawn during the repaint() of this ElementPanel object at a specified
+	 * location; this allows image files to be drawn to this ElementPanel.
+	 * 
+	 * This method uses the provided Image object to be drawn as opposed to a String path.
+	 * 
+	 * @param name
+	 * @param priority
+	 * @param x
+	 * @param y
+	 * @param center
+	 * @param img
+	 */
+	
+	public void addImage(String name, int priority, boolean frame, int x, int y, int width, int height, boolean center, Image img, boolean proportion) {
+		DrawnImage d = new DrawnImage(x, y, priority, center, img, width, height, proportion);
+		handleAddElement(name, d, frame);
+	}
+	
+	
+	
+	
 	
 	public void addAnimation(String name, int priority, boolean frame, int x, int y, boolean center, int period, double scale, String[] images) {
 		Image[] rec = new Image[images.length];

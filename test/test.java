@@ -13,8 +13,6 @@ import visual.panel.ElementPanel;
 public class test {
 	
 	/*
-	 * TODO: Scroll wheel type thing for increasing screen space availability; Frame origin x, y values
-	 * that can change, Panel's placed accordingly to the x, y bias.
 	 * 
 	 * 
 	 * 
@@ -27,6 +25,7 @@ public class test {
 	
 	private static void drawTest1() {
 		String imagePath = "src\\test\\assets\\Saskia_Portrait.jpg";
+		String imagePath2 = "src\\test\\assets\\ada.png";
 		String[] imagesPaths = new String[] {"src\\test\\assets\\burner5.png","src\\test\\assets\\burner6.png","src\\test\\assets\\burner7.png"};
 		
 		WindowFrame fram = new WindowFrame(1200, 500);
@@ -38,6 +37,7 @@ public class test {
 			
 			public void clickBehaviour(int event, int x, int y) {
 				System.out.println(x + " " + y);
+				
 			} 
 			
 		};
@@ -56,11 +56,19 @@ public class test {
 		
 		pan.addAnimation("anim", 23, false,  pan.getWidth() / 2, pan.getHeight() * 3 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
 		
+		pan.addImage("ada", 15, false, pan.getWidth() / 4, pan.getHeight() / 3, 125, 75, true, imagePath2, true);
+		pan.addImage("ada2", 15, false, pan.getWidth() * 2 / 3, pan.getHeight() / 3, 125, 75, true, imagePath2, false);
+		
 		ElementPanel pan2 = new ElementPanel(400, 0, 300, 500) {
+			@Override
 			public void keyBehaviour(char event) {
-				
+				if(event == 't') {
+					fram.hideActiveWindow("window");
+					fram.showActiveWindow("other");
+				}
 			}
 			
+			@Override
 			public void clickBehaviour(int event, int x, int y) {
 				System.out.println(event + " " + x + " " + y);
 				System.out.println(getFocusElement());
@@ -111,9 +119,29 @@ public class test {
 		
 		can.setPenColor(Color.blue);
 		
+		ElementPanel stlth = new ElementPanel(300, 0, 100, 100) {
+			@Override
+			public void clickBehaviour(int code, int x, int y) {
+				fram.showActiveWindow("window");
+				fram.hideActiveWindow("other");
+			}
+		};
+		
+		ElementPanel hide = new ElementPanel(150, 150, 250, 250) {
+			
+		};
+		
+		hide.addAnimation("anim", 23, false,  hide.getWidth() / 2, hide.getHeight() * 3 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
+		
+		fram.reservePanel("stlth", stlth);
+		fram.reserveWindow("other");
+		
+		fram.reservePanel("other", "hide", hide);
+		
 		drawFrame(pan);
 		drawFrame(pan2);
 		fram.reserveWindow("window");
+		fram.showActiveWindow("window");
 		fram.reservePanel("window", "panel1", pan);
 		fram.reservePanel("window", "panel2", pan2);
 		fram.reservePanel("window", "canvas", can);

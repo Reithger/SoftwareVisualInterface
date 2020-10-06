@@ -1,6 +1,8 @@
 package visual.frame;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -34,10 +36,27 @@ public abstract class Frame{
 	/** Timer object to automatically refresh (repaint) this Frame object at a defined frequency*/
 	private Timer timer;
 	
+	private boolean wipe;
+	
 //---  Constructors  --------------------------------------------------------------------------
 	
 	public Frame(int width, int height) {
-		frame = new JFrame();
+		frame = new JFrame() {
+			@Override
+			public void paintComponents(Graphics g) {
+				System.out.println("Here");
+				if(wipe) {
+					Color save = g.getColor();
+					g.setColor(Color.white);
+					g.fillRect(0, 0, frame.getWidth(), frame.getHeight());
+					System.out.println(frame.getWidth() + " " + frame.getHeight());
+					g.setColor(save);
+					wipe = false;
+				}
+				super.paintComponents(g);
+			}
+		};
+
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent componentEvent) {
 				reactToResize();
@@ -55,6 +74,30 @@ public abstract class Frame{
 		timer.schedule(new TimerRefresh(this), 0, REFRESH_RATE);
 	}
 	
+//---  Operations   ---------------------------------------------------------------------------
+	
+	public void repaint() {
+		frame.repaint();
+	}
+
+	public void disposeFrame() {
+		frame.dispose();
+	}
+	
+	/**
+	 * All Frame objects need to be able to have Panel objects added to them; the addition
+	 * of a name allows for multiple Panels to be used distinctly.
+	 * 
+	 * @param name - String object representing the desired name of the provided Panel object
+	 * @param panel - Panel object being added to this Frame object
+	 */
+	
+	public abstract void reservePanel(String name, Panel panel);
+	
+	public abstract void dispenseAttention();
+	
+	public abstract void reactToResize();
+	
 //---  Adder Methods   ------------------------------------------------------------------------
 
 	public void addPanelToScreen(Panel panel) {
@@ -67,10 +110,12 @@ public abstract class Frame{
 	
 	public void removePanelFromScreen(Panel panel) {
 		frame.remove(panel.getPanel());
+		wipe = true;
 	}
 
 	public void removeScreenContents() {
 		frame.getContentPane().removeAll();
+		wipe = true;
 	}
 	
 //---  Setter Methods   -----------------------------------------------------------------------
@@ -113,29 +158,5 @@ public abstract class Frame{
 	public JFrame getFrame() {
 		return frame;
 	}
-	
-//---  Operations   ---------------------------------------------------------------------------
-	
-	public void repaint() {
-		frame.repaint();
-	}
 
-	public void disposeFrame() {
-		frame.dispose();
-	}
-	
-	/**
-	 * All Frame objects need to be able to have Panel objects added to them; the addition
-	 * of a name allows for multiple Panels to be used distinctly.
-	 * 
-	 * @param name - String object representing the desired name of the provided Panel object
-	 * @param panel - Panel object being added to this Frame object
-	 */
-	
-	public abstract void reservePanel(String name, Panel panel);
-	
-	public abstract void dispenseAttention();
-	
-	public abstract void reactToResize();
-	
 }

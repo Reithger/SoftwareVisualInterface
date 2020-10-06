@@ -1,11 +1,18 @@
 package visual.frame;
 
 import java.util.HashMap;
+import java.util.HashSet;
+
 import visual.panel.Panel;
 
 /**
  * This class implements the Frame abstract class to store a collection of named Panel objects
  * that can be hidden and shown by referencing their names.
+ * 
+ * Functions that don't specify the Window you are referring to assumes that you are using the DEFAULT_WINDOW; if
+ * this is not the case, make sure to use the functions that specify the Window you are manipulating.
+ * 
+ * TODO: Panel priority levels in cases of overlap? Handle that in the background or provide controls to intentionally stack stuff?
  * 
  * @author Ada Clevinger
  *
@@ -13,12 +20,16 @@ import visual.panel.Panel;
 
 public class WindowFrame extends Frame{
 
+//---  Constants   ----------------------------------------------------------------------------
+	
+	private final static String DEFAULT_WINDOW = "default";
+	
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** HashMap<<r>String, Panel> object containing the Panel objects contained by this WindowFrame and their names*/
 	private HashMap<String, HashMap<String, Panel>> windows;
 	
-	private String activeWindow;
+	private HashSet<String> activeWindow;
 	
 	private boolean start;
 	
@@ -38,7 +49,8 @@ public class WindowFrame extends Frame{
 	public WindowFrame(int width, int height) {
 		super(width, height);
 		windows = new HashMap<String, HashMap<String, Panel>>();
-		activeWindow = null;
+		activeWindow = new HashSet<String>();
+		reserveWindow(DEFAULT_WINDOW);
 		start = true;
 		mutex = false;
 	}
@@ -46,11 +58,15 @@ public class WindowFrame extends Frame{
 //---  Adder Methods   ------------------------------------------------------------------------
 	
 	public void reserveWindow(String windowName) {
+		if(windows.get(windowName) != null) {
+			System.out.println("Error: Reserved Window: \"" + windowName + "\" already exists. Window \"" + DEFAULT_WINDOW + "\" is present by default.");
+			return;
+		}
 		openLock();
 		windows.put(windowName, new HashMap<String, Panel>());
 		closeLock();
-		if(activeWindow == null) {
-			setActiveWindow(windowName);
+		if(activeWindow.size() == 0) {
+			showActiveWindow(windowName);
 		}
 	}
 	
@@ -70,22 +86,19 @@ public class WindowFrame extends Frame{
 		openLock();
 		windows.get(windowName).put(panelName, panel);
 		closeLock();
-		showPanel(panelName);
+		if(activeWindow.contains(windowName)) {
+			showPanel(windowName, panelName);
+		}
 	}
 	
 	public void reservePanel(String panelName, Panel panel) {
-		if(activeWindow == null) {
-			return;
-		}
-		if(windows.get(activeWindow) == null) {
-			openLock();
-			windows.put(activeWindow, new HashMap<String, Panel>());
-			closeLock();
-		}
 		openLock();
-		windows.get(activeWindow).put(panelName, panel);
+		windows.get(DEFAULT_WINDOW).put(panelName, panel);
 		closeLock();
 		showPanel(panelName);
+		if(activeWindow.contains(DEFAULT_WINDOW)) {
+			showPanel(DEFAULT_WINDOW, panelName);
+		}
 	}
 	
 //---  Remover Methods   ----------------------------------------------------------------------
@@ -111,12 +124,12 @@ public class WindowFrame extends Frame{
 	
 	public void removePanel(String panelName) {
 		try {
-			removePanelFromScreen(windows.get(activeWindow).get(panelName));
-			windows.get(activeWindow).get(panelName).setParentFrame(null);
-			windows.get(activeWindow).remove(panelName);
+			removePanelFromScreen(windows.get(DEFAULT_WINDOW).get(panelName));
+			windows.get(DEFAULT_WINDOW).get(panelName).setParentFrame(null);
+			windows.get(DEFAULT_WINDOW).remove(panelName);
 		}
 		catch(Exception e) {
-			System.out.println("Error: Attempt to remove non-existant Panel object");
+			System.out.println("Error: Attempt to remove non-existant Panel object; \"" + panelName + "\" not found in default Window, please specify the Window this Panel is in.");
 		}
 	}
 	
@@ -131,13 +144,27 @@ public class WindowFrame extends Frame{
 	
 //---  Setter Methods   -----------------------------------------------------------------------
 
-	public void setActiveWindow(String windowName) {
-		activeWindow = windowName;
+	public void showActiveWindow(String windowName) {
+		activeWindow.add(windowName);
+		openLock();
+		for(Panel p : windows.get(windowName).values()) {
+			addPanelToScreen(p);
+		}
+		closeLock();
+	}
+	
+	public void hideActiveWindow(String windowName) {
+		activeWindow.remove(windowName);
+		openLock();
+		for(Panel p : windows.get(windowName).values()) {
+			removePanelFromScreen(p);
+		}
+		closeLock();
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
-	public String getActiveWindow() {
+	public HashSet<String> getActiveWindows() {
 		return activeWindow;
 	}
 	
@@ -149,84 +176,88 @@ public class WindowFrame extends Frame{
 	}
 	
 	public Panel getPanel(String panelName) {
-		if(windows.get(activeWindow) == null) {
+		if(windows.get(DEFAULT_WINDOW) == null) {
 			return null;
 		}
-		return windows.get(activeWindow).get(panelName);
+		return windows.get(DEFAULT_WINDOW).get(panelName);
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
 	
 	@Override
 	public void repaint() {
-		if(!start || windows.get(activeWindow) == null) {
-			return;
-		}
-		openLock();
-		for(Panel p : windows.get(activeWindow).values()) {
-			p.getPanel().repaint();
-		}
-		closeLock();
+		super.repaint();
 	}
-	
-	/**
-	 * This method removes a designated Panel object from the Frame, but keeps
-	 * it in the stored HashMap<<r>String, Panel> for re-inclusion at a later time.
-	 * 
-	 * @param name - String object representing the name associated to a Panel object stored by this WindowFrame.
-	 */
-	
-	public void hidePanel(String panelName) {
-		try {
-			removePanelFromScreen(windows.get(activeWindow).get(panelName));
-		}
-		catch(Exception e) {
-			System.out.println("Error: Attempt to hide non-existant Panel object");
-		}
-	}
-	
+
 	public void showWindow() {
-		if(!start || windows.get(activeWindow) == null) {
+		if(!start || activeWindow.size() == 0) {
 			return;
 		}
 		openLock();
-		for(String p : windows.get(activeWindow).keySet()) {
-			showPanel(p);
+		for(String window : activeWindow) {
+			for(String p : windows.get(window).keySet()) {
+				showPanel(window, p);
+			}
 		}
 		closeLock();
 	}
 	
-	/**
-	 * This method adds a designated Panel object to the Frame, accessing the stored
-	 * HashMap<<r>String, Panel> via the provided name to find the Panel to add.
-	 * 
-	 * @param name - String object representing the name associated to a Panel object stored by this WindowFrame.
-	 */
-	
-	public void showPanel(String panelName) {
+	public void showPanel(String windowName, String panelName) {
 		try {
-			addPanelToScreen(windows.get(activeWindow).get(panelName));
+			addPanelToScreen(windows.get(windowName).get(panelName));
 		}
 		catch(Exception e) {
 			System.out.println("Error: Attempt to show non-existant Panel object");
 		}
 	}
 	
+	public void showPanel(String panelName) {
+		try {
+			addPanelToScreen(windows.get(DEFAULT_WINDOW).get(panelName));
+		}
+		catch(Exception e) {
+			System.out.println("Error: Attempt to show non-existant Panel object");
+		}
+	}
+
+	public void hidePanel(String windowName, String panelName) {
+		try {
+			removePanelFromScreen(windows.get(windowName).get(panelName));
+		}
+		catch(Exception e) {
+			System.out.println("Error: Attempt to hide non-existant Panel object");
+		}
+	}
+	
+	public void hidePanel(String panelName) {
+		try {
+			removePanelFromScreen(windows.get(DEFAULT_WINDOW).get(panelName));
+		}
+		catch(Exception e) {
+			System.out.println("Error: Attempt to hide non-existant Panel object");
+		}
+	}
+
 	public void hidePanels() {
-		if(windows.get(activeWindow) == null) {
+		if(activeWindow.size() == 0) {
 			return;
 		}
 		openLock();
-		for(String p : windows.get(activeWindow).keySet()) {
-			this.hidePanel(p);
+		for(String window : activeWindow) {
+			for(String p : windows.get(window).keySet()) {
+				hidePanel(window, p);
+			}
 		}
+
 		closeLock();
 	}
 	
 	public void dispenseAttention() {
 		openLock();
-		for(Panel p : windows.get(activeWindow).values()) {
-			p.setAttention(false);
+		for(String window : activeWindow) {
+			for(Panel p : windows.get(window).values()) {
+				p.setAttention(false);
+			}
 		}
 		closeLock();
 	}

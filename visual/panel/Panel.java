@@ -87,9 +87,24 @@ public abstract class Panel{
 	public abstract void paintComponent(Graphics g);
 
 	public void repaint() {
-		this.getPanel().repaint();
+		getPanel().repaint();
 	}
 
+	/**
+	 * This method instructs the ClickComponent object of this class to reset the regions that
+	 * have been assigned a particular value to return if clicked. (See documentation of
+	 * ClickComponent for further information on its functionality.)
+	 * 
+	 * Effectively resets how this Panel object responds to user mouse-clicking.
+	 * 
+	 */
+	
+	public void resetDetectionRegions() {
+		mouseEvent.resetDetectionRegions();
+	}
+
+//---  Reactions   ----------------------------------------------------------------------------
+	
 	/**
 	 * This method is triggered whenever the Panel object detects user interaction
 	 * via the Mouse; exact implementation of response is left to the implementation
@@ -119,20 +134,7 @@ public abstract class Panel{
 	 */
 	
 	public abstract void keyEvent(char event);
-
-	/**
-	 * This method instructs the ClickComponent object of this class to reset the regions that
-	 * have been assigned a particular value to return if clicked. (See documentation of
-	 * ClickComponent for further information on its functionality.)
-	 * 
-	 * Effectively resets how this Panel object responds to user mouse-clicking.
-	 * 
-	 */
 	
-	public void resetDetectionRegions() {
-		mouseEvent.resetDetectionRegions();
-	}
-
 //---  Setter Methods   -----------------------------------------------------------------------
 
 	/**
@@ -182,9 +184,18 @@ public abstract class Panel{
 		}
 	}
 	
-	public void resize(int width, int height) {
+	public void setLocation(int x, int y) {
+		panel.setLocation(x, y);
+	}
+	
+	private void bullshitResize(int width, int height) {
 		panel.setSize(width - Frame.BULLSHIT_OFFSET_X, height - Frame.BULLSHIT_OFFSET_Y);
 		panel.setPreferredSize(new Dimension(width - Frame.BULLSHIT_OFFSET_X, height - Frame.BULLSHIT_OFFSET_Y));
+	}
+	
+	public void resize(int width, int height) {
+		panel.setSize(width, height);
+		panel.setPreferredSize(new Dimension(width, height));
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------

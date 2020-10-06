@@ -17,6 +17,26 @@ public class DrawnImage extends Element{
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
+	public DrawnImage(int x, int y, int prior, boolean inCenter, Image img, int width, int height, boolean proportion) {
+		setX(x);
+		setY(y);
+		Image drawImage = null;
+		center = inCenter;
+		scaleFactor = 1;
+		if(proportion) {
+			int small = width < height ? width : height;
+			drawImage = img.getScaledInstance(small, small, Image.SCALE_DEFAULT);
+		}
+		else {
+			drawImage = img.getScaledInstance(width, height, Image.SCALE_DEFAULT);
+		}
+		
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		while(!tk.prepareImage(drawImage, -1, -1, null)){	}
+		image = drawImage;
+		setDrawPriority(prior);
+	}
+	
 	/**
 	 * 
 	 * @param x
