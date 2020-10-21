@@ -5,7 +5,9 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import input.ClickComponent;
 import input.Detectable;

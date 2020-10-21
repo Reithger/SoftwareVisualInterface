@@ -4,8 +4,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.io.File;
+
+import javax.swing.JFileChooser;
 
 import input.Communication;
+import visual.FileChooser;
 import visual.frame.WindowFrame;
 import visual.panel.CanvasPanel;
 import visual.panel.ElementPanel;
@@ -20,7 +24,9 @@ public class test {
 	 */
 
 	public static void main(String[] args) {
-		drawTest1();
+		File f = FileChooser.promptSelectFile("C:/Users/Borinor/Pictures/", true, true);
+		FileChooser.promptSaveFile(null, true, false, f);
+		//drawTest1();
 	}
 	
 	private static void drawTest1() {
