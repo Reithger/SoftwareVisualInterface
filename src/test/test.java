@@ -9,7 +9,8 @@ import java.io.File;
 import javax.swing.JFileChooser;
 
 import input.Communication;
-import visual.FileChooser;
+import visual.filemeta.FileChooser;
+import visual.filemeta.config.Config;
 import visual.frame.WindowFrame;
 import visual.panel.CanvasPanel;
 import visual.panel.ElementPanel;
@@ -24,9 +25,27 @@ public class test {
 	 */
 
 	public static void main(String[] args) {
+		testConfig();
+		//drawTest1();
+	}
+	
+	private static void testConfig() {
+		Config c = new Config("", new TestValidateFile());
+		c.addFilePath("test");
+		c.addFilePath("test/settings");
+		c.addFilePath("test/settings/underling");
+		c.addFile("test/settings", "test.txt", "#Howdy");
+		c.addFileEntry("test/settings", "test.txt", "test", "More howdy", "expected");
+		System.out.println(c.verifyConfig());
+		System.out.println(c.initializeDefaultConfig());
+		System.out.println(c.verifyConfig());
+		c.setConfigFileEntry("test/settings/test.txt", "test", "unexpected");
+		System.out.println(c.getConfigFileEntry("test/settings/test.txt", "test"));
+	}
+	
+	private static void testFileChooser() {
 		File f = FileChooser.promptSelectFile("C:/Users/Borinor/Pictures/", true, true);
 		FileChooser.promptSaveFile(null, true, false, f);
-		//drawTest1();
 	}
 	
 	private static void drawTest1() {
