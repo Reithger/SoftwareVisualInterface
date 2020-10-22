@@ -1,11 +1,11 @@
-package visual.filemeta.config.blueprint;
+package filemeta.config.blueprint;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashSet;
 
-import visual.filemeta.config.ConfigFileParser;
+import filemeta.config.ConfigFileParser;
 
 public class ConfigFile {
 

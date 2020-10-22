@@ -2,8 +2,8 @@ package test;
 
 import java.io.File;
 
-import visual.filemeta.config.Config;
-import visual.filemeta.config.ValidateFiles;
+import filemeta.config.Config;
+import filemeta.config.ValidateFiles;
 
 public class TestValidateFile implements ValidateFiles{
 

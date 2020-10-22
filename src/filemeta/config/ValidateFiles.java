@@ -1,4 +1,4 @@
-package visual.filemeta.config;
+package filemeta.config;
 
 import java.io.File;
 

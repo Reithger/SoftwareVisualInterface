@@ -8,9 +8,9 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 
+import filemeta.FileChooser;
+import filemeta.config.Config;
 import input.Communication;
-import visual.filemeta.FileChooser;
-import visual.filemeta.config.Config;
 import visual.frame.WindowFrame;
 import visual.panel.CanvasPanel;
 import visual.panel.ElementPanel;

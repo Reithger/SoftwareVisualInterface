@@ -1,4 +1,4 @@
-package visual.filemeta.config.blueprint;
+package filemeta.config.blueprint;
 
 public class FileEntry {
 

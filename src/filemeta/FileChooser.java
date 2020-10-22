@@ -1,4 +1,4 @@
-package visual.filemeta;
+package filemeta;
 
 import java.io.File;
 import javax.swing.JFileChooser;

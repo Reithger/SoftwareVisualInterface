@@ -1,9 +1,9 @@
-package visual.filemeta.config;
+package filemeta.config;
 
 import java.io.File;
 import java.io.IOException;
 
-import visual.filemeta.config.blueprint.ConfigBlueprint;
+import filemeta.config.blueprint.ConfigBlueprint;
 
 public class Config {
 
