@@ -1,73 +1,52 @@
 package test;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.io.File;
-
-import javax.swing.JFileChooser;
-
-import filemeta.FileChooser;
-import filemeta.config.Config;
-import input.Communication;
-import visual.composite.popout.PopoutAlert;
-import visual.composite.popout.PopoutImageDisplay;
-import visual.composite.popout.PopoutSelectList;
 import visual.frame.WindowFrame;
 import visual.panel.CanvasPanel;
 import visual.panel.ElementPanel;
 
-public class test {
+public class Tutorial {
 	
 	/*
+	 * Introductory file that explains how the library can be used to generate your program's UI.
 	 * 
+	 * Comments in some classes may be lacking, so this should serve as a starting location for basic
+	 * usage of the library; if more advanced usage is desired, feel free to explore the Classes to
+	 * see how they operate, or contact the library writer, Ada Clevinger (aka Reithger), at her github
+	 * for help, suggestions, or a demand to make a more convenient wiki.
 	 * 
-	 * 
+	 * THIS IS A TXT VERSION OF THE .java FILE IN THE test PACKAGE FOR REFERENCE PURPOSES
 	 *
 	 */
 
 	public static void main(String[] args) {
-		//testComposites();
-		//testConfig();
 		drawTest1();
 	}
-	
-	private static void testComposites() {
-		//PopoutAlert pa = new PopoutAlert(450, 250, "yo get scared");
-		//pa.dispose();
-		//PopoutSelectList psl = new PopoutSelectList(250, 150, new String[] {"var1A", "var2B", "var2C", "var1D"}, true, "A");
-		//System.out.println("D: " + PopoutSelectList.getSelection("A"));
-		//psl.dispose();
-		PopoutImageDisplay pid = new PopoutImageDisplay(400, 400, "src\\test\\assets\\ada.png");
-	}
-	
-	private static void testConfig() {
-		Config c = new Config("", new TestValidateFile());
-		c.addFilePath("test");
-		c.addFilePath("test/settings");
-		c.addFilePath("test/settings/underling");
-		c.addFile("test/settings", "test.txt", "#Howdy");
-		c.addFileEntry("test/settings", "test.txt", "test", "More howdy", "expected");
-		System.out.println(c.verifyConfig());
-		System.out.println(c.initializeDefaultConfig());
-		System.out.println(c.verifyConfig());
-		c.setConfigFileEntry("test/settings/test.txt", "test", "unexpected");
-		System.out.println(c.getConfigFileEntry("test/settings/test.txt", "test"));
-	}
-	
-	private static void testFileChooser() {
-		File f = FileChooser.promptSelectFile("C:/Users/Borinor/Pictures/", true, true);
-		FileChooser.promptSaveFile(null, true, false, f);
-	}
-	
+
 	private static void drawTest1() {
+		//Image paths should be contextual to your project architecture, no worries about accessing within a .jar if you package your program, I fixed that
 		String imagePath = "src\\test\\assets\\Saskia_Portrait.jpg";
 		String imagePath2 = "src\\test\\assets\\ada.png";
 		String[] imagesPaths = new String[] {"src\\test\\assets\\burner5.png","src\\test\\assets\\burner6.png","src\\test\\assets\\burner7.png"};
 		
+		//Just make a WindowFrame with (width, height)
 		WindowFrame fram = new WindowFrame(1200, 500);
 
+		//A WindowFrame specifically functions to allow sets of Panels to be added, allowing for group addition/removal of Panels
+		fram.reserveWindow("window");
+		
+		/*
+		 * Creates a .jar with an (x, y) position in its parent Frame and a width, height
+		 * 
+		 * ALSO, this overrides the functions keyBehaviour and clickBehaviour as a part of instantiation, which
+		 * is a neat trick you can just do that is used here to specify how the ElementPanel should respond to
+		 * the input it receives.
+		 * 
+		 * Unfortunately this ElementPanel doesn't do anything at the moment beside some brief print-outs.
+		 * 
+		 */
 		ElementPanel pan = new ElementPanel(0, 0, 300, 500) {
 			public void keyBehaviour(char event) {
 				
@@ -81,6 +60,8 @@ public class test {
 		};
 		
 		Font defaultFont = new Font("Serif", Font.BOLD, 18);
+		
+		//Here is a whole suite of functions that add Elements of varying types to the ElementPanel
 		
 		pan.addRectangle("rect", 1, false, pan.getWidth() / 20, pan.getHeight() / 10, pan.getWidth() * 18/20, pan.getHeight() * 17/20, false, Color.blue);
 		
@@ -97,13 +78,11 @@ public class test {
 		pan.addImage("ada", 15, false, pan.getWidth() / 4, pan.getHeight() / 3, 125, 75, true, imagePath2, true);
 		pan.addImage("ada2", 15, false, pan.getWidth() * 2 / 3, pan.getHeight() / 3, 125, 75, true, imagePath2, false);
 		
+		
+		//Another ElementPanel, this time when clicked it moves an Element
 		ElementPanel pan2 = new ElementPanel(400, 0, 300, 500) {
 			@Override
 			public void keyBehaviour(char event) {
-				if(event == 't') {
-					fram.hideActiveWindow("window");
-					fram.showActiveWindow("other");
-				}
 			}
 			
 			@Override
@@ -115,6 +94,7 @@ public class test {
 			
 		};
 		
+		//Scrollbars are a functionality that allow a Panel to be navigated if its Elements extend beyond the size of the Panel; they can be disabled
 		pan.setScrollBarVertical(true);
 		
 		pan2.addRectangle("rect", 1, false,  pan2.getWidth() /20, pan2.getHeight() / 20, pan2.getWidth() * 18/20, pan2.getHeight() * 18/20, false, Color.red);
@@ -127,7 +107,8 @@ public class test {
 		pan2.addLine("line6", 30, false,  50, 50, 150, 50, 5, Color.black);
 		pan2.setScrollBarVertical(true);
 		
-		CanvasPanel can = new CanvasPanel(800, 0, 300, 500, 1) {
+		//This is a CanvasPanel, a very specific Panel subclass for being able to be drawn on. Basically just for my art program, but use it yourself!
+		CanvasPanel can = new CanvasPanel(800, 0, 300, 500, 5) {
 			private boolean grid;
 			
 			@Override
@@ -137,6 +118,7 @@ public class test {
 				}
 			}
 			
+			//CanvasPanel has some specific functions to it for overriding, this one draws a grid over the canvas if enabled
 			@Override
 			public void commandOver(Graphics g) {
 				if(grid) {
@@ -155,70 +137,20 @@ public class test {
 			}
 		};
 		
+		//CanvasPanel can have its pen change color, it's a virtual canvas
 		can.setPenColor(Color.blue);
-		
-		ElementPanel stlth = new ElementPanel(300, 0, 100, 100) {
-			@Override
-			public void clickBehaviour(int code, int x, int y) {
-				fram.showActiveWindow("window");
-				fram.hideActiveWindow("other");
-			}
-		};
-		
-		ElementPanel hide = new ElementPanel(150, 150, 250, 250) {
-			
-		};
-		
-		hide.addAnimation("anim", 23, false,  hide.getWidth() / 2, hide.getHeight() * 3 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
-		
-		fram.reservePanel("stlth", stlth);
-		fram.reserveWindow("other");
-		
-		fram.reservePanel("other", "hide", hide);
-		
+
+		//Calls on a helper method to draw some lines around these Panels to add borders to them
 		drawFrame(pan);
 		drawFrame(pan2);
-		fram.reserveWindow("window");
+		//Instructs the WindowFrame to show the window "window"
 		fram.showActiveWindow("window");
+		//And now we add each Panel object to the Window with unique names and a housing Window. Done!
 		fram.reservePanel("window", "panel1", pan);
 		fram.reservePanel("window", "panel2", pan2);
 		fram.reservePanel("window", "canvas", can);
 	}
 
-	private static void drawTest2() {
-		String[] imagesPaths = new String[] {"src\\test\\assets\\burner5.png","src\\test\\assets\\burner6.png","src\\test\\assets\\burner7.png"};
-		int wid = 400;	//400
-		int hei = 250;	//250
-		WindowFrame fra = new WindowFrame(wid, hei) {
-			@Override
-			public void reactToResize() {
-				System.out.println("H");
-				if(this.getPanel("pan") != null) {
-					this.getPanel("pan").resize(this.getWidth(), this.getHeight());
-				}
-			}
-		};
-
-		fra.reserveWindow("window");
-		ElementPanel pan = new ElementPanel(0, 0, wid, hei) {
-			
-			public void clickBehaviour(int code, int x, int y) {
-				System.out.println(y);
-				//fra.resize(300, 400);
-				//resize(300, 400);
-			}
-			
-		};
-		fra.reservePanel("window", "pan", pan);
-
-		pan.resize(150, 400);
-		fra.resize(150, 400);	//17 pixel offset, too small
-		
-		fra.setResizable(true);
-		
-		pan.addAnimation("anim", 23, false,  pan.getWidth() / 2, pan.getHeight() * 6 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
-	}
-	
 	private static void drawFrame(ElementPanel p) {
 		p.addLine("line1", 5, false,  0, 0, p.getWidth(), 0, 3, Color.black);
 		p.addLine("line2", 5, false,  0, 0, 0, p.getHeight(), 3, Color.black);
