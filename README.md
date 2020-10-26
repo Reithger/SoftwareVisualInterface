@@ -1,7 +1,7 @@
 # SoftwareVisualInterface
 Easy to use interface for creating visual and interactive programs via javax.swing libraries. (Handles the awkward stuff to provide an easy-to-use environment)
 
-Easiest way to get started is to make a WindowFrame object and an ElementPanel and add the ElementPanel to the WindowFrame. ElementPanel has support for adding text, text-entry, rectangles, lines, images, buttons, and animations; look at the test.java class to see an example of its usage in the drawTest1() function, and run it to see how the instructions translate to output appearance.
+## Check out the Wiki for a Tutorial on using this!
 
 The goal for this library is to obscure many low-level details and give the programmer simple commands for designing their UI; check out the Finite State Machine Model project's ui package for examples on its use in more complicated projects.
 
