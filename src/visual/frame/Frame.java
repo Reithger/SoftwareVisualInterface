@@ -8,7 +8,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.Timer;
 import javax.swing.JFrame;
-import timer.TimerRefresh;
+
+import visual.frame.timer.TimerRefresh;
 import visual.panel.Panel;
 
 /**
@@ -44,12 +45,10 @@ public abstract class Frame{
 		frame = new JFrame() {
 			@Override
 			public void paintComponents(Graphics g) {
-				System.out.println("Here");
 				if(wipe) {
 					Color save = g.getColor();
 					g.setColor(Color.white);
 					g.fillRect(0, 0, frame.getWidth(), frame.getHeight());
-					System.out.println(frame.getWidth() + " " + frame.getHeight());
 					g.setColor(save);
 					wipe = false;
 				}
@@ -62,9 +61,7 @@ public abstract class Frame{
 				reactToResize();
 			}
 		});
-		frame.getContentPane().setSize(width, height);
-		frame.getContentPane().setPreferredSize(new Dimension(width, height));
-		frame.setMinimumSize(frame.getSize());
+		resize(width, height);
 		frame.setResizable(false);
 		frame.setVisible(true);
 		frame.setLayout(null);
@@ -103,7 +100,6 @@ public abstract class Frame{
 	public void addPanelToScreen(Panel panel) {
 		frame.add(panel.getPanel());
 		panel.setParentFrame(this);
-		frame.pack();
 	}
 	
 //---  Remover Methods   ----------------------------------------------------------------------
@@ -141,6 +137,7 @@ public abstract class Frame{
 		frame.setSize(wid + BULLSHIT_OFFSET_X, hei + BULLSHIT_OFFSET_Y);
 		frame.getContentPane().setPreferredSize(new Dimension(wid + BULLSHIT_OFFSET_X, hei + BULLSHIT_OFFSET_Y));
 		frame.setMinimumSize(frame.getSize());
+		frame.setMaximumSize(frame.getSize());
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -148,11 +145,11 @@ public abstract class Frame{
 	public abstract Panel getPanel(String name);
 
 	public int getWidth() {
-		return frame.getWidth();
+		return frame.getWidth() - BULLSHIT_OFFSET_X;
 	}
 	
 	public int getHeight() {
-		return frame.getHeight();
+		return frame.getHeight() - BULLSHIT_OFFSET_Y;
 	}
 	
 	public JFrame getFrame() {

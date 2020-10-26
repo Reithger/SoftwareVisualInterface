@@ -1,4 +1,4 @@
-package timer;
+package visual.frame.timer;
 
 import java.util.TimerTask;
 import visual.frame.Frame;

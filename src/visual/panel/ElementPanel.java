@@ -10,7 +10,6 @@ import java.awt.*;
 
 import javax.imageio.ImageIO;
 
-import input.ClickRegionRectangle;
 import visual.panel.element.*;
 
 /**
@@ -20,14 +19,20 @@ import visual.panel.element.*;
  * If using the SVI library, you should not need to look any deeper than this unless you wish to change
  * base functionality. All features are provided by methods describing those features.
  * 
- * TODO: Big memory leak issues, need to fix that
+ * Additionally, a composite package has been made that builds on top of this basic foundation to make less
+ * flexible but more convenient tools which can themselves be overridden.
  * 
- * @author Ada Clevinger
+ * TODO: Big memory leak issues, need to fix that; maybe not? Still needs a good reworking though
  * 
  * TODO: Small pixel font options for text
  * TODO: Region categories with scroll implementation, 'sub-panels'? Ugh, tricky to do.
  * TODO: Diagnostic output of all Elements, instance variables
  * TODO: Review adding functions, they're getting cluttered
+ * TODO: Decorator class to wrap it in Scrollbar and Drag Navigation functionality? Otherwise cluttered with booleans.
+ * TODO: This needs major refactoring, it's almost 1000 lines! That was the size of that whole game you made in the summer of 2016! Good memories...
+ * 
+ * @author Ada Clevinger
+ * 
  *
  */
 
@@ -46,7 +51,7 @@ public class ElementPanel extends Panel{
 	//-- Element Storage/Management  --------------------------
 	
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
-	private HashMap<String, Element> drawList;
+	private HashMap<String, Element> drawList;	//TODO: Abstract these out
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
 	private HashMap<String, Element> frameList;
 	/** HashMap that assigns a name to defined regions of the screen that generate a specified code upon interaction*/
@@ -63,11 +68,11 @@ public class ElementPanel extends Panel{
 	//-- 
 
 	/** HashMap linking String system paths to Images to cache images that may be used repeatedly*/
-	private HashMap<String, Image> images;
+	private HashMap<String, Image> images;	//TODO: Image manager? Can be a small class, but still
 	
 	private boolean mutex;
 	
-	private Scrollbar scrollbar;
+	private Scrollbar scrollbar;		//TODO: Common interface so we can wrap these into pseudo-recursive structure
 	
 
 //---  Constructors   -------------------------------------------------------------------------
