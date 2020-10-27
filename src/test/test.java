@@ -171,18 +171,18 @@ public class test {
 		
 		hide.addAnimation("anim", 23, false,  hide.getWidth() / 2, hide.getHeight() * 3 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
 		
-		fram.reservePanel("stlth", stlth);
+		fram.addPanel("stlth", stlth);
 		fram.reserveWindow("other");
 		
-		fram.reservePanel("other", "hide", hide);
+		fram.addPanelToWindow("other", "hide", hide);
 		
 		drawFrame(pan);
 		drawFrame(pan2);
 		fram.reserveWindow("window");
 		fram.showActiveWindow("window");
-		fram.reservePanel("window", "panel1", pan);
-		fram.reservePanel("window", "panel2", pan2);
-		fram.reservePanel("window", "canvas", can);
+		fram.addPanelToWindow("window", "panel1", pan);
+		fram.addPanelToWindow("window", "panel2", pan2);
+		fram.addPanelToWindow("window", "canvas", can);
 	}
 
 	private static void drawTest2() {
@@ -209,7 +209,7 @@ public class test {
 			}
 			
 		};
-		fra.reservePanel("window", "pan", pan);
+		fra.addPanelToWindow("window", "pan", pan);
 
 		pan.resize(150, 400);
 		fra.resize(150, 400);	//17 pixel offset, too small

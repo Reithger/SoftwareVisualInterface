@@ -79,7 +79,7 @@ public class WindowFrame extends Frame{
 	 * 
 	 */
 	
-	public void reservePanel(String windowName, String panelName, Panel panel) {
+	public void addPanelToWindow(String windowName, String panelName, Panel panel) {
 		if(windows.get(windowName) == null) {
 			reserveWindow(windowName);
 		}
@@ -91,7 +91,7 @@ public class WindowFrame extends Frame{
 		}
 	}
 	
-	public void reservePanel(String panelName, Panel panel) {
+	public void addPanel(String panelName, Panel panel) {
 		openLock();
 		windows.get(DEFAULT_WINDOW).put(panelName, panel);
 		closeLock();

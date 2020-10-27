@@ -70,7 +70,7 @@ public abstract class PopoutWindow implements HandleElements{
 		};
 		parFrame.reserveWindow("popout");
 		parFrame.showActiveWindow("popout");
-		parFrame.reservePanel("popout", "pan", panel);
+		parFrame.addPanelToWindow("popout", "pan", panel);
 	}
 
 //---  Operations   ---------------------------------------------------------------------------

@@ -89,7 +89,7 @@ public abstract class Frame{
 	 * @param panel - Panel object being added to this Frame object
 	 */
 	
-	public abstract void reservePanel(String name, Panel panel);
+	public abstract void addPanel(String name, Panel panel);
 	
 	public abstract void dispenseAttention();
 	

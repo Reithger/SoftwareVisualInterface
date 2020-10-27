@@ -146,9 +146,11 @@ public class Tutorial {
 		//Instructs the WindowFrame to show the window "window"
 		fram.showActiveWindow("window");
 		//And now we add each Panel object to the Window with unique names and a housing Window. Done!
-		fram.reservePanel("window", "panel1", pan);
-		fram.reservePanel("window", "panel2", pan2);
-		fram.reservePanel("window", "canvas", can);
+		fram.addPanelToWindow("window", "panel1", pan);
+		//We can also use a simpler function call of addPanel(panelName, panel) if we won't need to control Windows and can just have one pool for all Panels
+		//This uses a window named "default" that the WindowFrame prepares during its construction
+		fram.addPanel("panel2", pan2);
+		fram.addPanel("canvas", can);
 	}
 
 	private static void drawFrame(ElementPanel p) {
