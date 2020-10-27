@@ -18,14 +18,10 @@ public abstract class PopoutWindow implements HandleElements{
 	private WindowFrame parFrame;
 	private HandlePanel panel;
 	
-	private long lastResize;
-	private boolean halt;
-	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public PopoutWindow(int width, int height) {
 		panel = null;
-		halt = false;
 		parFrame = new WindowFrame(width, height) {
 			@Override
 			public void reactToResize() {
@@ -131,7 +127,7 @@ public abstract class PopoutWindow implements HandleElements{
 		return panel.getElementStoredText(ref);
 	}
 	
-	public HandlePanel getElementPanel() {
+	public HandlePanel getHandlePanel() {
 		return panel;
 	}
 	
@@ -175,5 +171,10 @@ public abstract class PopoutWindow implements HandleElements{
 	@Override
 	public void handleThickRectangle(String nom, boolean frame, int x, int y, int x2, int y2, Color border, int thick) {
 		panel.handleThickRectangle(nom, frame, x, y, x2, y2, border, thick);
+	}
+
+	@Override
+	public void handleImageButton(String name, boolean frame, int x, int y, int wid, int hei, String path, int code) {
+		panel.handleImageButton(name, frame, x, y, wid, hei, path, code);
 	}
 }

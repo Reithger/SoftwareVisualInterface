@@ -8,8 +8,6 @@ import input.Communication;
 
 public class PopoutSelectList extends PopoutWindow{
 
-	private static final int DEFAULT_WIDTH = 300;
-	private static final int DEFAULT_HEIGHT = 400;
 	private static final int CODE_FILTER_ENTRY_ACCESS = -17;
 	private static final int CODE_FILTER_ENTRY_SUBMIT = -16;
 	private static final int CODE_CLOSE = -18;
@@ -20,40 +18,37 @@ public class PopoutSelectList extends PopoutWindow{
 	private String[] ref;
 	private String[] used;
 	private String searchTerm;
-	private String label;
 	private boolean filtered;
 	private static boolean resolve;
 	
-	public PopoutSelectList(int wid, int hei, String[] list, boolean filter, String returnLabel) {
+	public PopoutSelectList(int wid, int hei, String[] list, boolean filter) {
 		super(wid, hei);
 		allowScrollbars(true);
 		Communication.set(STATIC_ACCESS, null);
-		popoutResize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		ref = list;
 		used = ref;
 		filtered = filter;
 		searchTerm = "";
-		label = returnLabel;
-		Communication.set(label, null);
 		resolve = false;
 		drawPage();
+		System.out.println(Thread.currentThread());
 	}
 	
 	private void drawPage() {
-		int heiChng = DEFAULT_HEIGHT / 4;
+		int heiChng = getHeight() / 4;
 		int size = heiChng / 4;
 		if(filtered) {
-			this.handleTextEntry(TEXT_ENTRY_FILTER_ACCESS, true, DEFAULT_WIDTH / 3, heiChng / 4, DEFAULT_WIDTH * 7 / 12, heiChng / 4, CODE_FILTER_ENTRY_ACCESS, null, "");
-			this.handleRectangle("rect_filter_entry", true, 5, DEFAULT_WIDTH / 3, heiChng / 4, DEFAULT_WIDTH * 7 / 12, heiChng / 4, Color.WHITE, Color.BLACK);
+			this.handleTextEntry(TEXT_ENTRY_FILTER_ACCESS, true, getWidth() / 3, heiChng / 4, getWidth() * 7 / 12, heiChng / 4, CODE_FILTER_ENTRY_ACCESS, null, "");
+			this.handleRectangle("rect_filter_entry", true, 5, getWidth() / 3, heiChng / 4, getWidth() * 7 / 12, heiChng / 4, Color.WHITE, Color.BLACK);
 			
-			this.handleRectangle("rect_submit", true, 5, DEFAULT_WIDTH * 3 /4, heiChng / 4, heiChng / 5, heiChng / 5, Color.GREEN, Color.BLACK);
-			this.handleButton("butt_submit", true, DEFAULT_WIDTH * 3 / 4, heiChng / 4, size, size, CODE_FILTER_ENTRY_SUBMIT);
+			this.handleRectangle("rect_submit", true, 5, getWidth() * 3 /4, heiChng / 4, heiChng / 5, heiChng / 5, Color.GREEN, Color.BLACK);
+			this.handleButton("butt_submit", true, getWidth() * 3 / 4, heiChng / 4, size, size, CODE_FILTER_ENTRY_SUBMIT);
 		}
 		removeElementPrefixed("han");
 		for(int i = 0; i < used.length; i++) {
-			handleTextButton("han_" + i, false, DEFAULT_WIDTH / 2, (filtered ? heiChng : heiChng / 2) + i * heiChng, DEFAULT_WIDTH * 2 / 4, DEFAULT_HEIGHT / 5, null, used[i], i, Color.gray, Color.black);
+			handleTextButton("han_" + i, false, getWidth() / 2, (filtered ? heiChng : heiChng / 2) + i * heiChng, getWidth() * 2 / 4, getHeight() / 5, null, used[i], i, Color.gray, Color.black);
 		}
-		handleText("placeholder", false, DEFAULT_WIDTH / 2, (filtered ? heiChng : heiChng / 2) + (used.length)* heiChng , 10, 10, null, "");
+		handleText("placeholder", false, getWidth() / 2, (filtered ? heiChng : heiChng / 2) + (used.length)* heiChng , 10, 10, null, "");
 		
 		int xPos = getWidth() * 35/40;
 		int yPos = getHeight() * 1 / 15;
@@ -79,14 +74,15 @@ public class PopoutSelectList extends PopoutWindow{
 		}
 	}
 	
-	public static String getSelection(String returnLabel) {
-		while(Communication.get(returnLabel) == null && !resolve) {
+	public static String getSelection() {
+		while(Communication.get(STATIC_ACCESS) == null && !resolve) {
 		};
-		return Communication.get(returnLabel);
+		return Communication.get(STATIC_ACCESS);
 	}
 	
 	@Override
 	public void clickAction(int code, int x, int y) {
+		System.out.println(Thread.currentThread());
 		if(code == CODE_FILTER_ENTRY_SUBMIT) {
 			searchTerm = this.getStoredText(TEXT_ENTRY_FILTER_ACCESS);
 			filterList();
@@ -98,7 +94,7 @@ public class PopoutSelectList extends PopoutWindow{
 		}
 		for(int i = 0; i < used.length; i++) {
 			if(i == code) {
-				Communication.set(label, used[i]);
+				Communication.set(STATIC_ACCESS, used[i]);
 			}
 		}
 		

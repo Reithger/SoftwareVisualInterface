@@ -6,16 +6,11 @@ public class PopoutImageDisplay extends PopoutWindow {
 
 	private ImageDisplay imageDisplay;
 	
-	private int dragStartX;
-	private int dragStartY;
-	private boolean dragState;
-	
 	public PopoutImageDisplay(int wid, int hei, String ref) {
 		super(wid, hei);
 		this.allowScrollbars(false);
 		this.setResizable(true);
-		imageDisplay = new ImageDisplay(ref, getElementPanel());
-		imageDisplay.designatePopout();
+		imageDisplay = new ImageDisplay(ref, getHandlePanel());
 		imageDisplay.drawPage();
 	}
 	
@@ -50,24 +45,17 @@ public class PopoutImageDisplay extends PopoutWindow {
 	
 	@Override
 	public void clickPressAction(int code, int x, int y) {
-		dragStartX = x;
-		dragStartY = y;
-		dragState = true;
+		imageDisplay.processPressInput(code, x, y);
 	}
 	
 	@Override
 	public void clickReleaseAction(int code, int x, int y) {
-		dragState = false;
+		imageDisplay.processReleaseInput(code, x, y);
 	}
 	
 	@Override
 	public void dragAction(int code, int x, int y) {
-		if(dragState) {
-			imageDisplay.dragOriginX(x - dragStartX);
-			imageDisplay.dragOriginY(y - dragStartY);
-			dragStartX = x;
-			dragStartY = y;
-		}
+		imageDisplay.processDragInput(code,  x,  y);
 	}
 
 }

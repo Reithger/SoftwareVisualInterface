@@ -3,8 +3,6 @@ package visual.composite;
 import java.awt.Color;
 import java.awt.Image;
 
-import visual.panel.ElementPanel;
-
 public class ImageDisplay {
 
 //---  Constant Values   ----------------------------------------------------------------------
@@ -18,6 +16,7 @@ public class ImageDisplay {
 	
 	private static final double UI_BOX_RATIO_Y = 3 / 4.0;
 	private static final double UI_BOX_RATIO_X = 4 / 5.0;
+	private static final double UI_BOX_RATIO = 3.0 / 4.0;
 	public static final String IMAGE_NAME = "img";
 	
 	//-- Codes  -----------------------------------------------
@@ -28,7 +27,7 @@ public class ImageDisplay {
 	private static final int CODE_ZOOM_IN = 14;
 	private static final int CODE_ZOOM_OUT = 15;
 	private static final int CODE_RESET_POSITION = 17;
-	private static final int CODE_POPOUT = 18;
+	private static final int CODE_DRAG_UI = 18;
 	private static final int CODE_HIDE_UI = 19;
 	private static final char KEY_MOVE_RIGHT = 'd';
 	private static final char KEY_MOVE_DOWN = 's';
@@ -45,24 +44,24 @@ public class ImageDisplay {
 	private String imagePath;
 	private Image reference;
 	private double zoom;
-	private ElementPanel p;
+	private HandlePanel p;
 	private int originUIX;
 	private int originUIY;
-	private boolean popout;
 	private boolean hideUI;
 	
 	private int dragStartX;
 	private int dragStartY;
 	private boolean dragState;
+	private boolean dragUI;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
-	public ImageDisplay(String path, ElementPanel in) {
+	public ImageDisplay(String path, HandlePanel in) {
 		imagePath = path;
 		p = in;
 		zoom = 1;
-		originUIX = (int)(in.getWidth() * UI_BOX_RATIO_X);
-		originUIY = (int)(in.getHeight()  * UI_BOX_RATIO_Y);
+		originUIX = 0;
+		originUIY = 0;
 		refresh();
 	}
 
@@ -131,13 +130,31 @@ public class ImageDisplay {
 	}
 	
 	public void processPressInput(int code, int x, int y) {
-		dragStartX = x;
-		dragStartY = y;
-		dragState = true;
+		if(originUIX + 5 > p.getWidth()) {
+			originUIX = 0;
+			originUIY = 0;
+			drawUI();
+		}
+		if(originUIY + 5 > p.getHeight()) {
+			originUIX = 0;
+			originUIY = 0;
+			drawUI();
+		}
+		if(code == -1) {
+			dragStartX = x;
+			dragStartY = y;
+			dragState = true;
+		}
+		else if(code == CODE_DRAG_UI) {
+			dragStartX = x;
+			dragStartY = y;
+			dragUI = true;
+		}
 	}
 	
 	public void processReleaseInput(int code, int x, int y) {
 		dragState = false;
+		dragUI = false;
 	}
 	
 	public void processMouseWheelInput(int scroll) {
@@ -157,41 +174,59 @@ public class ImageDisplay {
 			dragStartX = x;
 			dragStartY = y;
 		}
+		else if(dragUI) {
+			originUIX += x - dragStartX;
+			originUIY += y - dragStartY;
+			dragStartX = x;
+			dragStartY = y;
+			drawUI();
+		}
 	}
 	
 	public void drawPage() {
-		p.addImage(IMAGE_NAME, 10, false, 0, 0, false, getImage(), getZoom());
-
+		if(!p.moveElement(IMAGE_NAME, 0, 0))
+			p.addImage(IMAGE_NAME, 10, false, 0, 0, false, getImage(), getZoom());
+		drawUI();
+	}
+	
+	public void drawUI() {
 		int usedWidth = p.getWidth() > MAXIMUM_UI_WIDTH ? MAXIMUM_UI_WIDTH : p.getWidth();
-		int imageSize = usedWidth / 20;
-		imageSize = imageSize > 30 ? 30 : imageSize;
+		int usedHeight =  p.getHeight() > MAXIMUM_UI_HEIGHT ? MAXIMUM_UI_HEIGHT : p.getHeight();
+		
+		int wid1 = (int)(usedWidth * (1 - UI_BOX_RATIO_X));
+		int hei1 = (int)(wid1 / UI_BOX_RATIO);
+		int hei2 = (int)(usedHeight * (1 - UI_BOX_RATIO_Y));
+		int wid2 = (int)(hei2 * UI_BOX_RATIO);
+		int useWid = wid1 < wid2 ? wid1 : wid2;
+		int useHei = useWid == wid1 ? hei1 : hei2;
+		
+		int imageSize = useHei / 5;
 		
 		if(!hideUI) {
-			int usedHeight =  p.getHeight() > MAXIMUM_UI_HEIGHT ? MAXIMUM_UI_HEIGHT : p.getHeight();
-			int spacing = imageSize * 4 / 3;
-			int posX = originUIX + (int)(usedWidth * (1 - UI_BOX_RATIO_X)) / 2;
-			int posY = originUIY + spacing * 3 / 4;
-	
-			p.addRectangle("rect_ui", 13, true,  originUIX, originUIY, (int)(usedWidth * (1 - UI_BOX_RATIO_X)), (int)(usedHeight * (1 - UI_BOX_RATIO_Y)), false, Color.white, Color.black);
+			if(!p.moveElement("ui_box_drag_button", originUIX, originUIY))
+				p.addButton("ui_box_drag_button", 10, true, originUIX, originUIY, useWid, useHei, CODE_DRAG_UI, false);
+			int spacing = imageSize * 5 / 4;
+
+			int posX = originUIX + useWid / 2;
+			int posY = originUIY + spacing * 3 / 5;
+
+			if(!p.moveElement("rect_ui", originUIX, originUIY))
+				p.addRectangle("rect_ui", 13, true,  originUIX, originUIY, useWid, useHei, false, Color.white, Color.black);
 			
-			drawImageButton("ui_box_zoom_in", true, posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_in.png", CODE_ZOOM_IN);
-			drawImageButton("ui_box_zoom_out", true, posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_out.png", CODE_ZOOM_OUT);
+			p.handleImageButton("ui_box_zoom_in", true, posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_in.png", CODE_ZOOM_IN);
+			p.handleImageButton("ui_box_zoom_out", true, posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_out.png", CODE_ZOOM_OUT);
 			posY += spacing;
-			drawImageButton("ui_box_move_up", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/up_arrow.png", CODE_MOVE_UP);
+			p.handleImageButton("ui_box_move_up", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/up_arrow.png", CODE_MOVE_UP);
 			posY += spacing;
-			drawImageButton("ui_box_move_left", true, posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/left_arrow.png", CODE_MOVE_LEFT);
-			drawImageButton("ui_box_move_right", true, posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/right_arrow.png", CODE_MOVE_RIGHT);
-			drawImageButton("ui_box_UI_ring", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/UI_ring.png", CODE_RESET_POSITION);
+			p.handleImageButton("ui_box_move_left", true, posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/left_arrow.png", CODE_MOVE_LEFT);
+			p.handleImageButton("ui_box_move_right", true, posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/right_arrow.png", CODE_MOVE_RIGHT);
+			p.handleImageButton("ui_box_UI_ring", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/UI_ring.png", CODE_RESET_POSITION);
 			posY += spacing;
-			drawImageButton("ui_box_move_down", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/down_arrow.png", CODE_MOVE_DOWN);
+			p.handleImageButton("ui_box_move_down", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/down_arrow.png", CODE_MOVE_DOWN);
 			
-			if(!popout) {
-				drawImageButton("ui_box_popout", true, p.getWidth() - imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, "/visual/composite/assets/popout.png", CODE_POPOUT);
-				p.addRectangle("rect_ui_popout", 13, true, p.getWidth() - imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, true, Color.white, Color.black);
-			}
 		}
-		drawImageButton("ui_hide_ui", true, p.getWidth() - (popout ? 1 : 3) * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, hideUI ? "/visual/composite/assets/eye_open-2.png" : "/visual/composite/assets/eye_closed-2.png", CODE_HIDE_UI);
-		p.addRectangle("rect_hide_ui", 13, true, p.getWidth() - (popout ? 1 : 3) * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, true, Color.white, Color.black);
+		p.handleImageButton("ui_hide_ui", true, p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, hideUI ? "/visual/composite/assets/eye_open-2.png" : "/visual/composite/assets/eye_closed-2.png", CODE_HIDE_UI);
+		p.addRectangle("rect_hide_ui", 13, true, p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, true, Color.white, Color.black);
 	}
 
 	public void refresh() {
@@ -215,31 +250,7 @@ public class ImageDisplay {
 		drawPage();
 	}
 
-	//---  Composite   ----------------------------------------------------------------------------
-		
-	private void drawImageButton(String name, boolean frame, int x, int y, int wid, int hei, String path, int code) {
-		String imageName = name + "_image";
-		if(!p.moveElement(imageName, x, y)) {
-			double imgWid = p.retrieveImage(path).getWidth(null);
-			double zoom = 1.0;
-			if(imgWid != wid) {
-				zoom = wid / imgWid;
-			}
-			p.addImage(imageName,15, frame, x, y, true, path, zoom);
-		}
-		String buttonName = name + "_button";
-		if(!p.moveElement(buttonName, x, y)) {
-			p.addButton(buttonName, 15, frame,  x, y, wid, hei, code, true);
-		}
-	}
-		
 //---  Setter Methods   -----------------------------------------------------------------------
-	
-	public void designatePopout() {
-		popout = true;
-		originUIX = 0;
-		originUIY = 0;
-	}
 	
 	public void setImagePath(String in) {
 		p.removeCachedImage(imagePath);

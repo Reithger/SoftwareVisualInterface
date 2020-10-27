@@ -134,10 +134,9 @@ public abstract class Frame{
 	}
 	
 	public void resize(int wid, int hei) {
-		frame.setSize(wid + BULLSHIT_OFFSET_X, hei + BULLSHIT_OFFSET_Y);
-		frame.getContentPane().setPreferredSize(new Dimension(wid + BULLSHIT_OFFSET_X, hei + BULLSHIT_OFFSET_Y));
-		frame.setMinimumSize(frame.getSize());
-		frame.setMaximumSize(frame.getSize());
+		Dimension d = new Dimension(wid + BULLSHIT_OFFSET_X, hei + BULLSHIT_OFFSET_Y);
+		frame.setSize(d);
+		frame.getContentPane().setPreferredSize(d);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
