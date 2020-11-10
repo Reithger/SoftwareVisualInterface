@@ -3,6 +3,8 @@ package visual.composite;
 import java.awt.Color;
 import java.awt.Image;
 
+import visual.panel.ElementPanel;
+
 public class ImageDisplay {
 
 //---  Constant Values   ----------------------------------------------------------------------
@@ -44,7 +46,7 @@ public class ImageDisplay {
 	private String imagePath;
 	private Image reference;
 	private double zoom;
-	private HandlePanel p;
+	private ElementPanel p;
 	private int originUIX;
 	private int originUIY;
 	private boolean hideUI;
@@ -56,7 +58,7 @@ public class ImageDisplay {
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
-	public ImageDisplay(String path, HandlePanel in) {
+	public ImageDisplay(String path, ElementPanel in) {
 		imagePath = path;
 		p = in;
 		zoom = 1;
@@ -213,19 +215,19 @@ public class ImageDisplay {
 			if(!p.moveElement("rect_ui", originUIX, originUIY))
 				p.addRectangle("rect_ui", 13, true,  originUIX, originUIY, useWid, useHei, false, Color.white, Color.black);
 			
-			p.handleImageButton("ui_box_zoom_in", true, posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_in.png", CODE_ZOOM_IN);
-			p.handleImageButton("ui_box_zoom_out", true, posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_out.png", CODE_ZOOM_OUT);
+			handleImageButton("ui_box_zoom_in", true, posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_in.png", CODE_ZOOM_IN);
+			handleImageButton("ui_box_zoom_out", true, posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_out.png", CODE_ZOOM_OUT);
 			posY += spacing;
-			p.handleImageButton("ui_box_move_up", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/up_arrow.png", CODE_MOVE_UP);
+			handleImageButton("ui_box_move_up", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/up_arrow.png", CODE_MOVE_UP);
 			posY += spacing;
-			p.handleImageButton("ui_box_move_left", true, posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/left_arrow.png", CODE_MOVE_LEFT);
-			p.handleImageButton("ui_box_move_right", true, posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/right_arrow.png", CODE_MOVE_RIGHT);
-			p.handleImageButton("ui_box_UI_ring", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/UI_ring.png", CODE_RESET_POSITION);
+			handleImageButton("ui_box_move_left", true, posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/left_arrow.png", CODE_MOVE_LEFT);
+			handleImageButton("ui_box_move_right", true, posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/right_arrow.png", CODE_MOVE_RIGHT);
+			handleImageButton("ui_box_UI_ring", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/UI_ring.png", CODE_RESET_POSITION);
 			posY += spacing;
-			p.handleImageButton("ui_box_move_down", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/down_arrow.png", CODE_MOVE_DOWN);
+			handleImageButton("ui_box_move_down", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/down_arrow.png", CODE_MOVE_DOWN);
 			
 		}
-		p.handleImageButton("ui_hide_ui", true, p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, hideUI ? "/visual/composite/assets/eye_open-2.png" : "/visual/composite/assets/eye_closed-2.png", CODE_HIDE_UI);
+		handleImageButton("ui_hide_ui", true, p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, hideUI ? "/visual/composite/assets/eye_open-2.png" : "/visual/composite/assets/eye_closed-2.png", CODE_HIDE_UI);
 		p.addRectangle("rect_hide_ui", 13, true, p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, true, Color.white, Color.black);
 	}
 
@@ -250,6 +252,22 @@ public class ImageDisplay {
 		drawPage();
 	}
 
+	public void handleImageButton(String name, boolean frame, int x, int y, int wid, int hei, String path, int code) {
+		String imageName = name + "_image";
+		if(!p.moveElement(imageName, x, y)) {
+			double imgWid = p.retrieveImage(path).getWidth(null);
+			double zoom = 1.0;
+			if(imgWid != wid) {
+				zoom = wid / imgWid;
+			}
+			p.addImage(imageName,15, frame, x, y, true, path, zoom);
+		}
+		String buttonName = name + "_button";
+		if(!p.moveElement(buttonName, x, y)) {
+			p.addButton(buttonName, 15, frame,  x, y, wid, hei, code, true);
+		}
+	}
+	
 //---  Setter Methods   -----------------------------------------------------------------------
 	
 	public void setImagePath(String in) {

@@ -11,9 +11,6 @@ import javax.swing.JFileChooser;
 import filemeta.FileChooser;
 import filemeta.config.Config;
 import input.Callback;
-import input.Communication;
-import visual.composite.popout.PopoutAlert;
-import visual.composite.popout.PopoutImageDisplay;
 import visual.composite.popout.PopoutSelectList;
 import visual.frame.WindowFrame;
 import visual.panel.CanvasPanel;
@@ -36,7 +33,7 @@ public class test {
 			}
 		});
 		Callback.callback("C");
-		//testComposites();
+		testComposites();
 		//testConfig();
 		//drawTest1();
 	}
@@ -44,9 +41,14 @@ public class test {
 	private static void testComposites() {
 		//PopoutAlert pa = new PopoutAlert(450, 250, "yo get scared");
 		//pa.dispose();
-		PopoutSelectList psl = new PopoutSelectList(250, 150, new String[] {"var1A", "var2B", "var2C", "var1D"}, true);
-		System.out.println("D: " + PopoutSelectList.getSelection());
-		psl.dispose();
+		PopoutSelectList psl = new PopoutSelectList(250, 150, new String[] {"var1A", "var2B", "var2C", "var1D"}, true, "this");
+		Callback.setCallback("this", new Callback() {
+			@Override
+			public void callbackFunction() {
+				System.out.println("D: " + psl.getSelected());
+				psl.dispose();
+			}
+		});
 		//PopoutImageDisplay pid = new PopoutImageDisplay(200, 200, "src\\test\\assets\\ada.png");
 	}
 	

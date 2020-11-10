@@ -62,7 +62,7 @@ public class CanvasPanel extends Panel{
 	
 	//--  Support  ------------------------------------
 	
-	private void initialize() {
+	public void initialize() {
 		for(int i = 0; i < canvas.length / zoom; i++) {
 			for(int j = 0; j < canvas[i].length / zoom; j++) {
 				canvas[i][j] =  new Color(i  % 255, j % 255, (i * j) % 255);
@@ -130,8 +130,7 @@ public class CanvasPanel extends Panel{
 	@Override
 	public void clickEvent(int event, int x, int y) {
 		if(x >= 0 && x <= width && y >= 0 && y <= height) {
-			canvas[x / zoom][y / zoom] = new Color(draw.getRGB());
-			update[x  / subGridSize][y / subGridSize] = true;
+			setPixelColor(x / zoom, y / zoom, new Color(draw.getRGB()));
 		}
 	}
 	
@@ -146,10 +145,26 @@ public class CanvasPanel extends Panel{
 		
 	}
 	
-	public void mouseWheelEvent(int rotation) {
+	public void mouseMoveEvent(int x, int y) {
 		
 	}
 	
+	public void mouseWheelEvent(int rotation) {
+		
+	}
+
+	@Override
+	public void clickReleaseEvent(int event, int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void clickPressEvent(int event, int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
 //---  Setter Methods   -----------------------------------------------------------------------
 	
 	public void setPenColor(Color drawSet) {
@@ -192,6 +207,10 @@ public class CanvasPanel extends Panel{
 		return getHeight();
 	}
 
+	public Color getPixelColor(int x, int y) {
+		return canvas[x][y];
+	}
+	
 	public BufferedImage getImage() {
 		BufferedImage out = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		for(int i = 0; i < canvas.length; i++) {
@@ -249,18 +268,6 @@ public class CanvasPanel extends Panel{
 			}
 		}
 		return out;
-	}
-
-	@Override
-	public void clickReleaseEvent(int event, int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void clickPressEvent(int event, int x, int y) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

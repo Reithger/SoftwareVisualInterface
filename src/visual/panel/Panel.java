@@ -126,6 +126,8 @@ public abstract class Panel{
 	
 	public abstract void mouseWheelEvent(int rotation);
 	
+	public abstract void mouseMoveEvent(int x, int y);
+	
 	/**
 	 * This method is triggered whenever the Panel object detects user interaction
 	 * via the KeyBoard; exact implementation of response is left to the implementation

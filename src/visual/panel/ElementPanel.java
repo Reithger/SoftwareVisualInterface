@@ -10,7 +10,17 @@ import java.awt.*;
 
 import javax.imageio.ImageIO;
 
-import visual.panel.element.*;
+import visual.panel.element.Clickable;
+import visual.panel.element.DrawnAnimation;
+import visual.panel.element.DrawnButton;
+import visual.panel.element.DrawnImage;
+import visual.panel.element.DrawnLine;
+import visual.panel.element.DrawnRectangle;
+import visual.panel.element.DrawnText;
+import visual.panel.element.DrawnTextEntry;
+import visual.panel.element.Element;
+import visual.panel.element.TextStorage;
+
 
 /**
  * This class implements the Panel abstract class to provide a suite of drawing tools and interactivity
@@ -23,7 +33,7 @@ import visual.panel.element.*;
  * flexible but more convenient tools which can themselves be overridden.
  * 
  * TODO: Big memory leak issues, need to fix that; maybe not? Still needs a good reworking though
- * 
+ * TODO: ElementFactory to reduce number of dependencies on specific subclasses; simplify their input?
  * TODO: Small pixel font options for text
  * TODO: Region categories with scroll implementation, 'sub-panels'? Ugh, tricky to do.
  * TODO: Diagnostic output of all Elements, instance variables
@@ -257,6 +267,10 @@ public class ElementPanel extends Panel{
 		dragBehaviour(event, x, y);
 	}
 	
+	public void mouseMoveEvent(int x, int y) {
+		mouseMoveBehaviour(x, y);
+	}
+	
 	public void mouseWheelEvent(int rotation) {
 		mouseWheelBehaviour(rotation);
 	}
@@ -295,6 +309,10 @@ public class ElementPanel extends Panel{
 	 */
 	
 	public void dragBehaviour(int event, int x, int y) {
+		
+	}
+	
+	public void mouseMoveBehaviour(int x, int y) {
 		
 	}
 	

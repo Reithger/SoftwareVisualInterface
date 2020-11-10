@@ -265,7 +265,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
+		containerFrame.mouseMoveEvent(e.getX(), e.getY());
 		
 	}
 

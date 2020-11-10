@@ -13,7 +13,7 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	public HandlePanel(int x, int y, int width, int height) {
 		super(x, y, width, height);
 	}
-
+	
 	@Override
 	public void handleTextButton(String nom, boolean frame, int x, int y, int wid, int hei, Font font, String phr, int code, Color fill, Color border) {
 		handleRectangle(nom + "_rect", frame, 5, x, y, wid, hei, fill, border);

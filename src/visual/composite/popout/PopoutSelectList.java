@@ -1,10 +1,8 @@
 package visual.composite.popout;
 
 import java.awt.Color;
-import java.io.File;
-import java.util.ArrayList;
 
-import input.Communication;
+import input.Callback;
 
 public class PopoutSelectList extends PopoutWindow{
 
@@ -19,19 +17,22 @@ public class PopoutSelectList extends PopoutWindow{
 	private String[] used;
 	private String searchTerm;
 	private boolean filtered;
-	private static boolean resolve;
+	private String callbackReference;
+	private String output;
 	
-	public PopoutSelectList(int wid, int hei, String[] list, boolean filter) {
+	public PopoutSelectList(int wid, int hei, String[] list, boolean filter, String callbackIn) {
 		super(wid, hei);
 		allowScrollbars(true);
-		Communication.set(STATIC_ACCESS, null);
 		ref = list;
 		used = ref;
 		filtered = filter;
 		searchTerm = "";
-		resolve = false;
+		callbackReference = callbackIn;
 		drawPage();
-		System.out.println(Thread.currentThread());
+	}
+	
+	public String getSelected() {
+		return output;
 	}
 	
 	private void drawPage() {
@@ -74,27 +75,20 @@ public class PopoutSelectList extends PopoutWindow{
 		}
 	}
 	
-	public static String getSelection() {
-		while(Communication.get(STATIC_ACCESS) == null && !resolve) {
-		};
-		return Communication.get(STATIC_ACCESS);
-	}
-	
 	@Override
 	public void clickAction(int code, int x, int y) {
-		System.out.println(Thread.currentThread());
 		if(code == CODE_FILTER_ENTRY_SUBMIT) {
 			searchTerm = this.getStoredText(TEXT_ENTRY_FILTER_ACCESS);
 			filterList();
 			drawPage();
 		}
 		if(code == CODE_CLOSE) {
-			resolve = true;
 			dispose();
 		}
 		for(int i = 0; i < used.length; i++) {
 			if(i == code) {
-				Communication.set(STATIC_ACCESS, used[i]);
+				output = used[i];
+				Callback.callback(callbackReference);
 			}
 		}
 		

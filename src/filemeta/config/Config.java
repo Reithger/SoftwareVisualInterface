@@ -81,7 +81,7 @@ public class Config {
 	
 	//TODO: Closing function that stops all this data from being active
 	
-	public String getConfigFileEntry(String fullPath, String entryName) {
+	public static String getConfigFileEntry(String fullPath, String entryName) {
 		try {
 			return ConfigFileParser.getContents(new File(fullPath), entryName);
 		}
@@ -92,7 +92,7 @@ public class Config {
 		}
 	}
 	
-	public boolean setConfigFileEntry(String fullPath, String entryName, String newValue) {
+	public static boolean setConfigFileEntry(String fullPath, String entryName, String newValue) {
 		try {
 			return ConfigFileParser.setContents(new File(fullPath), entryName, newValue);
 		}
@@ -103,7 +103,7 @@ public class Config {
 		}
 	}
 	
-	public String getConfigFileEntry(File fil, String entryName) {
+	public static String getConfigFileEntry(File fil, String entryName) {
 		try {
 			return ConfigFileParser.getContents(fil, entryName);
 		}
@@ -114,7 +114,7 @@ public class Config {
 		}
 	}
 	
-	public boolean setConfigFileEntry(File fil, String entryName, String newValue) {
+	public static boolean setConfigFileEntry(File fil, String entryName, String newValue) {
 		try {
 			return ConfigFileParser.setContents(fil, entryName, newValue);
 		}
