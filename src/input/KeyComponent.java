@@ -81,7 +81,12 @@ public class KeyComponent implements KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		activeSelect = e.getKeyChar();
-		containerFrame.keyEvent(getSelected());
+		new Thread() {
+			@Override
+			public void run() {
+				containerFrame.keyEvent(getSelected());
+			}
+		}.start();
 	}
 
 	@Override

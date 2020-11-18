@@ -42,8 +42,6 @@ public class ImageDisplay {
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
-	private String imageName;
-	private String imagePath;
 	private Image reference;
 	private double zoom;
 	private ElementPanel p;
@@ -59,7 +57,16 @@ public class ImageDisplay {
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public ImageDisplay(String path, ElementPanel in) {
-		imagePath = path;
+		reference = in.retrieveImage(path);
+		p = in;
+		zoom = 1;
+		originUIX = 0;
+		originUIY = 0;
+		refresh();
+	}
+	
+	public ImageDisplay(Image ref, ElementPanel in) {
+		reference = ref;
 		p = in;
 		zoom = 1;
 		originUIX = 0;
@@ -233,13 +240,10 @@ public class ImageDisplay {
 
 	public void refresh() {
 		clear();
-		reference = p.retrieveImage(imagePath);
-		imageName = formatImageName(imagePath);
 		drawPage();
 	}
 	
 	public void clear() {
-		p.removeCachedImage(imagePath);
 		p.removeElement(IMAGE_NAME);
 		p.removeElementPrefixed("");
 	}
@@ -270,9 +274,13 @@ public class ImageDisplay {
 	
 //---  Setter Methods   -----------------------------------------------------------------------
 	
-	public void setImagePath(String in) {
-		p.removeCachedImage(imagePath);
-		imagePath = in;
+	public void setImage(String in) {
+		reference = p.retrieveImage(in);
+		refresh();
+	}
+	
+	public void setImage(Image in) {
+		reference = in;
 		refresh();
 	}
 	
@@ -311,27 +319,13 @@ public class ImageDisplay {
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
-	
-	public String getImageName() {
-		return imageName;
-	}
-	
-	public String getImagePath() {
-		return imagePath;
-	}
-	
+
 	public Image getImage() {
 		return reference;
 	}
 	
 	public double getZoom() {
 		return zoom;
-	}
-	
-//---  Mechanics   ----------------------------------------------------------------------------
-	
-	private String formatImageName(String in) {
-		return in.substring(in.lastIndexOf("\\") + 1).substring(in.lastIndexOf("/") + 1);
 	}
 	
 }

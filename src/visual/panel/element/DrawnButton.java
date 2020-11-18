@@ -89,7 +89,7 @@ public class DrawnButton extends Element implements Clickable{
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public ClickRegionRectangle getDetectionRegion(int offsetX, int offsetY) {
-		return new ClickRegionRectangle(getX() - (center ? width / 2 : 0) + offsetX, getY() - (center ? height / 2 : 0) + offsetY, width, height, code);
+		return new ClickRegionRectangle(getX() - (center ? width / 2 : 0) + offsetX, getY() - (center ? height / 2 : 0) + offsetY, width, height, code, getDrawPriority());
 	}
 
 	public int getCode() {

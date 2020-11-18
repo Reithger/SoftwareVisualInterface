@@ -1,10 +1,13 @@
-package visual.panel;
+package visual.panel.element;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-public class CanvasPanel extends Panel{
+import input.ClickRegionRectangle;
+import input.Detectable;
+
+public class DrawnCanvas extends Element implements Clickable{
 	
 //---  Constant Values   ----------------------------------------------------------------------
 	
@@ -21,41 +24,39 @@ public class CanvasPanel extends Panel{
 	private boolean[][] update;
 	/** int value describing how large to draw each entry in the canvas (at zoom = 1, each color is 1 pixel). Does not affect the size of the canvas, just its representation*/
 	private int zoom;
-	/** Color object describing the current Color that any selected point in the canvas Color[][] array will be set as (the 'pen' color)*/
-	private Color draw;
 	/** */
-	private int width;
+	private int elemWidth;
 	/** */
-	private int height;
+	private int elemHeight;
 	/** */
-	private int xBlock;
-	/** */
-	private int yBlock;
-	/** */
-	private BufferedImage save;
-	
 	private int subGridSize;
+	
+	private int code;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
-	public CanvasPanel(int x, int y, int inWidth, int inHeight) {
-		super(x, y, inWidth, inHeight);
-		width = inWidth;
-		height = inHeight;
-		zoom = 5;
-		draw = new Color(0, 0, 0);
-		canvas = new Color[width][height];
+	public DrawnCanvas(int x, int y, int inWidth, int inHeight, int inCode, int canWid, int canHei) {
+		setX(x);
+		setY(y);
+		code = inCode;
+		setDrawPriority(0);
+		elemWidth = inWidth;
+		elemHeight = inHeight;
+		zoom = 1;
+		canvas = new Color[canWid][canHei];
 		formatSubImages();
 		initialize();
 	}
 	
-	public CanvasPanel(int x, int y, int inWidth, int inHeight, int defZoom) {
-		super(x, y, inWidth, inHeight);
-		width = inWidth;
-		height = inHeight;
+	public DrawnCanvas(int x, int y, int inWidth, int inHeight, int inCode, int canWid, int canHei, int defZoom) {
+		setX(x);
+		setY(y);
+		code = inCode;
+		setDrawPriority(0);
+		elemWidth = inWidth;
+		elemHeight = inHeight;
 		zoom = defZoom;
-		draw = new Color(0, 0, 0);
-		canvas = new Color[inWidth][inHeight];
+		canvas = new Color[canWid][canHei];
 		formatSubImages();
 		initialize();
 	}
@@ -63,8 +64,8 @@ public class CanvasPanel extends Panel{
 	//--  Support  ------------------------------------
 	
 	public void initialize() {
-		for(int i = 0; i < canvas.length / zoom; i++) {
-			for(int j = 0; j < canvas[i].length / zoom; j++) {
+		for(int i = 0; i < canvas.length; i++) {
+			for(int j = 0; j < canvas[i].length; j++) {
 				canvas[i][j] =  new Color(i  % 255, j % 255, (i * j) % 255);
 			}
 		}
@@ -72,12 +73,25 @@ public class CanvasPanel extends Panel{
 	
 //---  Operations   ---------------------------------------------------------------------------
 
+	public boolean focusEvent(char in) {
+		input(in);
+		return false;
+	}
+	
+	public void input(int code) {
+		//Override this
+	}
+	
+	public void input(char code) {
+		//Override this
+	}
+	
 	public void commandUnder(Graphics g) {
 		//Overwrite method to allow custom underlay
 	}
 
 	@Override
-	public void paintComponent(Graphics g) {
+	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
 		Color save = g.getColor();
 		commandUnder(g);
 		
@@ -92,7 +106,11 @@ public class CanvasPanel extends Panel{
 		
 		for(int i = 0; i < display.length; i++) {
 			for(int j = 0; j < display[i].length; j++) {
-				g.drawImage(display[i][j], i * subGridSize, j * subGridSize, null);
+				int x = getX() + i * subGridSize;
+				int y = getY() + j * subGridSize;
+				if(x < elemWidth && y < elemHeight) {
+					g.drawImage(display[i][j], x + offsetX, y + offsetY, null);
+				}
 			}
 		}
 		commandOver(g);
@@ -102,13 +120,17 @@ public class CanvasPanel extends Panel{
 	public void commandOver(Graphics g) {
 		//Overwrite method to allow custom overlay
 	}
+	
+	public void updateElementSize(int elWid, int elHei) {
+		elemWidth = elWid;
+		elemHeight = elHei;
+		formatSubImages();
+	}
 
-	public void updateSize(int newWidth, int newHeight) {
-		width = newWidth;
-		height = newHeight;
-		Color[][] out = new Color[newWidth][newHeight];
-		for(int i = 0; i < newWidth; i++) {
-			for(int j = 0; j < newHeight; j++) {
+	public void updateCanvasSize(int canWid, int canHei) {
+		Color[][] out = new Color[canWid][canHei];
+		for(int i = 0; i < canWid; i++) {
+			for(int j = 0; j < canHei; j++) {
 				if(i < canvas.length && j < canvas[i].length) {
 					out[i][j] = canvas[i][j];
 				}
@@ -120,99 +142,98 @@ public class CanvasPanel extends Panel{
 
 	public void updateCanvas(Color[][] newCan) {
 		canvas = newCan;
-		width = newCan.length;
-		height = newCan[0].length;
 		formatSubImages();
-	}
-	
-	//-- Reactions  -----------------------------------
-	
-	@Override
-	public void clickEvent(int event, int x, int y) {
-		if(x >= 0 && x <= width && y >= 0 && y <= height) {
-			setPixelColor(x / zoom, y / zoom, new Color(draw.getRGB()));
-		}
-	}
-	
-	@Override
-	public void dragEvent(int event, int x, int y) {
-		clickEvent(-1, x, y);
-	}
-
-	@Override
-	public void keyEvent(char event) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void mouseMoveEvent(int x, int y) {
-		
-	}
-	
-	public void mouseWheelEvent(int rotation) {
-		
-	}
-
-	@Override
-	public void clickReleaseEvent(int event, int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void clickPressEvent(int event, int x, int y) {
-		// TODO Auto-generated method stub
-		
 	}
 
 //---  Setter Methods   -----------------------------------------------------------------------
 	
-	public void setPenColor(Color drawSet) {
-		draw = drawSet;
+	public void setZoom(int in) {
+		if(in <= 0) {
+			in = 1;
+		}
+		zoom = in;
+		formatSubImages();
 	}
 	
 	public void setPixelColor(int x, int y, Color col) {
-		canvas[x / zoom][y / zoom] = col;
-		update[x  / subGridSize][y / subGridSize] = true;
+		int canX = x / zoom;
+		int canY = y / zoom;
+		if(canX < canvas.length && canY < canvas[0].length) {
+			canvas[canX][canY] = col;
+			update[x  / subGridSize][y / subGridSize] = true;
+		}
 	}
 	
 	public void setCanvasColor(int x, int y, Color col) {
-		canvas[x][y] = col;
-		update[x * zoom / subGridSize][y * zoom / subGridSize] = true;
+		if(x < canvas.length && y < canvas[0].length) {
+			canvas[x][y] = col;
+			update[x * zoom / subGridSize][y * zoom / subGridSize] = true;
+		}
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
+	
+	public Detectable getDetectionRegion(int offsetX, int offsetY) {
+		return new ClickRegionRectangle(getX() + offsetX, getY() + offsetY, getCanvasWidth() * zoom, getCanvasHeight() * zoom, getCode(), getDrawPriority());
+	}
+	
+	public int getCode() {
+		return code;
+	}
 	
 	public int getZoom() {
 		return zoom;
 	}
 
 	@Override
-	public int getMinimumScreenX() {
-		return 0;
+	public int getMinimumX() {
+		return getX();
 	}
 
 	@Override
-	public int getMaximumScreenX() {
-		return getWidth();
+	public int getMaximumX() {
+		return getX() + getWidth();
 	}
 
 	@Override
-	public int getMinimumScreenY() {
-		return 0;
+	public int getMinimumY() {
+		return getY();
 	}
 
 	@Override
-	public int getMaximumScreenY() {
-		return getHeight();
+	public int getMaximumY() {
+		return getY() + getHeight();
 	}
 
+	public int getWidth() {
+		return elemWidth;
+	}
+	
+	public int getHeight() {
+		return elemHeight;
+	}
+	
+	public int getCanvasWidth() {
+		return canvas.length;
+	}
+	
+	public int getCanvasHeight() {
+		if(canvas.length <= 0) {
+			return 0;
+		}
+		return canvas[0].length;
+	}
+	
 	public Color getPixelColor(int x, int y) {
+		return canvas[x / zoom][y / zoom];
+	}
+	
+	public Color getCanvasColor(int x, int y) {
 		return canvas[x][y];
 	}
 	
 	public BufferedImage getImage() {
-		BufferedImage out = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage out = new BufferedImage(canvas.length, canvas[0].length, BufferedImage.TYPE_INT_ARGB);
 		for(int i = 0; i < canvas.length; i++) {
 			for(int j = 0; j < canvas[i].length; j++) {
 				out.setRGB(i, j, canvas[i][j].getRGB());
@@ -222,8 +243,8 @@ public class CanvasPanel extends Panel{
 	}
 	
 	public BufferedImage getImage(double scale) {
-		int wid = (int)(scale * width);
-		int hei = (int)(scale * height);
+		int wid = (int)(scale * canvas.length);
+		int hei = (int)(scale * canvas[0].length);
 		BufferedImage out = new BufferedImage(wid, hei, BufferedImage.TYPE_INT_ARGB);
 		for(int i = 0; i < out.getWidth(); i++) {
 			for(int j = 0; j < out.getHeight(); j++) {
@@ -237,14 +258,16 @@ public class CanvasPanel extends Panel{
 
 	private void formatSubImages() {
 		subGridSize = zoom * (SUB_GRID_SIZE_MAXIMUM / zoom);
-		xBlock = width % subGridSize == 0 ? width / subGridSize : (width / subGridSize + 1);
-		yBlock = height % subGridSize == 0 ? height / subGridSize : (height / subGridSize + 1);
+		int width = canvas.length * zoom;
+		int height = canvas[0].length * zoom;
+		int xBlock = width % subGridSize == 0 ? width / subGridSize : (width / subGridSize + 1);
+		int yBlock = height % subGridSize == 0 ? height / subGridSize : (height / subGridSize + 1);
 		update = new boolean[xBlock][yBlock];
 		display = new BufferedImage[xBlock][yBlock];
-		buildSubImages();
+		buildSubImages(xBlock, yBlock);
 	}
 	
-	private void buildSubImages() {
+	private void buildSubImages(int xBlock, int yBlock) {
 		for(int i = 0; i < xBlock; i++) {
 			for(int j = 0; j < yBlock; j++) {
 				display[i][j] = buildSubImage(i, j);
@@ -254,16 +277,22 @@ public class CanvasPanel extends Panel{
 	}
 	
 	private BufferedImage buildSubImage(int displayX, int displayY) {
+		int width = canvas.length * zoom;
+		int height = canvas[0].length * zoom;
+		int xBlock = width % subGridSize == 0 ? width / subGridSize : (width / subGridSize + 1);
+		int yBlock = height % subGridSize == 0 ? height / subGridSize : (height / subGridSize + 1);
 		int wid = (displayX == xBlock - 1 && width % subGridSize != 0) ? width % subGridSize : subGridSize;
 		int hei = (displayY == yBlock - 1 && height % subGridSize != 0) ? height % subGridSize : subGridSize;
 		BufferedImage out = new BufferedImage(wid, hei, BufferedImage.TYPE_INT_ARGB);
 		for(int i = 0; i < wid; i++) {
 			for(int j = 0; j < hei; j++) {
-				if(canvas[(displayX * subGridSize + i) / zoom][(displayY * subGridSize + j) / zoom] == null) {
-					out.setRGB(i, j, Color.white.getRGB());
+				int indX = (displayX * subGridSize + i) / zoom;
+				int indY = (displayY * subGridSize + j) / zoom;
+				if(indX >= canvas.length || indY >= canvas[0].length || canvas[indX][indY] == null) {
+					out.setRGB(i, j, new Color(255, 255, 255, 255).getRGB());
 				}
 				else {
-					out.setRGB(i, j, canvas[(displayX * subGridSize + i) / zoom][(displayY * subGridSize + j) / zoom].getRGB());
+					out.setRGB(i, j, canvas[indX][indY].getRGB());
 				}
 			}
 		}

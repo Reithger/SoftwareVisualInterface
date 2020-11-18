@@ -135,7 +135,10 @@ public class WindowFrame extends Frame{
 	
 	public void removeWindow(String windowName) {
 		try {
+			hideActiveWindow(windowName);
+			openLock();
 			windows.remove(windowName);
+			closeLock();
 		}
 		catch(Exception e) {
 			System.out.println("Error: Attempt to remove non-existant Window collection of Panel objects");

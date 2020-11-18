@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import visual.panel.element.Clickable;
 import visual.panel.element.DrawnAnimation;
 import visual.panel.element.DrawnButton;
+import visual.panel.element.DrawnCanvas;
 import visual.panel.element.DrawnImage;
 import visual.panel.element.DrawnLine;
 import visual.panel.element.DrawnRectangle;
@@ -55,6 +56,8 @@ public class ElementPanel extends Panel{
 	/** boolean value used to denote the meaning of the boolean value given to many methods*/
 	public static final boolean NON_CENTERED = false;
 	
+	private static final int DRAG_CLICK_SENSITIVITY = 25;
+	
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -80,11 +83,16 @@ public class ElementPanel extends Panel{
 	/** HashMap linking String system paths to Images to cache images that may be used repeatedly*/
 	private HashMap<String, Image> images;	//TODO: Image manager? Can be a small class, but still
 	
-	private boolean mutex;
-	
 	private Scrollbar scrollbar;		//TODO: Common interface so we can wrap these into pseudo-recursive structure
 	
-
+	private int dragClickX;
+	
+	private int dragClickY;
+	
+	private int dragClickSensitivity;	//This is so you can have some grace period in having clicks be detected
+	
+	private volatile boolean clickFired;	//This is to avoid double-firing a clickEvent
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
@@ -97,13 +105,13 @@ public class ElementPanel extends Panel{
 	 * @param height - int value representing the height of this ElementPanel object
 	 */
 	
-	public ElementPanel(int x, int y, int width, int height){
+ 	public ElementPanel(int x, int y, int width, int height){
 		super(x, y, width, height);
 		drawList = new HashMap<String, Element>();
 		frameList = new HashMap<String, Element>();
 		clickList = new LinkedList<String>();
 		images = new HashMap<String, Image>();
-		mutex = false;
+		dragClickSensitivity = DRAG_CLICK_SENSITIVITY;
 		scrollbar = new Scrollbar(this);
 	}
 	
@@ -226,32 +234,44 @@ public class ElementPanel extends Panel{
 	 * 
 	 */
 	
+	@Override
 	public void clickEvent(int event, int x, int y){
+		if(clickFired) {
+			return;
+		}
+		clickFired = true;
 		getParentFrame().dispenseAttention();
 		setAttention(true);
 		focusElement = null;
 		for(String s : clickList) {
 			Clickable c = getClickableElement(s);
-			if(c == null) {
-				continue;
-			}
-			if(c.getCode() == event) {
-				focusElement = c;
+			if(c != null) {
+				if(c.getCode() == event) {
+					focusElement = c;
+				}
 			}
 		}
 		clickBehaviour(event, x, y);
 	}
 	
+	@Override
 	public void clickReleaseEvent(int event, int x, int y) {
 		scrollbar.processClickRelease();
+		double dist = Math.sqrt(Math.pow(x - dragClickX, 2) + Math.pow(y - dragClickY, 2));
+		if(!clickFired && dist < dragClickSensitivity) {
+			clickEvent(event, x, y);
+		}
 		clickReleaseBehaviour(event, x, y);
 	}
 	
 	@Override
 	public void clickPressEvent(int event, int x, int y) {
+		clickFired = false;
 		if(!scrollbar.processClickPress(event, x , y)) {
 			return;
 		}
+		dragClickX = x;
+		dragClickY = y;
 		clickPressBehaviour(event, x, y);
 	}
 	
@@ -370,6 +390,10 @@ public class ElementPanel extends Panel{
 		sT.setText(newText);
 	}
 	
+	public void setDragClickSensitivity(int in) {
+		dragClickSensitivity = in;
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 
 	/**
@@ -433,6 +457,18 @@ public class ElementPanel extends Panel{
 		catch(Exception e) {
 			e.printStackTrace();
 			System.out.println("Failure to retrieve TextStorage implementing Element object; \"getStoredTextElement(String name)\" function.");
+			return null;
+		}
+	}
+	
+	public DrawnCanvas getDrawnCanvas(String name) {
+		try {
+			return (DrawnCanvas)getElement(name);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("Failure to retrieve DrawnCanvas Element object; \"getDrawnCanvas(String name)\" function.");
+			System.out.println("Attempted to retrieve " + name);
 			return null;
 		}
 	}
@@ -547,6 +583,10 @@ public class ElementPanel extends Panel{
 		return (maxY < getHeight() ? getHeight() : maxY);
 	}
 	
+	public int getDragClickSensitivity() {
+		return dragClickSensitivity;
+	}
+	
 //---  Mechanics   ----------------------------------------------------------------------------
 	
 	/**
@@ -589,17 +629,14 @@ public class ElementPanel extends Panel{
 		return null != images.remove(path);
 	}
 	
-	private void openLock() {
-		while(mutex) {
-		}
-		mutex = true;
-	}
-	
-	private void closeLock() {
-		mutex = false;
-	}
-	
 //---  Draw   ---------------------------------------------------------------------------------
+	
+	//-- Canvas  ----------------------------------------------
+	
+	public void addCanvas(String name, DrawnCanvas can, boolean frame) {
+		handleAddElement(name, can, frame);
+		clickList.add(name);
+	}
 	
 	//-- Image  -----------------------------------------------
 	
@@ -722,9 +759,7 @@ public class ElementPanel extends Panel{
 		handleAddElement(name, d, frame);
 	}
 	
-	
-	
-	
+	//-- Animations  ------------------------------------------
 	
 	public void addAnimation(String name, int priority, boolean frame, int x, int y, boolean center, int period, double scale, String[] images) {
 		Image[] rec = new Image[images.length];
@@ -929,8 +964,8 @@ public class ElementPanel extends Panel{
 		openLock();
 		drawList.remove(name);
 		frameList.remove(name);
-		closeLock();
 		clickList.remove(name);
+		closeLock();
 	}
 	
 	/**

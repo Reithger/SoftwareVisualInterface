@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import visual.frame.WindowFrame;
-import visual.panel.CanvasPanel;
 import visual.panel.ElementPanel;
+import visual.panel.element.DrawnCanvas;
 
 public class Tutorial {
 	
@@ -107,16 +107,9 @@ public class Tutorial {
 		pan2.addLine("line6", 30, false,  50, 50, 150, 50, 5, Color.black);
 		pan2.setScrollBarVertical(true);
 		
-		//This is a CanvasPanel, a very specific Panel subclass for being able to be drawn on. Basically just for my art program, but use it yourself!
-		CanvasPanel can = new CanvasPanel(800, 0, 300, 500, 5) {
+		DrawnCanvas can = new DrawnCanvas(800, 0, 300, 500, 5, 300, 500, 1) {
 			private boolean grid;
 			
-			@Override
-			public void keyEvent(char key) {
-				if(key == 'g') {
-					grid = !grid;
-				}
-			}
 			
 			//CanvasPanel has some specific functions to it for overriding, this one draws a grid over the canvas if enabled
 			@Override
@@ -138,7 +131,6 @@ public class Tutorial {
 		};
 		
 		//CanvasPanel can have its pen change color, it's a virtual canvas
-		can.setPenColor(Color.red);
 
 		//Calls on a helper method to draw some lines around these Panels to add borders to them
 		drawFrame(pan);
@@ -150,7 +142,6 @@ public class Tutorial {
 		//We can also use a simpler function call of addPanel(panelName, panel) if we won't need to control Windows and can just have one pool for all Panels
 		//This uses a window named "default" that the WindowFrame prepares during its construction
 		fram.addPanel("panel2", pan2);
-		fram.addPanel("canvas", can);
 	}
 
 	private static void drawFrame(ElementPanel p) {

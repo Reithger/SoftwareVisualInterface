@@ -21,7 +21,7 @@ import java.util.*;
  */
 
 public class ClickComponent implements MouseListener, MouseMotionListener, MouseWheelListener{
-
+	
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** int value representing the coded value for which event-region is currently selected*/
@@ -32,7 +32,9 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	private Panel containerFrame;
 	
 	private boolean mutex;
-
+	
+	private ActionEventManager eventManager;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
@@ -49,8 +51,9 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		panel.getPanel().addMouseListener(this);
 		panel.getPanel().addMouseMotionListener(this);
 		panel.getPanel().addMouseWheelListener(this);
+		startQueueThread();
 	}
-	
+
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	/**
@@ -87,7 +90,27 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	public void resetDetectionRegions() {
 		detectionRegions = new ArrayList<Detectable>();
 	}
-
+	
+	private void startQueueThread() {
+		if(eventManager == null) {
+			eventManager = new ActionEventManager(containerFrame);
+			eventManager.start();
+		}
+		else if(!eventManager.isAlive()) {
+			eventManager.run();
+		}
+	}
+	
+	private void sendAction(char c, int x, int y, int code) {
+		eventManager.add(new ActionEvent(c, x, y, code));
+		startQueueThread();
+	}
+	
+	private void sendAction(char c, int in) {
+		eventManager.add(new ActionEvent(c, in));
+		startQueueThread();
+	}
+	
 //---  Remover Methods   ----------------------------------------------------------------------
 	
 	/**
@@ -199,12 +222,15 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		Integer y = e.getY();
 		boolean happened = false;
 		for(Detectable d : findClicked(x, y)) {
-			activeSelect = d.getCode();
-			containerFrame.clickEvent(getSelected(), x, y);
+			activeSelect = d.getCode();	
+			
+			sendAction(ActionEvent.EVENT_CLICK, x, y, getSelected());
+			
 			happened = true;
 		}
-		if(!happened)
-			containerFrame.clickEvent(getSelected(), x, y);
+		if(!happened){
+			sendAction(ActionEvent.EVENT_CLICK, x, y, getSelected());
+		}
 	}
 	
 	@Override
@@ -216,10 +242,14 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		for(Detectable d : findClicked(x, y)) {
 			happened = true;
 			activeSelect = d.getCode();
-			containerFrame.clickReleaseEvent(getSelected(), x, y);
+
+			sendAction(ActionEvent.EVENT_RELEASE, x, y, getSelected());
 		}
-		if(!happened)
-			containerFrame.clickReleaseEvent(getSelected(), x, y);
+		if(!happened) {
+
+			sendAction(ActionEvent.EVENT_RELEASE, x, y, getSelected());
+			
+		}
 	}
 	
 	@Override
@@ -236,10 +266,12 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		for(Detectable d : findClicked(x, y)) {
 			happened = true;
 			activeSelect = d.getCode();
-			containerFrame.clickPressEvent(getSelected(), x, y);
+
+			sendAction(ActionEvent.EVENT_PRESS, x, y, getSelected());
 		}
-		if(!happened)
-			containerFrame.clickPressEvent(getSelected(), x, y);
+		if(!happened){
+			sendAction(ActionEvent.EVENT_PRESS, x, y, getSelected());
+		}
 	}
 	
 	@Override
@@ -256,22 +288,23 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		for(Detectable d : findClicked(x, y)) {
 			happened = true;
 			activeSelect = d.getCode();
-			containerFrame.dragEvent(getSelected(), x, y);
+
+			sendAction(ActionEvent.EVENT_DRAG, x, y, getSelected());
 		}
-		if(!happened)
-			containerFrame.dragEvent(getSelected(), x, y);
+		if(!happened){
+			sendAction(ActionEvent.EVENT_DRAG, x, y, getSelected());
+		}
 		
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		containerFrame.mouseMoveEvent(e.getX(), e.getY());
-		
+		sendAction(ActionEvent.EVENT_MOUSE_MOVE, e.getX(), e.getY(), -1);
 	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		containerFrame.mouseWheelEvent(e.getWheelRotation());
+		sendAction(ActionEvent.EVENT_WHEEL, e.getClickCount());
 	}
 
 	//-- Support  ---------------------------------------------
@@ -284,8 +317,9 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 				response.add(d);
 			}
 		}
+		Collections.sort(response);
 		closeLock();
 		return response;
 	}
-	
+
 }

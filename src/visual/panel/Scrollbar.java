@@ -100,7 +100,7 @@ public class Scrollbar {
 				yVertChange = minSize ? (int)((subSpaceY + overSpaceY) / (double)(hei - barButtonSizeY)) : 1;
 				g.drawRect(wid - butWid - 1, 0, butWid, hei);
 				g.fillRect(wid - butWid - 1, barTopSizeY, butWid, barButtonSizeY);
-				panel.addClickRegion(new ClickRegionRectangle(wid - butWid - 1, barTopSizeY, butWid, barButtonSizeY, CODE_SCROLL_BAR_Y));
+				panel.addClickRegion(new ClickRegionRectangle(wid - butWid - 1, barTopSizeY, butWid, barButtonSizeY, CODE_SCROLL_BAR_Y, 55));
 			}
 		}
 		catch(Exception e) {
@@ -136,7 +136,7 @@ public class Scrollbar {
 			double prop = (wid - (liveVert ? butWid : 0)) / (double)wid;
 			int presentBarWid = (int)(prop * barButtonSizeX);
 			g.fillRect((int)(prop * barTopSizeX), hei - butHei - 1, presentBarWid, butHei);
-			panel.addClickRegion(new ClickRegionRectangle(subSpaceX, hei - butHei - 1, barButtonSizeX, butHei, CODE_SCROLL_BAR_X));
+			panel.addClickRegion(new ClickRegionRectangle(subSpaceX, hei - butHei - 1, barButtonSizeX, butHei, CODE_SCROLL_BAR_X, 55));
 		}
 	}
 	

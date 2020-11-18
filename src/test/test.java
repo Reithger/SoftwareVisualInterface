@@ -1,20 +1,17 @@
 package test;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.io.File;
 
-import javax.swing.JFileChooser;
 
 import filemeta.FileChooser;
 import filemeta.config.Config;
-import input.Callback;
 import visual.composite.popout.PopoutSelectList;
 import visual.frame.WindowFrame;
-import visual.panel.CanvasPanel;
 import visual.panel.ElementPanel;
+import visual.panel.element.DrawnCanvas;
 
 public class test {
 	
@@ -26,29 +23,26 @@ public class test {
 	 */
 
 	public static void main(String[] args) {
-		Callback.setCallback("C", new Callback() {
+		/*Callback.setCallback("C", new Callback() {
 			@Override
 			public void callbackFunction() {
 				System.out.println("Yo");
 			}
 		});
-		Callback.callback("C");
-		testComposites();
+		Callback.callback("C");*/
+		//testComposites();
+		
 		//testConfig();
-		//drawTest1();
+		drawTest1();
 	}
 	
 	private static void testComposites() {
 		//PopoutAlert pa = new PopoutAlert(450, 250, "yo get scared");
 		//pa.dispose();
-		PopoutSelectList psl = new PopoutSelectList(250, 150, new String[] {"var1A", "var2B", "var2C", "var1D"}, true, "this");
-		Callback.setCallback("this", new Callback() {
-			@Override
-			public void callbackFunction() {
-				System.out.println("D: " + psl.getSelected());
-				psl.dispose();
-			}
-		});
+		PopoutSelectList psl = new PopoutSelectList(250, 150, new String[] {"var1A", "var2B", "var2C", "var1D"}, true);
+		psl.setTitle("Test");
+		System.out.println(psl.getSelected());
+		psl.dispose();
 		//PopoutImageDisplay pid = new PopoutImageDisplay(200, 200, "src\\test\\assets\\ada.png");
 	}
 	
@@ -77,10 +71,11 @@ public class test {
 		String[] imagesPaths = new String[] {"src\\test\\assets\\burner5.png","src\\test\\assets\\burner6.png","src\\test\\assets\\burner7.png"};
 		
 		WindowFrame fram = new WindowFrame(1200, 500);
-
+		fram.setName("Test");
 		ElementPanel pan = new ElementPanel(0, 0, 300, 500) {
 			public void keyBehaviour(char event) {
-				
+				PopoutSelectList psL = new PopoutSelectList(300, 500, new String[] {"A", "B"}, false);
+				System.out.println(psL.getSelected());
 			}
 			
 			public void clickBehaviour(int event, int x, int y) {
@@ -106,14 +101,41 @@ public class test {
 		
 		pan.addImage("ada", 15, false, pan.getWidth() / 4, pan.getHeight() / 3, 125, 75, true, imagePath2, true);
 		pan.addImage("ada2", 15, false, pan.getWidth() * 2 / 3, pan.getHeight() / 3, 125, 75, true, imagePath2, false);
-		
+		DrawnCanvas can = null;
 		ElementPanel pan2 = new ElementPanel(400, 0, 300, 500) {
+			
+			private boolean dragging;
+			private int lastX;
+			private int lastY;
+			
 			@Override
 			public void keyBehaviour(char event) {
 				if(event == 't') {
 					fram.hideActiveWindow("window");
 					fram.showActiveWindow("other");
 				}
+			}
+			
+			@Override
+			public void clickPressBehaviour(int code, int x, int y) {
+				dragging = true;
+				lastX = x;
+				lastY = y;
+			}
+			
+			@Override
+			public void dragBehaviour(int code, int x, int y) {
+				if(dragging) {
+					resize(getWidth() + (x - lastX), getHeight() + (y - lastY));
+					lastX = x;
+					lastY = y;
+					drawPan2(this);
+				}
+			}
+			
+			@Override
+			public void clickReleaseBehaviour(int code, int x, int y) {
+				dragging = false;
 			}
 			
 			@Override
@@ -127,22 +149,17 @@ public class test {
 		
 		pan.setScrollBarVertical(true);
 		
-		pan2.addRectangle("rect", 1, false,  pan2.getWidth() /20, pan2.getHeight() / 20, pan2.getWidth() * 18/20, pan2.getHeight() * 18/20, false, Color.red);
-		pan2.addRectangle("rect2", 8, false,  pan2.getWidth() / 2,  pan2.getHeight() / 6, pan2.getWidth() * 16 / 18,  pan2.getHeight() * 2 / 18, true, Color.white, Color.black);
-		pan2.addTextEntry("texEn", 10, false,  pan2.getWidth() / 2, pan2.getHeight() / 6, pan2.getWidth() * 16 / 18, pan2.getHeight() * 2 / 18, 15, "This is a text entry area", defaultFont, true, true, true);
-		
-		pan2.addImage("sas", 15, false,  pan2.getWidth() / 2, pan2.getHeight() * 2 / 3, true, imagePath, .5);
-		
-		pan2.addLine("line5", 30, false,  40, -70, 50, 750, 5, Color.black);
-		pan2.addLine("line6", 30, false,  50, 50, 150, 50, 5, Color.black);
+		drawPan2(pan2);
 		pan2.setScrollBarVertical(true);
 		
-		CanvasPanel can = new CanvasPanel(800, 0, 300, 500, 1) {
-			private boolean grid;
+		
+		can = new DrawnCanvas(0, 0, 300, 500, 5, 200, 400, 1) {
+
+			boolean grid;
 			
 			@Override
-			public void keyEvent(char key) {
-				if(key == 'g') {
+			public void input(int code) {
+				if(code == 1) {
 					grid = !grid;
 				}
 			}
@@ -165,7 +182,44 @@ public class test {
 			}
 		};
 		
-		can.setPenColor(Color.blue);
+		ElementPanel pan3 = new ElementPanel(800, 0, 300, 500) {
+			
+			@Override
+			public void clickEvent(int code, int x, int y) {
+				DrawnCanvas can = ((DrawnCanvas)(this.getElement("canvas")));
+				can.setPixelColor(x - can.getX(), y - can.getY(), Color.blue);
+			}
+			
+			@Override
+			public void dragEvent(int code, int x, int y) {
+				clickEvent(code, x, y);
+			}
+			
+			@Override
+			public void keyEvent(char key) {
+				DrawnCanvas can = ((DrawnCanvas)(this.getElement("canvas")));
+				if(key == 'g') {
+					can.input(1);
+				}
+
+				if(key == 'z') {
+					can.setZoom(can.getZoom() + 1);
+				}
+				if(key == 'x') {
+					can.setZoom(can.getZoom() - 1);
+				}
+				if(key == 'a') {
+					moveElement("canvas", can.getX() + 25, can.getY());
+				}
+				if(key == 's') {
+					moveElement("canvas", can.getX(), can.getY() + 25);
+				}
+			}
+			
+			
+		};
+		
+		pan3.addCanvas("canvas", can, false);
 		
 		ElementPanel stlth = new ElementPanel(300, 0, 100, 100) {
 			@Override
@@ -192,7 +246,20 @@ public class test {
 		fram.showActiveWindow("window");
 		fram.addPanelToWindow("window", "panel1", pan);
 		fram.addPanelToWindow("window", "panel2", pan2);
-		fram.addPanelToWindow("window", "canvas", can);
+		fram.addPanelToWindow("window", "canvas", pan3);
+	}
+	
+	private static void drawPan2(ElementPanel pan2) {
+		String imagePath = "src\\test\\assets\\Saskia_Portrait.jpg";
+		pan2.removeElementPrefixed("");
+		pan2.addRectangle("rect", 1, false,  pan2.getWidth() /20, pan2.getHeight() / 20, pan2.getWidth() * 18/20, pan2.getHeight() * 18/20, false, Color.red);
+		pan2.addRectangle("rect2", 8, false,  pan2.getWidth() / 2,  pan2.getHeight() / 6, pan2.getWidth() * 16 / 18,  pan2.getHeight() * 2 / 18, true, Color.white, Color.black);
+		pan2.addTextEntry("texEn", 10, false,  pan2.getWidth() / 2, pan2.getHeight() / 6, pan2.getWidth() * 16 / 18, pan2.getHeight() * 2 / 18, 15, "This is a text entry area", new Font("Serif", Font.BOLD, 12), true, true, true);
+		
+		pan2.addImage("sas", 15, false,  pan2.getWidth() / 2, pan2.getHeight() * 2 / 3, true, imagePath, .5);
+		
+		pan2.addLine("line5", 30, false,  40, -70, 50, 750, 5, Color.black);
+		pan2.addLine("line6", 30, false,  50, 50, 150, 50, 5, Color.black);
 	}
 
 	private static void drawTest2() {

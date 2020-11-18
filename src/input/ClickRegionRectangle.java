@@ -23,6 +23,8 @@ public class ClickRegionRectangle implements Detectable{
 	/** int value describing the code value that will be generated when this ClickRegionRectangle object is triggered*/
 	private int code;
 	
+	private int priority;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
@@ -43,6 +45,7 @@ public class ClickRegionRectangle implements Detectable{
 		width = in[2];
 		height = in[3];
 		code = in[4];
+		priority = in[5];
 	}
 	
 	/**
@@ -58,12 +61,13 @@ public class ClickRegionRectangle implements Detectable{
 	 * @param inCode - int value describing the code value that will be generated when this ClickRegionRectangle is triggered. 
 	 */
 	
-	public ClickRegionRectangle(int inX, int inY, int wid, int hei, int inCode) {
+	public ClickRegionRectangle(int inX, int inY, int wid, int hei, int inCode, int inPriority) {
 		x = inX;
 		y = inY;
 		width = wid;
 		height = hei;
 		code = inCode;
+		priority = inPriority;
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -76,6 +80,25 @@ public class ClickRegionRectangle implements Detectable{
 	@Override
 	public int getCode() {
 		return code;
+	}
+	
+	public int getPriority() {
+		return priority;
+	}
+	
+	@Override
+	public int compareTo(Detectable d) {
+		int a = getPriority();
+		int b = d.getPriority();
+		if(a < b) {
+			return 1;
+		}
+		else if(b < a) {
+			return -1;
+		}
+		else {
+			return 0;
+		}
 	}
 	
 }

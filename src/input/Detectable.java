@@ -5,11 +5,11 @@ package input;
  * to define regions of the screen that respond to input and generate some
  * code value when triggered.
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 
-public interface Detectable {
+public interface Detectable extends Comparable<Detectable>{
 
 //---  Getter Methods   -----------------------------------------------------------------------
 	
@@ -32,5 +32,7 @@ public interface Detectable {
 	 */
 	
 	public abstract int getCode();
+	
+	public abstract int getPriority();
 	
 }

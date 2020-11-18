@@ -2,8 +2,6 @@ package visual.composite.popout;
 
 import java.awt.Color;
 
-import input.Callback;
-
 public class PopoutSelectList extends PopoutWindow{
 
 	private static final int CODE_FILTER_ENTRY_ACCESS = -17;
@@ -17,21 +15,24 @@ public class PopoutSelectList extends PopoutWindow{
 	private String[] used;
 	private String searchTerm;
 	private boolean filtered;
-	private String callbackReference;
 	private String output;
+	private volatile boolean ready;
 	
-	public PopoutSelectList(int wid, int hei, String[] list, boolean filter, String callbackIn) {
+	public PopoutSelectList(int wid, int hei, String[] list, boolean filter) {
 		super(wid, hei);
 		allowScrollbars(true);
 		ref = list;
 		used = ref;
 		filtered = filter;
+		ready = false;
 		searchTerm = "";
-		callbackReference = callbackIn;
 		drawPage();
 	}
 	
 	public String getSelected() {
+		while(!ready) {
+			Thread.onSpinWait();
+		};
 		return output;
 	}
 	
@@ -88,7 +89,7 @@ public class PopoutSelectList extends PopoutWindow{
 		for(int i = 0; i < used.length; i++) {
 			if(i == code) {
 				output = used[i];
-				Callback.callback(callbackReference);
+				ready = true;
 			}
 		}
 		

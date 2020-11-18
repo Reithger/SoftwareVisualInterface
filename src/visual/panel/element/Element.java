@@ -98,6 +98,9 @@ public abstract class Element implements Comparable<Element>{
 	
 	@Override
 	public int compareTo(Element d) {
+		if(d == null) {
+			return 1;
+		}
 		int a = this.getDrawPriority();
 		int b = d.getDrawPriority();
 		if(a > b)

@@ -25,7 +25,7 @@ import visual.frame.Frame;
  *
  */
 
-public abstract class Panel{
+public abstract class Panel implements Comparable<Panel>{
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -43,6 +43,10 @@ public abstract class Panel{
 	private int offsetX;
 	
 	private int offsetY;
+	
+	private int priority;
+	
+	private volatile boolean mutex;
 	
 //---  Constructor Support   ------------------------------------------------------------------
 	
@@ -152,6 +156,11 @@ public abstract class Panel{
 		
 	}
 	
+	public void setPriority(int in) {
+		priority = in;
+		panel.setDrawPriority(in);
+	}
+	
 	public void setAttention(boolean atten) {
 		attention = atten;
 	}
@@ -203,6 +212,10 @@ public abstract class Panel{
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
+	
+	public int getDrawPriority() {
+		return priority;
+	}
 	
 	/**
 	 * Getter method that requests the X position of this Panel object's origin in the
@@ -305,11 +318,34 @@ public abstract class Panel{
 		return mouseEvent.removeDetectionRegions(x, y);
 	}
 	
+//---  Mechanics   ----------------------------------------------------------------------------
+	
+	protected void openLock() {
+		while(mutex) {}
+		mutex = true;
+	}
+	
+	protected void closeLock() {
+		mutex = false;
+	}
+	
+	@Override
+	public int compareTo(Panel p) {
+		int a = this.getDrawPriority();
+		int b = p.getDrawPriority();
+		if(a > b)
+			return 1;
+		if(a < b)
+			return -1;
+		return 0;
+	}
+	
 //---  Support Class   ------------------------------------------------------------------------
 	
-	class JPanelWrap extends JPanel{
+	class JPanelWrap extends JPanel implements Comparable<JPanelWrap>{
 		
 		private Panel container;
+		private int priority;
 		
 		public JPanelWrap(Panel pan) {
 			container = pan;
@@ -320,6 +356,24 @@ public abstract class Panel{
 			container.paintComponent(g);
 		}
 		
+		public int getDrawPriority() {
+			return priority;
+		}
+		
+		public void setDrawPriority(int in) {
+			priority = in;
+		}
+		
+		@Override
+		public int compareTo(JPanelWrap p) {
+			int a = this.getDrawPriority();
+			int b = p.getDrawPriority();
+			if(a > b)
+				return 1;
+			if(a < b)
+				return -1;
+			return 0;
+		}
 	}
 	
 }
