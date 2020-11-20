@@ -111,7 +111,7 @@ public class Tutorial {
 			private boolean grid;
 			
 			
-			//CanvasPanel has some specific functions to it for overriding, this one draws a grid over the canvas if enabled
+			/*//CanvasPanel has some specific functions to it for overriding, this one draws a grid over the canvas if enabled
 			@Override
 			public void commandOver(Graphics g) {
 				if(grid) {
@@ -127,7 +127,7 @@ public class Tutorial {
 						g.drawLine(0, y, wid, y);
 					}
 				}
-			}
+			}*/
 		};
 		
 		//CanvasPanel can have its pen change color, it's a virtual canvas

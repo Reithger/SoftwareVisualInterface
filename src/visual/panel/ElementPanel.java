@@ -5,11 +5,15 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.io.File;
-import java.awt.*;
 
 import javax.imageio.ImageIO;
 
+import visual.panel.element.Canvas;
 import visual.panel.element.Clickable;
 import visual.panel.element.DrawnAnimation;
 import visual.panel.element.DrawnButton;
@@ -461,9 +465,9 @@ public class ElementPanel extends Panel{
 		}
 	}
 	
-	public DrawnCanvas getDrawnCanvas(String name) {
+	public DrawnCanvas getCanvas(String name) {
 		try {
-			return (DrawnCanvas)getElement(name);
+			return ((DrawnCanvas)getElement(name));
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -633,8 +637,15 @@ public class ElementPanel extends Panel{
 	
 	//-- Canvas  ----------------------------------------------
 	
-	public void addCanvas(String name, DrawnCanvas can, boolean frame) {
-		handleAddElement(name, can, frame);
+	public void addCanvas(String name, int priority, int x, int y, int elemWidth, int elemHeight, int canWidth, int canHeight, int inCode, boolean frame) {
+		DrawnCanvas dC = new DrawnCanvas(x, y, priority, elemWidth, elemHeight, inCode, canWidth, canHeight);
+		handleAddElement(name, dC, frame);
+		clickList.add(name);
+	}
+	
+	public void addCanvas(String name, int priority, Canvas inCanvas, int x, int y, int elemWidth, int elemHeight, int inCode, boolean frame) {
+		DrawnCanvas dC = new DrawnCanvas(x, y, priority, elemWidth, elemHeight, inCode, inCanvas);
+		handleAddElement(name, dC, frame);
 		clickList.add(name);
 	}
 	

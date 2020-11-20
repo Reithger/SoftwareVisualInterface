@@ -11,6 +11,7 @@ import filemeta.config.Config;
 import visual.composite.popout.PopoutSelectList;
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
+import visual.panel.element.Canvas;
 import visual.panel.element.DrawnCanvas;
 
 public class test {
@@ -101,7 +102,7 @@ public class test {
 		
 		pan.addImage("ada", 15, false, pan.getWidth() / 4, pan.getHeight() / 3, 125, 75, true, imagePath2, true);
 		pan.addImage("ada2", 15, false, pan.getWidth() * 2 / 3, pan.getHeight() / 3, 125, 75, true, imagePath2, false);
-		DrawnCanvas can = null;
+		Canvas can = null;
 		ElementPanel pan2 = new ElementPanel(400, 0, 300, 500) {
 			
 			private boolean dragging;
@@ -153,7 +154,7 @@ public class test {
 		pan2.setScrollBarVertical(true);
 		
 		
-		can = new DrawnCanvas(0, 0, 300, 500, 5, 200, 400, 1) {
+		can = new Canvas(200, 400, 1) {
 
 			boolean grid;
 			
@@ -167,8 +168,8 @@ public class test {
 			@Override
 			public void commandOver(Graphics g) {
 				if(grid) {
-					int wid = this.getWidth();
-					int hei = this.getHeight();
+					int wid = this.getCanvasZoomWidth();
+					int hei = this.getCanvasZoomHeight();
 					int zm = this.getZoom();
 					for(int i = 0; i < wid / zm; i++) {
 						int x = zm * i;
@@ -186,8 +187,8 @@ public class test {
 			
 			@Override
 			public void clickEvent(int code, int x, int y) {
-				DrawnCanvas can = ((DrawnCanvas)(this.getElement("canvas")));
-				can.setPixelColor(x - can.getX(), y - can.getY(), Color.blue);
+				DrawnCanvas can = this.getCanvas("canvas");
+				can.getCanvas().setPixelColor(x - can.getX(), y - can.getY(), Color.blue);
 			}
 			
 			@Override
@@ -197,7 +198,8 @@ public class test {
 			
 			@Override
 			public void keyEvent(char key) {
-				DrawnCanvas can = ((DrawnCanvas)(this.getElement("canvas")));
+				DrawnCanvas dCan = getCanvas("canvas");
+				Canvas can = dCan.getCanvas();
 				if(key == 'g') {
 					can.input(1);
 				}
@@ -209,17 +211,17 @@ public class test {
 					can.setZoom(can.getZoom() - 1);
 				}
 				if(key == 'a') {
-					moveElement("canvas", can.getX() + 25, can.getY());
+					moveElement("canvas", dCan.getX() + 25, dCan.getY());
 				}
 				if(key == 's') {
-					moveElement("canvas", can.getX(), can.getY() + 25);
+					moveElement("canvas", dCan.getX(), dCan.getY() + 25);
 				}
 			}
 			
 			
 		};
 		
-		pan3.addCanvas("canvas", can, false);
+		pan3.addCanvas("canvas", 15, can, 0, 0, 300, 500, 5, false);
 		
 		ElementPanel stlth = new ElementPanel(300, 0, 100, 100) {
 			@Override
