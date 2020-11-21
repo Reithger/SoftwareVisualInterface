@@ -8,10 +8,10 @@ import java.io.File;
 
 import filemeta.FileChooser;
 import filemeta.config.Config;
+import misc.Canvas;
 import visual.composite.popout.PopoutSelectList;
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
-import visual.panel.element.Canvas;
 import visual.panel.element.DrawnCanvas;
 
 public class test {
@@ -154,7 +154,7 @@ public class test {
 		pan2.setScrollBarVertical(true);
 		
 		
-		can = new Canvas(200, 400, 1) {
+		can = new Canvas(200, 400) {
 
 			boolean grid;
 			

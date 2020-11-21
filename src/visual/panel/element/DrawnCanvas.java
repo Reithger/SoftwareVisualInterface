@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 
 import input.ClickRegionRectangle;
 import input.Detectable;
+import misc.Canvas;
 
 public class DrawnCanvas extends Element implements Clickable{
 
@@ -30,16 +31,6 @@ public class DrawnCanvas extends Element implements Clickable{
 		elemWidth = inWidth;
 		elemHeight = inHeight;
 		canvas = new Canvas(canWid, canHei);
-	}
-	
-	public DrawnCanvas(int x, int y, int priority, int inWidth, int inHeight, int inCode, int canWid, int canHei, int defZoom) {
-		setX(x);
-		setY(y);
-		code = inCode;
-		setDrawPriority(priority);
-		elemWidth = inWidth;
-		elemHeight = inHeight;
-		canvas = new Canvas(canWid, canHei, defZoom);
 	}
 	
 	public DrawnCanvas(int x, int y, int priority, int inWidth, int inHeight, int inCode, Canvas inCanvas) {

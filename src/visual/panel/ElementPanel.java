@@ -13,7 +13,7 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import visual.panel.element.Canvas;
+import misc.Canvas;
 import visual.panel.element.Clickable;
 import visual.panel.element.DrawnAnimation;
 import visual.panel.element.DrawnButton;

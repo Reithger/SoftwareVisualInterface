@@ -1,8 +1,12 @@
-package visual.panel.element;
+package misc;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Canvas {
 
@@ -33,11 +37,33 @@ public class Canvas {
 		initialize();
 	}
 	
-	public Canvas(int canWid, int canHei, int defZoom) {
-		zoom = defZoom;
-		canvas = new Color[canWid][canHei];
+	public Canvas(Color[][] cols) {
+		zoom = 1;
+		canvas = cols;
 		formatSubImages();
-		initialize();
+	}
+	
+	public Canvas(File in) throws IOException {
+		BufferedImage bI = ImageIO.read(in);
+		zoom = 1;
+		canvas = new Color[bI.getWidth()][bI.getHeight()];
+		for(int i = 0; i < bI.getWidth(); i++) {
+			for(int j = 0; j < bI.getHeight(); j++) {
+				canvas[i][j] = new Color(bI.getRGB(i, j));
+			}
+		}
+		formatSubImages();
+	}
+	
+	public Canvas(BufferedImage in) {
+		zoom = 1;
+		canvas = new Color[in.getWidth(null)][in.getHeight(null)];
+		for(int i = 0; i < in.getWidth(null); i++) {
+			for(int j = 0; j < in.getHeight(null); j++) {
+				canvas[i][j] = new Color(in.getRGB(i, j));
+			}
+		}
+		formatSubImages();
 	}
 	
 	//--  Support  ------------------------------------
@@ -167,6 +193,10 @@ public class Canvas {
 		return zoom;
 	}
 
+	public Color[][] getColorData(){
+		return canvas;
+	}
+	
 	public BufferedImage getImage() {
 		BufferedImage out = new BufferedImage(canvas.length, canvas[0].length, BufferedImage.TYPE_INT_ARGB);
 		for(int i = 0; i < canvas.length; i++) {
