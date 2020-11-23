@@ -26,11 +26,16 @@ public class ActionEventManager extends Thread{
 	}
 	
 	public TimedThread getOpenThread() {
-		for(TimedThread t : threads) {
-			if(t.isAvailable()){
-				return t;
+		boolean timed = false;
+		do {
+			timed = false;
+			for(TimedThread t : threads) {
+				if(t.isAvailable()){
+					return t;
+				}
+				timed = timed || !t.timedOut();
 			}
-		}
+		} while(timed);
 		TimedThread newT = new TimedThread(reference);
 		threads.add(newT);
 		return newT;
@@ -45,6 +50,7 @@ public class ActionEventManager extends Thread{
 		private Panel reference;
 		private ActionEvent event;
 		private boolean open;
+		private long time;
 		
 		public TimedThread(Panel ref) {
 			reference = ref;
@@ -57,6 +63,7 @@ public class ActionEventManager extends Thread{
 		
 		public void run(ActionEvent e) {
 			open = false;
+			time = System.currentTimeMillis();
 			interrupt();
 			event = e;
 		}
@@ -65,13 +72,17 @@ public class ActionEventManager extends Thread{
 			return open;
 		}
 		
+		public boolean timedOut() {
+			return (System.currentTimeMillis() - time) > 5;
+		}
+		
 		@Override
 		public void run() {
 			while(reference != null) {
 				open = true;
 				while(open) {
 					try {
-						sleep(100);
+						sleep(10);
 					} catch (InterruptedException e) {}
 				}
 				try {

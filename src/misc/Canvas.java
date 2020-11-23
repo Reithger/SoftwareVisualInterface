@@ -220,7 +220,10 @@ public class Canvas {
 	}
 
 	public Color getPixelColor(int x, int y) {
-		return canvas[x / zoom][y / zoom];
+		if(x/zoom < canvas.length && y / zoom < canvas[0].length)
+			return canvas[x / zoom][y / zoom];
+		else
+			return null;
 	}
 	
 	public Color getCanvasColor(int x, int y) {
