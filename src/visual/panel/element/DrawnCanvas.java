@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import input.ClickRegionRectangle;
-import input.Detectable;
+import input.mouse.ClickRegionRectangle;
+import input.mouse.Detectable;
 import misc.Canvas;
 
 public class DrawnCanvas extends Element implements Clickable{
@@ -47,7 +47,7 @@ public class DrawnCanvas extends Element implements Clickable{
 
 	public boolean focusEvent(char in) {
 		canvas.input(in);
-		return false;
+		return true;
 	}
 
 	@Override

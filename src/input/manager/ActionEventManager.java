@@ -1,16 +1,17 @@
-package input;
+package input.manager;
 
 import java.util.LinkedList;
 
-import visual.panel.Panel;
+import input.EventReceiver;
+
 
 public class ActionEventManager extends Thread{
 
 	private LinkedList<TimedThread> threads;
 	private LinkedList<ActionEvent> events;
-	private Panel reference;
+	private EventReceiver reference;
 	
-	public ActionEventManager(Panel in) {
+	public ActionEventManager(EventReceiver in) {
 		threads = new LinkedList<TimedThread>();
 		events = new LinkedList<ActionEvent>();
 		reference = in;
@@ -47,12 +48,12 @@ public class ActionEventManager extends Thread{
 	
 	class TimedThread extends Thread {
 		
-		private Panel reference;
+		private EventReceiver reference;
 		private ActionEvent event;
 		private boolean open;
 		private long time;
 		
-		public TimedThread(Panel ref) {
+		public TimedThread(EventReceiver ref) {
 			reference = ref;
 			start();
 		}

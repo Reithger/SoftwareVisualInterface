@@ -3,7 +3,7 @@ package visual.panel;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import input.ClickRegionRectangle;
+import input.mouse.ClickRegionRectangle;
 
 public class Scrollbar {
 	

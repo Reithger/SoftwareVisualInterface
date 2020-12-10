@@ -1,8 +1,10 @@
-package input;
+package input.mouse;
 
-import visual.panel.Panel;
 import java.awt.event.*;
 import java.util.*;
+
+import input.EventFielder;
+import input.manager.ActionEvent;
 
 /**
  * This class implements the MouseListener interface to predefine behavior for integrating user
@@ -10,9 +12,9 @@ import java.util.*;
  * for visual design should not see.
  * 
  * Response to user input is performed by predefining regions of the screen to generate defined
- * code values that the containing Panel object is given when its clickEvent method is called.
+ * code values that the containing EventReceiver object is given when its clickEvent method is called.
  * 
- * Extending to account for x, y integer coordinate values being passed to the Panel is planned
+ * Extending to account for x, y integer coordinate values being passed to the EventReceiver is planned
  * for future flexibility; likely create an interface for which discrete and 'continuous' reactivity
  * is integrated.
  * 
@@ -28,37 +30,31 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	private int activeSelect;
 	/** ArrayList<Integer[]> object containing the coordinates and codes for each event-region*/
 	private List<Detectable> detectionRegions;
-	/** Panel object representing the Panel to which this ClickComponent is attached (the Panel that is being clicked)*/
-	private Panel containerFrame;
+	/** EventReceiver object representing the EventReceiver to which this ClickComponent is attached (the EventReceiver that is being clicked)*/
+	private EventFielder eventHandler;
 	
 	private boolean mutex;
-	
-	private ActionEventManager eventManager;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	/**
 	 * Constructor for objects of the ClickComponent object; default selected value is -1, and
-	 * this object is added as a MouseListener to the provided Panel.
+	 * this object is added as a MouseListener to the provided EventReceiver.
 	 * 
-	 * @param panel - Panel object for which this ClickComponent exists; directs input to this Panel.
+	 * @param eventReceiver - EventReceiver object for which this ClickComponent exists; directs input to this EventReceiver.
 	 */
 	
-	public ClickComponent(Panel panel){
+	public ClickComponent(EventFielder eventReceiver){
 		resetSelected();
 		detectionRegions = new ArrayList<Detectable>();
-		containerFrame = panel;
-		panel.getPanel().addMouseListener(this);
-		panel.getPanel().addMouseMotionListener(this);
-		panel.getPanel().addMouseWheelListener(this);
-		startQueueThread();
+		eventHandler = eventReceiver;
 	}
 
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	/**
 	 * Getter method that returns the value currently stored by this ClickComponent (that value
-	 * being a reflection of the user's interaction with the Panel this is adjoined to.)
+	 * being a reflection of the user's interaction with the EventReceiver this is adjoined to.)
 	 * 
 	 * Value is reset after each call of this method.
 	 * 
@@ -91,24 +87,12 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		detectionRegions = new ArrayList<Detectable>();
 	}
 	
-	private void startQueueThread() {
-		if(eventManager == null) {
-			eventManager = new ActionEventManager(containerFrame);
-			eventManager.start();
-		}
-		else if(!eventManager.isAlive()) {
-			eventManager.run();
-		}
-	}
-	
 	private void sendAction(char c, int x, int y, int code) {
-		eventManager.add(new ActionEvent(c, x, y, code));
-		startQueueThread();
+		eventHandler.receiveActionEvent(new ActionEvent(c, x, y, code));
 	}
 	
 	private void sendAction(char c, int in) {
-		eventManager.add(new ActionEvent(c, in));
-		startQueueThread();
+		eventHandler.receiveActionEvent(new ActionEvent(c, in));
 	}
 	
 //---  Remover Methods   ----------------------------------------------------------------------
@@ -139,10 +123,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	/**
 	 * This method removes all Detectable objects for which the provided x and y coordinates would
 	 * generate their code. (Detectable objects can overlap, and all would trigger a ClickEvent in
-	 * the containing Panel object.)
+	 * the containing EventReceiver object.)
 	 * 
-	 * @param x - int value representing the x coordinate of the point in the Panel containing this ClickComponent to remove Detectable objects from.
-	 * @param y - int value representing the y coordinate of the point in the Panel containing this ClickComponent to remove Detectable objects from.
+	 * @param x - int value representing the x coordinate of the point in the EventReceiver containing this ClickComponent to remove Detectable objects from.
+	 * @param y - int value representing the y coordinate of the point in the EventReceiver containing this ClickComponent to remove Detectable objects from.
 	 * @return - Returns a boolean value representing whether any Detectable objects were removed (true) or not (false).
 	 * 
 	 */
@@ -174,17 +158,17 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	}
 
 	/**
-	 * This method sets the provided Panel as the container for which this ClickComponent exists (will
-	 * direct user interaction to that Panel.)
+	 * This method sets the provided EventReceiver as the container for which this ClickComponent exists (will
+	 * direct user interaction to that EventReceiver.)
 	 * 
-	 * Does not add this ClickComponent to the Panel, only changes the reference locally. You are still
-	 * able to add the ClickComponent to the Panel elsewhere.
+	 * Does not add this ClickComponent to the EventReceiver, only changes the reference locally. You are still
+	 * able to add the ClickComponent to the EventReceiver elsewhere.
 	 * 
-	 * @param reference - Panel object for which this ClickComponent is now associated.
+	 * @param reference - EventReceiver object for which this ClickComponent is now associated.
 	 */
 	
-	public void setParentFrame(Panel reference){
-		containerFrame = reference;
+	public void setEventFielder(EventFielder eF){
+		eventHandler = eF;
 	}
 	
 //---  Adder Methods   ------------------------------------------------------------------------
@@ -217,7 +201,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	
 	@Override
 	public void mouseClicked(MouseEvent e){
-		containerFrame.getPanel().requestFocusInWindow();
+		eventHandler.requestFocusInWindow();
 		Integer x = e.getX();
 		Integer y = e.getY();
 		boolean happened = false;
@@ -235,7 +219,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	
 	@Override
 	public void mouseReleased(MouseEvent e){
-		containerFrame.getPanel().requestFocusInWindow();
+		eventHandler.requestFocusInWindow();
 		Integer x = e.getX();
 		Integer y = e.getY();
 		boolean happened = false;
@@ -259,7 +243,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	
 	@Override
 	public void mousePressed(MouseEvent e){
-		containerFrame.getPanel().requestFocusInWindow();
+		eventHandler.requestFocusInWindow();
 		Integer x = e.getX();
 		Integer y = e.getY();
 		boolean happened = false;
@@ -281,7 +265,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		containerFrame.getPanel().requestFocusInWindow();
+		eventHandler.requestFocusInWindow();
 		Integer x = e.getX();
 		Integer y = e.getY();
 		boolean happened = false;

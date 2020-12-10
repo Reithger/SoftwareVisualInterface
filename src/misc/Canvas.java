@@ -57,9 +57,9 @@ public class Canvas {
 	
 	public Canvas(BufferedImage in) {
 		zoom = 1;
-		canvas = new Color[in.getWidth(null)][in.getHeight(null)];
-		for(int i = 0; i < in.getWidth(null); i++) {
-			for(int j = 0; j < in.getHeight(null); j++) {
+		canvas = new Color[in.getWidth()][in.getHeight()];
+		for(int i = 0; i < in.getWidth(); i++) {
+			for(int j = 0; j < in.getHeight(); j++) {
 				canvas[i][j] = new Color(in.getRGB(i, j));
 			}
 		}
@@ -101,10 +101,10 @@ public class Canvas {
 		
 		for(int i = 0; i < display.length; i++) {
 			for(int j = 0; j < display[i].length; j++) {
-				int x = xC + i * subGridSize;
-				int y = yC + j * subGridSize;
+				int x = i * subGridSize;
+				int y = j * subGridSize;
 				if(x < maxWidth && y < maxHeight) {
-					g.drawImage(display[i][j], x, y, null);
+					g.drawImage(display[i][j], xC + x, yC + y, null);
 				}
 			}
 		}
@@ -201,7 +201,12 @@ public class Canvas {
 		BufferedImage out = new BufferedImage(canvas.length, canvas[0].length, BufferedImage.TYPE_INT_ARGB);
 		for(int i = 0; i < canvas.length; i++) {
 			for(int j = 0; j < canvas[i].length; j++) {
-				out.setRGB(i, j, canvas[i][j].getRGB());
+				if(canvas[i][j] == null) {
+					out.setRGB(i, j, Color.white.getRGB());
+				}
+				else {
+					out.setRGB(i, j, canvas[i][j].getRGB());
+				}
 			}
 		}
 		return out;
@@ -220,27 +225,33 @@ public class Canvas {
 	}
 
 	public Color getPixelColor(int x, int y) {
-		if(x/zoom < canvas.length && y / zoom < canvas[0].length)
+		if(x/zoom < canvas.length && y / zoom < canvas[x / zoom].length) {
 			return canvas[x / zoom][y / zoom];
-		else
-			return null;
+		}
+		return null;
 	}
 	
 	public Color getCanvasColor(int x, int y) {
-		return canvas[x][y];
+		if(x < canvas.length && y < canvas[x].length) {
+			return canvas[x][y];
+		}
+		return null;
 	}
 
 //---  Mechanics   ----------------------------------------------------------------------------
 
 	private void formatSubImages() {
-		subGridSize = zoom * (SUB_GRID_SIZE_MAXIMUM / zoom);
-		int width = canvas.length * zoom;
-		int height = canvas[0].length * zoom;
-		int xBlock = width % subGridSize == 0 ? width / subGridSize : (width / subGridSize + 1);
-		int yBlock = height % subGridSize == 0 ? height / subGridSize : (height / subGridSize + 1);
+		calculateSubGridSize();
+		int xBlock = getNumXBlocks();
+		int yBlock = getNumYBlocks();
 		update = new boolean[xBlock][yBlock];
 		display = new BufferedImage[xBlock][yBlock];
 		buildSubImages(xBlock, yBlock);
+	}
+	
+	private void calculateSubGridSize() {
+		subGridSize = zoom * (SUB_GRID_SIZE_MAXIMUM / zoom);
+		subGridSize = ((subGridSize == 0) ? 1 : subGridSize);
 	}
 	
 	private void buildSubImages(int xBlock, int yBlock) {
@@ -253,12 +264,8 @@ public class Canvas {
 	}
 	
 	private BufferedImage buildSubImage(int displayX, int displayY) {
-		int width = canvas.length * zoom;
-		int height = canvas[0].length * zoom;
-		int xBlock = width % subGridSize == 0 ? width / subGridSize : (width / subGridSize + 1);
-		int yBlock = height % subGridSize == 0 ? height / subGridSize : (height / subGridSize + 1);
-		int wid = (displayX == xBlock - 1 && width % subGridSize != 0) ? width % subGridSize : subGridSize;
-		int hei = (displayY == yBlock - 1 && height % subGridSize != 0) ? height % subGridSize : subGridSize;
+		int wid = getSubImageWidth(displayX);
+		int hei = getSubImageHeight(displayY);
 		BufferedImage out = new BufferedImage(wid, hei, BufferedImage.TYPE_INT_ARGB);
 		for(int i = 0; i < wid; i++) {
 			for(int j = 0; j < hei; j++) {
@@ -273,6 +280,28 @@ public class Canvas {
 			}
 		}
 		return out;
+	}
+	
+	private int getSubImageWidth(int displayX) {
+		int width = getCanvasZoomWidth();
+		int xBlock = getNumXBlocks();
+		return ((displayX == xBlock - 1 && width % subGridSize != 0) ? width % subGridSize : subGridSize);
+	}
+	
+	private int getSubImageHeight(int displayY) {
+		int height = getCanvasZoomHeight();
+		int yBlock = getNumYBlocks();
+		return ((displayY == yBlock - 1 && height % subGridSize != 0) ? height % subGridSize : subGridSize);
+	}
+	
+	private int getNumXBlocks() {
+		int width = getCanvasZoomWidth();
+		return ((width % subGridSize == 0) ? width / subGridSize : (width / subGridSize + 1));
+	}
+	
+	private int getNumYBlocks() {
+		int height = getCanvasZoomHeight();
+		return ((height % subGridSize == 0) ? height / subGridSize : (height / subGridSize + 1));
 	}
 
 }

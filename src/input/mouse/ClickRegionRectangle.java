@@ -1,4 +1,4 @@
-package input;
+package input.mouse;
 
 /**
  * This class implements the Detectable interface to specify a rectangular region of the screen

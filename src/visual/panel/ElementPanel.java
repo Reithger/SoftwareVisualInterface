@@ -62,7 +62,6 @@ public class ElementPanel extends Panel{
 	
 	private static final int DRAG_CLICK_SENSITIVITY = 25;
 	
-	
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	//-- Element Storage/Management  --------------------------
@@ -637,13 +636,13 @@ public class ElementPanel extends Panel{
 	
 	//-- Canvas  ----------------------------------------------
 	
-	public void addCanvas(String name, int priority, int x, int y, int elemWidth, int elemHeight, int canWidth, int canHeight, int inCode, boolean frame) {
+	public void addCanvas(String name, int priority, boolean frame, int x, int y, int elemWidth, int elemHeight, int canWidth, int canHeight, int inCode) {
 		DrawnCanvas dC = new DrawnCanvas(x, y, priority, elemWidth, elemHeight, inCode, canWidth, canHeight);
 		handleAddElement(name, dC, frame);
 		clickList.add(name);
 	}
 	
-	public void addCanvas(String name, int priority, Canvas inCanvas, int x, int y, int elemWidth, int elemHeight, int inCode, boolean frame) {
+	public void addCanvas(String name, int priority, boolean frame, int x, int y, int elemWidth, int elemHeight, Canvas inCanvas, int inCode) {
 		DrawnCanvas dC = new DrawnCanvas(x, y, priority, elemWidth, elemHeight, inCode, inCanvas);
 		handleAddElement(name, dC, frame);
 		clickList.add(name);

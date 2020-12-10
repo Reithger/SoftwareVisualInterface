@@ -1,6 +1,6 @@
 package visual.panel.element;
 
-import input.Detectable;
+import input.mouse.Detectable;
 
 /**
  * This interface defines the behavior of Element objects that the user can

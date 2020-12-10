@@ -1,4 +1,4 @@
-package input;
+package input.mouse;
 
 /**
  * This interface functions to define the behavior of objects which are used

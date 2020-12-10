@@ -2,6 +2,7 @@ package visual.composite;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 
 public interface HandleElements {
 	
@@ -14,6 +15,8 @@ public interface HandleElements {
 	public abstract void handleButton(String nom, boolean frame, int x, int y, int wid, int hei, int code);
 
 	public abstract void handleImage(String nom, boolean frame, int x, int y, String path, double scale);
+
+	public abstract void handleImage(String nom, boolean frame, int x, int y, Image img, double scale);
 
 	public abstract void handleText(String nom, boolean frame, int x, int y, int wid, int hei, Font font, String phr);
 

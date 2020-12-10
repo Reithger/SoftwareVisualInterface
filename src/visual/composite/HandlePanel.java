@@ -2,6 +2,7 @@ package visual.composite;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 
 import visual.panel.ElementPanel;
 
@@ -32,6 +33,13 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	public void handleImage(String nom, boolean frame, int x, int y, String path, double scale) {
 		if(!moveElement(nom, x, y)){
 			addImage(nom, 15, frame, x, y, true, path, scale);
+		}
+	}
+	
+	@Override
+	public void handleImage(String nom, boolean frame, int x, int y, Image img, double scale) {
+		if(!moveElement(nom, x, y)){
+			addImage(nom, 15, frame, x, y, true, img, scale);
 		}
 	}
 

@@ -1,6 +1,6 @@
-package input;
+package input.manager;
 
-import visual.panel.Panel;
+import input.EventReceiver;
 
 public class ActionEvent {
 
@@ -12,6 +12,9 @@ public class ActionEvent {
 	public final static char EVENT_DRAG = 'D';
 	public final static char EVENT_MOUSE_MOVE = 'M';
 	public final static char EVENT_WHEEL = 'W';
+	public final static char EVENT_KEY = 'K';
+	
+//---  Instance Variables   -------------------------------------------------------------------
 	
 	private int x;
 	private int y;
@@ -19,6 +22,10 @@ public class ActionEvent {
 	private char type;
 	
 	private int wheel;
+	
+	private char keyInput;
+	
+//---  Constructors   -------------------------------------------------------------------------
 	
 	public ActionEvent(char in, int xIn, int yIn, int inCode) {
 		x = xIn;
@@ -32,11 +39,21 @@ public class ActionEvent {
 		wheel = inWheel;
 	}
 	
-	public void execute(Panel reference) {
+	public ActionEvent(char in, char key) {
+		type = in;
+		keyInput = key;
+	}
+	
+//---  Operations   ---------------------------------------------------------------------------
+	
+	public void execute(EventReceiver reference) {
 		if(reference == null) {
 			return;
 		}
 		switch(type) {
+			case EVENT_KEY:
+				reference.keyEvent(keyInput);
+				break;
 			case EVENT_PRESS:
 				reference.clickPressEvent(code, x, y);
 				break;

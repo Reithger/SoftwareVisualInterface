@@ -2,7 +2,8 @@ package visual.panel.element;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import input.ClickRegionRectangle;
+
+import input.mouse.ClickRegionRectangle;
 
 /**
  * This class extends the Element class and implements the Clickable interface

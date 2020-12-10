@@ -5,8 +5,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import input.ClickRegionRectangle;
-import input.Detectable;
+import input.mouse.ClickRegionRectangle;
+import input.mouse.Detectable;
 
 public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 

@@ -75,8 +75,9 @@ public class test {
 		fram.setName("Test");
 		ElementPanel pan = new ElementPanel(0, 0, 300, 500) {
 			public void keyBehaviour(char event) {
-				PopoutSelectList psL = new PopoutSelectList(300, 500, new String[] {"A", "B"}, false);
-				System.out.println(psL.getSelected());
+				System.out.println(event);
+				//PopoutSelectList psL = new PopoutSelectList(300, 500, new String[] {"A", "B"}, false);
+				//System.out.println(psL.getSelected());
 			}
 			
 			public void clickBehaviour(int event, int x, int y) {
@@ -221,7 +222,7 @@ public class test {
 			
 		};
 		
-		pan3.addCanvas("canvas", 15, can, 0, 0, 300, 500, 5, false);
+		pan3.addCanvas("canvas", 15, false, 0, 0, 300, 500, can, 5);
 		
 		ElementPanel stlth = new ElementPanel(300, 0, 100, 100) {
 			@Override

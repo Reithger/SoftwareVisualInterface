@@ -2,6 +2,7 @@ package visual.composite.popout;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 
 import visual.composite.HandleElements;
 import visual.composite.HandlePanel;
@@ -113,6 +114,10 @@ public abstract class PopoutWindow implements HandleElements{
 		parFrame.setResizable(in);
 	}
 	
+	public void setStoredText(String ref, String now) {
+		panel.setElementStoredText(ref, now);
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public int getWidth() {
@@ -146,6 +151,11 @@ public abstract class PopoutWindow implements HandleElements{
 	@Override
 	public void handleImage(String nom, boolean frame, int x, int y, String path, double scale) {
 		panel.handleImage(nom, frame, x, y, path, scale);
+	}
+
+	@Override
+	public void handleImage(String nom, boolean frame, int x, int y, Image img, double scale) {
+		panel.handleImage(nom, frame, x, y, img, scale);
 	}
 
 	@Override
