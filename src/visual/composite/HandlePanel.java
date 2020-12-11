@@ -25,7 +25,7 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	@Override
 	public void handleText(String nom, boolean frame, int x, int y, int wid, int hei, Font font, String phr) {
 		if(!moveElement(nom, x, y)){
-			addText(nom, 15, false, x, y, wid, hei, phr, font == null ? DEFAULT_FONT : font, true, true, true);
+			addText(nom, 15, frame, x, y, wid, hei, phr, font == null ? DEFAULT_FONT : font, true, true, true);
 		}
 	}
 
@@ -44,30 +44,37 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	}
 
 	@Override
+	public void handleImage(String nom, boolean frame, int x, int y, int wid, int hei, String imgPath) {
+		if(!moveElement(nom, x, y)){
+			addImage(nom, 15, frame, x, y, wid, hei, true, imgPath, true);
+		}
+	}
+	
+	@Override
 	public void handleTextEntry(String nom, boolean frame, int x, int y, int wid, int hei, int cod, Font font, String phr) {
 		if(!moveElement(nom, x, y)){
-			addTextEntry(nom, 15, false, x, y, wid, hei, cod, phr, font == null ? ENTRY_FONT : font, true, true, true);	//TODO: Smaller font for entry?
+			addTextEntry(nom, 15, frame, x, y, wid, hei, cod, phr, font == null ? ENTRY_FONT : font, true, true, true);	//TODO: Smaller font for entry?
 		}
 	}
 
 	@Override
 	public void handleButton(String nom, boolean frame, int x, int y, int wid, int hei, int code) {
 		if(!moveElement(nom, x, y)) {
-			addButton(nom, 10, false, x, y, wid, hei, code, true);
+			addButton(nom, 10, frame, x, y, wid, hei, code, true);
 		}
 	}
 
 	@Override
 	public void handleLine(String nom, boolean frame, int prior, int x, int y, int x2, int y2, int thck, Color fill) {
 		if(!moveElement(nom, x, y)) {
-			addLine(nom, prior, false, x, y, x2, y2, thck, fill);
+			addLine(nom, prior, frame, x, y, x2, y2, thck, fill);
 		}
 	}
 
 	@Override
 	public void handleRectangle(String nom, boolean frame, int prior, int x, int y, int wid, int hei, Color fill, Color border) {
 		if(!moveElement(nom, x, y)) {
-			addRectangle(nom, prior, false, x, y, wid, hei, true, fill, border);
+			addRectangle(nom, prior, frame, x, y, wid, hei, true, fill, border);
 		}
 	}
 

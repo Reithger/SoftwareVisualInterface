@@ -159,6 +159,11 @@ public abstract class PopoutWindow implements HandleElements{
 	}
 
 	@Override
+	public void handleImage(String nom, boolean frame, int x, int y, int wid, int hei, String imgPath) {
+		panel.handleImage(nom, frame, x, y, wid, hei, imgPath);
+	}
+	
+	@Override
 	public void handleTextEntry(String nom, boolean frame, int x, int y, int wid, int hei, int cod, Font font, String phr) {
 		panel.handleTextEntry(nom, frame, x, y, wid, hei, cod, font, phr);
 	}

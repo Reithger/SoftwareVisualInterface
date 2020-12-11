@@ -18,6 +18,8 @@ public interface HandleElements {
 
 	public abstract void handleImage(String nom, boolean frame, int x, int y, Image img, double scale);
 
+	public abstract void handleImage(String nom, boolean frame, int x, int y, int wid, int hei, String path);
+	
 	public abstract void handleText(String nom, boolean frame, int x, int y, int wid, int hei, Font font, String phr);
 
 	public abstract void handleTextEntry(String nom, boolean frame, int x, int y, int wid, int hei, int cod, Font font, String phr);

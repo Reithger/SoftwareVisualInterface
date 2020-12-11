@@ -728,8 +728,6 @@ public class ElementPanel extends Panel{
 		handleAddElement(name, d, frame);
 	}
 	
-
-
 	/**
 	 * This method permits the addition of a DrawnImage object to the list of objects
 	 * that are drawn during the repaint() of this ElementPanel object at a specified
