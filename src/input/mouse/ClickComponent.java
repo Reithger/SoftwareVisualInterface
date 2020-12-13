@@ -288,7 +288,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		sendAction(ActionEvent.EVENT_WHEEL, e.getClickCount());
+		sendAction(ActionEvent.EVENT_WHEEL, (int)(e.getPreciseWheelRotation()));
 	}
 
 	//-- Support  ---------------------------------------------
