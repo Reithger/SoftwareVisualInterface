@@ -8,12 +8,18 @@ import visual.panel.ElementPanel;
 
 public class HandlePanel extends ElementPanel implements HandleElements{
 	
+//---  Constants   ----------------------------------------------------------------------------
+	
 	protected final static Font DEFAULT_FONT = new Font("Serif", Font.BOLD, 16);
 	protected final static Font ENTRY_FONT = new Font("Serif", Font.BOLD, 12);
+	
+//---  Constructors   -------------------------------------------------------------------------
 	
 	public HandlePanel(int x, int y, int width, int height) {
 		super(x, y, width, height);
 	}
+	
+//---  Operations   ---------------------------------------------------------------------------
 	
 	@Override
 	public void handleTextButton(String nom, boolean frame, int x, int y, int wid, int hei, Font font, String phr, int code, Color fill, Color border) {

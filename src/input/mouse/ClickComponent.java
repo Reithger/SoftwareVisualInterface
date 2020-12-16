@@ -1,10 +1,15 @@
 package input.mouse;
 
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import input.EventFielder;
-import input.manager.ActionEvent;
+import input.manager.actionevent.ActionEventGenerator;
 
 /**
  * This class implements the MouseListener interface to predefine behavior for integrating user
@@ -26,10 +31,8 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
-	/** int value representing the coded value for which event-region is currently selected*/
-	private int activeSelect;
 	/** ArrayList<Integer[]> object containing the coordinates and codes for each event-region*/
-	private List<Detectable> detectionRegions;
+	private ArrayList<Detectable> detectionRegions;
 	/** EventReceiver object representing the EventReceiver to which this ClickComponent is attached (the EventReceiver that is being clicked)*/
 	private EventFielder eventHandler;
 	
@@ -45,38 +48,11 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	 */
 	
 	public ClickComponent(EventFielder eventReceiver){
-		resetSelected();
 		detectionRegions = new ArrayList<Detectable>();
 		eventHandler = eventReceiver;
 	}
-
-//---  Getter Methods   -----------------------------------------------------------------------
-	
-	/**
-	 * Getter method that returns the value currently stored by this ClickComponent (that value
-	 * being a reflection of the user's interaction with the EventReceiver this is adjoined to.)
-	 * 
-	 * Value is reset after each call of this method.
-	 * 
-	 * @return - Returns an int value representing the code value stored by this ClickComponent
-	 */
-	
-	public int getSelected(){
-		int out = activeSelect;
-		resetSelected();
-		return out;
-	}
 	
 //---  Operations   ---------------------------------------------------------------------------
-
-	/**
-	 * This method resets the stored value of this ClickComponent to -1 (the default value for
-	 * nothing significant having been selected; there may have been a click action, though.)
-	 */
-	
-	public void resetSelected(){
-		activeSelect = -1;
-	}
 
 	/**
 	 * This method resets the list of Detectable objects stored by this ClickComponent; no
@@ -84,15 +60,9 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	 */
 	
 	public void resetDetectionRegions() {
+		openLock();
 		detectionRegions = new ArrayList<Detectable>();
-	}
-	
-	private void sendAction(char c, int x, int y, int code) {
-		eventHandler.receiveActionEvent(new ActionEvent(c, x, y, code));
-	}
-	
-	private void sendAction(char c, int in) {
-		eventHandler.receiveActionEvent(new ActionEvent(c, in));
+		closeLock();
 	}
 	
 //---  Remover Methods   ----------------------------------------------------------------------
@@ -206,14 +176,11 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		Integer y = e.getY();
 		boolean happened = false;
 		for(Detectable d : findClicked(x, y)) {
-			activeSelect = d.getCode();	
-			
-			sendAction(ActionEvent.EVENT_CLICK, x, y, getSelected());
-			
 			happened = true;
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_CLICK, d.getCode(), x, y));
 		}
 		if(!happened){
-			sendAction(ActionEvent.EVENT_CLICK, x, y, getSelected());
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_CLICK, -1, x, y));
 		}
 	}
 	
@@ -225,13 +192,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		boolean happened = false;
 		for(Detectable d : findClicked(x, y)) {
 			happened = true;
-			activeSelect = d.getCode();
-
-			sendAction(ActionEvent.EVENT_RELEASE, x, y, getSelected());
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_RELEASE, d.getCode(), x, y));
 		}
 		if(!happened) {
-
-			sendAction(ActionEvent.EVENT_RELEASE, x, y, getSelected());
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_RELEASE, -1, x, y));
 			
 		}
 	}
@@ -249,12 +213,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		boolean happened = false;
 		for(Detectable d : findClicked(x, y)) {
 			happened = true;
-			activeSelect = d.getCode();
-
-			sendAction(ActionEvent.EVENT_PRESS, x, y, getSelected());
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_PRESS, d.getCode(), x, y));
 		}
 		if(!happened){
-			sendAction(ActionEvent.EVENT_PRESS, x, y, getSelected());
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_PRESS, -1, x, y));
 		}
 	}
 	
@@ -271,26 +233,33 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		boolean happened = false;
 		for(Detectable d : findClicked(x, y)) {
 			happened = true;
-			activeSelect = d.getCode();
-
-			sendAction(ActionEvent.EVENT_DRAG, x, y, getSelected());
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_DRAG, d.getCode(), x, y));
 		}
 		if(!happened){
-			sendAction(ActionEvent.EVENT_DRAG, x, y, getSelected());
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_DRAG, -1, x, y));
 		}
 		
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		sendAction(ActionEvent.EVENT_MOUSE_MOVE, e.getX(), e.getY(), -1);
+		eventHandler.requestFocusInWindow();
+		Integer x = e.getX();
+		Integer y = e.getY();
+		boolean happened = false;
+		for(Detectable d : findClicked(x, y)) {
+			happened = true;
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_MOVE, d.getCode(), x, y));
+		}
+		if(!happened)
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_MOVE, -1, x, y));
 	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		sendAction(ActionEvent.EVENT_WHEEL, (int)(e.getPreciseWheelRotation()));
+		eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseWheelActionEvent((int)(e.getPreciseWheelRotation())));
 	}
-
+	
 	//-- Support  ---------------------------------------------
 	
 	private ArrayList<Detectable> findClicked(int x, int y) {

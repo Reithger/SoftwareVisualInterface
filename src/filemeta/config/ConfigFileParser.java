@@ -7,8 +7,12 @@ import java.util.Scanner;
 
 public class ConfigFileParser {
 
+//---  Constants   ----------------------------------------------------------------------------
+	
 	public final static String ENTRY_EQUAL_SYMBOL = " = ";
 	public final static String ENTRY_VALUE_END_SYMBOL = "</;>";
+	
+//---  Getter Methods   -----------------------------------------------------------------------
 	
 	public static String getContents(File f, String entryName) throws IOException{
 		Scanner sc = new Scanner(f);
@@ -32,6 +36,8 @@ public class ConfigFileParser {
 		sc.close();
 		return null;
 	}
+	
+//---  Setter Methods   -----------------------------------------------------------------------
 	
 	public static boolean setContents(File f, String entryName, String newValue) throws IOException{
 		Scanner sc = new Scanner(f);

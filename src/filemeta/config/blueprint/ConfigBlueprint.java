@@ -6,7 +6,11 @@ import java.util.ArrayList;
 
 public class ConfigBlueprint {
 
+//---  Instance Variables   -------------------------------------------------------------------
+	
 	private Folder root;
+	
+//---  Constructors   -------------------------------------------------------------------------
 	
 	public ConfigBlueprint(String src) {
 		if(src.equals("")) {
@@ -15,27 +19,7 @@ public class ConfigBlueprint {
 		root = new Folder(src);
 	}
 	
-	public String addFilePath(String path) {
-		return root.addFilePath(processPath(path));
-	}
-	
-	public void addFile(String path, String fileName, String fileComments) {
-		root.addFile(processPath(path), fileName, fileComments);
-	}
-	
-	public void addFileEntry(String path, String fileName, String entryName, String entryComment, String entryValue) {
-		root.addFileEntry(processPath(path), fileName, entryName, entryComment, entryValue);
-	}
-	
-	private String[] processPath(String path) {
-		path = path.replaceAll("\\\\", "/").replaceAll("//", "/");
-		String[] use = path.split("/");
-		return use;
-	}
-	
-	public ArrayList<File> getAllFiles(){
-		return root.getAllFiles("");
-	}
+//---  Operations   ---------------------------------------------------------------------------
 	
 	public boolean writeBlueprint(boolean erase) {
 		try {
@@ -53,6 +37,32 @@ public class ConfigBlueprint {
 		root.erase("");
 	}
 	
+	private String[] processPath(String path) {
+		path = path.replaceAll("\\\\", "/").replaceAll("//", "/");
+		String[] use = path.split("/");
+		return use;
+	}
+	
+//---  Adder Methods   ------------------------------------------------------------------------
+	
+	public String addFilePath(String path) {
+		return root.addFilePath(processPath(path));
+	}
+	
+	public void addFile(String path, String fileName, String fileComments) {
+		root.addFile(processPath(path), fileName, fileComments);
+	}
+	
+	public void addFileEntry(String path, String fileName, String entryName, String entryComment, String entryValue) {
+		root.addFileEntry(processPath(path), fileName, entryName, entryComment, entryValue);
+	}
+
+//---  Getter Methods   -----------------------------------------------------------------------
+	
+	public ArrayList<File> getAllFiles(){
+		return root.getAllFiles("");
+	}
+
 	public Folder getRoot() {
 		return root;
 	}

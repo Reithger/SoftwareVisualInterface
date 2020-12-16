@@ -5,6 +5,8 @@ import javax.swing.JFileChooser;
 
 public class FileChooser {
 	
+//---  Operations   ---------------------------------------------------------------------------
+	
 	public static File promptSelectFile(String defaultPath, boolean explore, boolean files) {
 		JFileChooser jf = new JFileChooser(defaultPath);
 		jf.setFileSelectionMode(explore ? files ? JFileChooser.FILES_AND_DIRECTORIES : JFileChooser.DIRECTORIES_ONLY : JFileChooser.FILES_ONLY);

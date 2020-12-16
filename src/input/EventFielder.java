@@ -3,8 +3,8 @@ package input;
 import java.awt.Component;
 
 import input.keyboard.KeyComponent;
-import input.manager.ActionEvent;
 import input.manager.ActionEventManager;
+import input.manager.actionevent.ActionEvent;
 import input.mouse.ClickComponent;
 import input.mouse.Detectable;
 
@@ -15,11 +15,11 @@ public class EventFielder {
 	private ClickComponent mouseEvent;
 	private KeyComponent keyPress;
 	private ActionEventManager eventManager;
-	private EventReceiver reference;
+	private ComponentReceiver reference;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
-	public EventFielder(EventReceiver parent) {
+	public EventFielder(ComponentReceiver parent) {
 		mouseEvent = new ClickComponent(this);
 		keyPress = new KeyComponent(this);
 		reference = parent;

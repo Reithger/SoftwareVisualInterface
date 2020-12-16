@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import input.EventFielder;
-import input.manager.ActionEvent;
+import input.manager.actionevent.ActionEventGenerator;
 
 /**
  * This class implements the KeyListener interface to define behaviors for interpreting
@@ -22,8 +22,6 @@ public class KeyComponent implements KeyListener{
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
-	/** char value representing which keyboard key's value is being stored as the active value (most recently assigned)*/
-	public char activeSelect;
 	/** EventReceiver object providing reference to the EventReceiver to which this KeyComponent is attached*/
 	public EventFielder eventHandler;
 	
@@ -37,32 +35,7 @@ public class KeyComponent implements KeyListener{
 	 */
 	
 	public KeyComponent(EventFielder eventReceiver){
-		resetSelected();
 		eventHandler = eventReceiver;
-	}
-	
-//---  Getter Methods   -----------------------------------------------------------------------
-
-	/**
-	 * Getter method that requests the most recently submitted value to the KeyComponent by the user
-	 * via the keyboard.
-	 * 
-	 * @return - Returns a char value describing the key that the user has most recently pressed as input.
-	 */
-	
-	public char getSelected(){
-		return activeSelect;
-	}
-	
-//---  Operations   ---------------------------------------------------------------------------
-
-	/**
-	 * This method resets the selected char value to a default (char)0.
-	 * 
-	 */
-	
-	public void resetSelected(){
-		activeSelect = (char)0;
 	}
 	
 //---  Setter Methods   -----------------------------------------------------------------------
@@ -85,17 +58,17 @@ public class KeyComponent implements KeyListener{
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		eventHandler.receiveActionEvent(new ActionEvent(ActionEvent.EVENT_KEY, e.getKeyChar()));
+		eventHandler.receiveActionEvent(ActionEventGenerator.generateKeyActionEvent(ActionEventGenerator.KEY_DOWN, e.getKeyChar()));
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		//This space intentionally left blank, but doesn't need to be
+		eventHandler.receiveActionEvent(ActionEventGenerator.generateKeyActionEvent(ActionEventGenerator.KEY_UP, e.getKeyChar()));
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		//This space intentionally left blank, but doesn't need to be		
+		eventHandler.receiveActionEvent(ActionEventGenerator.generateKeyActionEvent(ActionEventGenerator.KEY_PRESS, e.getKeyChar()));	
 	}
 
 }

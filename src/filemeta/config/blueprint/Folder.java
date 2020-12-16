@@ -8,21 +8,51 @@ import java.util.Arrays;
 /**
  * Generic definition of a Folder in a File System to map out a blueprint of a config system for reproduction
  * 
- * @author Borinor
+ * @author Ada Clevinger
  *
  */
 
 public class Folder {
 
+//---  Instance Variables   -------------------------------------------------------------------
+	
 	private String name;
 	private ArrayList<Folder> children;
 	private ArrayList<ConfigFile> files;
+	
+//---  Constructors   -------------------------------------------------------------------------
 	
 	public Folder(String nom) {
 		name = nom;
 		children = new ArrayList<Folder>();
 		files = new ArrayList<ConfigFile>();
 	}
+	
+//---  Operations   ---------------------------------------------------------------------------
+
+	public void write(String path, boolean erase) throws IOException{
+		path += name + "/";
+		File gen = new File(path);
+		gen.mkdir();
+		for(ConfigFile s : files) {
+			s.write(path, erase);
+		}
+		for(Folder f : children) {
+			f.write(path, erase);
+		}
+	}
+
+	public void erase(String path) {
+		path += name + "/";
+		for(Folder f : children) {
+			f.erase(path);
+		}
+		for(ConfigFile s : files) {
+			s.erase(path);
+		}
+	}
+	
+//---  Adder Methods   ------------------------------------------------------------------------
 	
 	public String addFilePath(String[] path) {
 		if(path == null || path.length == 0) {
@@ -64,34 +94,7 @@ public class Folder {
 		next.addFileEntry(tearArray(path), fileName, entryName, entryComment, entryValue);
 	}
 
-	public void write(String path, boolean erase) throws IOException{
-		path += name + "/";
-		File gen = new File(path);
-		gen.mkdir();
-		for(ConfigFile s : files) {
-			s.write(path, erase);
-		}
-		for(Folder f : children) {
-			f.write(path, erase);
-		}
-	}
-
-	public void erase(String path) {
-		path += name + "/";
-		for(Folder f : children) {
-			f.erase(path);
-		}
-		for(ConfigFile s : files) {
-			s.erase(path);
-		}
-	}
-	
-	private String[] tearArray(String[] in) {
-		if(in.length == 0) {
-			return new String[] {};
-		}
-		return Arrays.copyOfRange(in, 1, in.length);
-	}
+//---  Getter Methods   -----------------------------------------------------------------------
 	
 	private Folder getNext(String nom) {
 		for(Folder f : children) {
@@ -130,6 +133,15 @@ public class Folder {
 			out.addAll(f.getAllFiles(path + "/" + name));
 		}
 		return out;
+	}
+
+//---  Mechanics   ----------------------------------------------------------------------------
+	
+	private String[] tearArray(String[] in) {
+		if(in.length == 0) {
+			return new String[] {};
+		}
+		return Arrays.copyOfRange(in, 1, in.length);
 	}
 	
 }

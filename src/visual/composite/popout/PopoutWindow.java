@@ -37,30 +37,39 @@ public abstract class PopoutWindow implements HandleElements{
 		parFrame.setExitOnClose(false);
 		panel = new HandlePanel(0, 0, width, height) {
 			@Override
-			public void clickBehaviour(int code, int x, int y){
+			public void clickEvent(int code, int x, int y){
+				super.clickEvent(code, x, y);
 				clickAction(code, x, y);
 			}
 			
 			@Override
-			public void keyBehaviour(char code) {
+			public void keyEvent(char code) {
+				super.keyEvent(code);
 				keyAction(code);
 			}
 			
 			@Override
-			public void mouseWheelBehaviour(int scroll) {
+			public void mouseWheelEvent(int scroll) {
+				super.mouseWheelEvent(scroll);
 				this.setOffsetYBounded(this.getOffsetY() - scroll * ROTATION_MULTIPLIER);
 				scrollAction(scroll);
 			}
-			
-			public void clickPressBehaviour(int code, int x, int y) {
+
+			@Override
+			public void clickPressEvent(int code, int x, int y) {
+				super.clickPressEvent(code, x, y);
 				clickPressAction(code, x, y);
 			}
-			
-			public void clickReleaseBehaviour(int code, int x, int y) {
+
+			@Override
+			public void clickReleaseEvent(int code, int x, int y) {
+				super.clickReleaseEvent(code, x, y);
 				clickReleaseAction(code, x, y);
 			}
-			
-			public void dragBehaviour(int code, int x, int y) {
+
+			@Override
+			public void dragEvent(int code, int x, int y) {
+				super.dragEvent(code, x, y);
 				dragAction(code, x, y);
 			}
 			
@@ -88,17 +97,29 @@ public abstract class PopoutWindow implements HandleElements{
 		panel.setScrollBarHorizontal(set);
 	}
 	
-	public abstract void clickAction(int code, int x, int y);
+	public void clickAction(int code, int x, int y) {
+		
+	}
 	
-	public abstract void clickPressAction(int code, int x, int y);
+	public void clickPressAction(int code, int x, int y) {
+		
+	}
 	
-	public abstract void clickReleaseAction(int code, int x, int y);
+	public void clickReleaseAction(int code, int x, int y) {
+		
+	}
 	
-	public abstract void keyAction(char code);
+	public void keyAction(char code) {
+		
+	}
 	
-	public abstract void scrollAction(int scroll);
+	public void scrollAction(int scroll) {
+		
+	}
 	
-	public abstract void dragAction(int code, int x, int y);
+	public void dragAction(int code, int x, int y) {
+		
+	}
 	
 	protected void removeElementPrefixed(String in) {
 		panel.removeElementPrefixed(in);

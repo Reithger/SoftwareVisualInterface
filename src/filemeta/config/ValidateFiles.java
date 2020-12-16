@@ -4,6 +4,8 @@ import java.io.File;
 
 public interface ValidateFiles {
 
+//---  Operations   ---------------------------------------------------------------------------
+	
 	/**
 	 * User directed implementation of the process to validate the config files for their
 	 * particular project.

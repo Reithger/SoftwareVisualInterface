@@ -3,19 +3,33 @@ package input.manager;
 import java.util.LinkedList;
 
 import input.EventReceiver;
-
+import input.manager.actionevent.ActionEvent;
 
 public class ActionEventManager extends Thread{
 
+//---  Constants   ----------------------------------------------------------------------------
+	
+	private final static long THREAD_TIME_OUT_DEFAULT = 50;
+	private final static int THREAD_TIME_OUT_MULTIPLIER = 2;
+	
+//---  Instance Variables   -------------------------------------------------------------------
+	
 	private LinkedList<TimedThread> threads;
-	private LinkedList<ActionEvent> events;
+	private volatile LinkedList<ActionEvent> events;
 	private EventReceiver reference;
+	private volatile long timeOut;
+	
+//---  Constructors   -------------------------------------------------------------------------
 	
 	public ActionEventManager(EventReceiver in) {
-		threads = new LinkedList<TimedThread>();
+		if(threads == null)
+			threads = new LinkedList<TimedThread>();
 		events = new LinkedList<ActionEvent>();
+		timeOut = THREAD_TIME_OUT_DEFAULT;
 		reference = in;
 	}
+	
+//---  Operations   ---------------------------------------------------------------------------
 	
 	@Override
 	public void run() {
@@ -26,6 +40,13 @@ public class ActionEventManager extends Thread{
 		}
 	}
 	
+	public void add(ActionEvent in) {
+		//TODO: Filter events you want to ignore
+		events.add(in);
+	}
+	
+//---  Getter Methods   -----------------------------------------------------------------------
+	
 	public TimedThread getOpenThread() {
 		boolean timed = false;
 		do {
@@ -34,68 +55,13 @@ public class ActionEventManager extends Thread{
 				if(t.isAvailable()){
 					return t;
 				}
-				timed = timed || !t.timedOut();
+				timed = timed || !t.timedOut(timeOut);
 			}
 		} while(timed);
 		TimedThread newT = new TimedThread(reference);
 		threads.add(newT);
+		timeOut *= THREAD_TIME_OUT_MULTIPLIER;
 		return newT;
 	}
-	
-	public void add(ActionEvent in) {
-		events.add(in);
-	}
-	
-	class TimedThread extends Thread {
-		
-		private EventReceiver reference;
-		private ActionEvent event;
-		private boolean open;
-		private long time;
-		
-		public TimedThread(EventReceiver ref) {
-			reference = ref;
-			start();
-		}
-		
-		public void updateEvent(ActionEvent in) {
-			event = in;
-		}
-		
-		public void run(ActionEvent e) {
-			open = false;
-			time = System.currentTimeMillis();
-			interrupt();
-			event = e;
-		}
-		
-		public boolean isAvailable() {
-			return open;
-		}
-		
-		public boolean timedOut() {
-			return (System.currentTimeMillis() - time) > 5;
-		}
-		
-		@Override
-		public void run() {
-			while(reference != null) {
-				open = true;
-				while(open) {
-					try {
-						sleep(10);
-					} catch (InterruptedException e) {}
-				}
-				try {
-					event.execute(reference);
-				}
-				catch(Exception e) {
-					e.printStackTrace();
-					System.out.println("Fail forward exception: ActionEventManager's TimedThread object produced an exception while executing input.");
-				}
-			}
-		}
-		
-	}
-	
+
 }

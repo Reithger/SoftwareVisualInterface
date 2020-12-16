@@ -6,6 +6,8 @@ import java.awt.Image;
 
 public interface HandleElements {
 	
+//---  Operations   ---------------------------------------------------------------------------
+	
 	public abstract void handleLine(String nom, boolean frame, int prior, int x, int y, int x2, int y2, int thck, Color fill);
 
 	public abstract void handleRectangle(String nom, boolean frame, int prior, int x, int y, int wid, int hei, Color fill, Color border);

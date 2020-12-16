@@ -4,6 +4,10 @@ import java.awt.Component;
 
 public interface EventReceiver {
 	
+//---  Operations   ---------------------------------------------------------------------------
+	
+	//-- Mouse Input  -----------------------------------------
+	
 	/**
 	 * This method is triggered whenever the Panel object detects user interaction
 	 * via the Mouse; exact implementation of response is left to the implementation
@@ -21,9 +25,13 @@ public interface EventReceiver {
 	
 	public abstract void dragEvent(int event, int x, int y);
 	
+	public abstract void mouseMoveEvent(int event, int x, int y);
+
+	//-- Mouse Wheel Input  -----------------------------------
+	
 	public abstract void mouseWheelEvent(int rotation);
 	
-	public abstract void mouseMoveEvent(int x, int y);
+	//-- Key Input  -------------------------------------------
 	
 	/**
 	 * This method is triggered whenever the Panel object detects user interaction
@@ -36,8 +44,8 @@ public interface EventReceiver {
 	
 	public abstract void keyEvent(char event);
 	
-	public abstract void requestFocusInWindow();
+	public abstract void keyPressEvent(char event);
 	
-	public abstract Component getListenerRecipient();
-	
+	public abstract void keyReleaseEvent(char event);
+
 }

@@ -66,6 +66,8 @@ public class test {
 		FileChooser.promptSaveFile(null, true, false, f);
 	}
 	
+	private static Canvas can;
+	
 	private static void drawTest1() {
 		String imagePath = "src\\test\\assets\\Saskia_Portrait.jpg";
 		String imagePath2 = "src\\test\\assets\\ada.png";
@@ -74,13 +76,15 @@ public class test {
 		WindowFrame fram = new WindowFrame(1200, 500);
 		fram.setName("Test");
 		ElementPanel pan = new ElementPanel(0, 0, 300, 500) {
-			public void keyBehaviour(char event) {
+			public void keyEvent(char event) {
+				super.keyEvent(event);
 				System.out.println(event);
 				//PopoutSelectList psL = new PopoutSelectList(300, 500, new String[] {"A", "B"}, false);
 				//System.out.println(psL.getSelected());
 			}
 			
-			public void clickBehaviour(int event, int x, int y) {
+			public void clickEvent(int event, int x, int y) {
+				super.clickEvent(event, x, y);
 				System.out.println(x + " " + y);
 				
 			} 
@@ -103,7 +107,7 @@ public class test {
 		
 		pan.addImage("ada", 15, false, pan.getWidth() / 4, pan.getHeight() / 3, 125, 75, true, imagePath2, true);
 		pan.addImage("ada2", 15, false, pan.getWidth() * 2 / 3, pan.getHeight() / 3, 125, 75, true, imagePath2, false);
-		Canvas can = null;
+
 		ElementPanel pan2 = new ElementPanel(400, 0, 300, 500) {
 			
 			private boolean dragging;
@@ -111,7 +115,8 @@ public class test {
 			private int lastY;
 			
 			@Override
-			public void keyBehaviour(char event) {
+			public void keyEvent(char event) {
+				super.keyEvent(event);
 				if(event == 't') {
 					fram.hideActiveWindow("window");
 					fram.showActiveWindow("other");
@@ -119,14 +124,16 @@ public class test {
 			}
 			
 			@Override
-			public void clickPressBehaviour(int code, int x, int y) {
+			public void clickPressEvent(int code, int x, int y) {
+				super.clickPressEvent(code, x, y);
 				dragging = true;
 				lastX = x;
 				lastY = y;
 			}
 			
 			@Override
-			public void dragBehaviour(int code, int x, int y) {
+			public void dragEvent(int code, int x, int y) {
+				super.dragEvent(code, x, y);
 				if(dragging) {
 					resize(getWidth() + (x - lastX), getHeight() + (y - lastY));
 					lastX = x;
@@ -136,12 +143,14 @@ public class test {
 			}
 			
 			@Override
-			public void clickReleaseBehaviour(int code, int x, int y) {
+			public void clickReleaseEvent(int code, int x, int y) {
+				super.clickReleaseEvent(code, x, y);
 				dragging = false;
 			}
 			
 			@Override
-			public void clickBehaviour(int event, int x, int y) {
+			public void clickEvent(int event, int x, int y) {
+				super.clickEvent(event, x, y);
 				System.out.println(event + " " + x + " " + y);
 				System.out.println(getFocusElement());
 				moveElement("line5", 40, 900);
@@ -154,6 +163,7 @@ public class test {
 		drawPan2(pan2);
 		pan2.setScrollBarVertical(true);
 		
+		String CANVAS_NAME = "canvas";
 		
 		can = new Canvas(200, 400) {
 
@@ -188,19 +198,19 @@ public class test {
 			
 			@Override
 			public void clickEvent(int code, int x, int y) {
-				DrawnCanvas can = this.getCanvas("canvas");
-				can.getCanvas().setPixelColor(x - can.getX(), y - can.getY(), Color.blue);
+				super.clickEvent(code, x, y);
+				can.setPixelColor(x - getElementX(CANVAS_NAME) - getOffsetX(), y - getElementY(CANVAS_NAME) - getOffsetY(), Color.blue);
 			}
 			
 			@Override
 			public void dragEvent(int code, int x, int y) {
+				super.dragEvent(code, x, y);
 				clickEvent(code, x, y);
 			}
 			
 			@Override
 			public void keyEvent(char key) {
-				DrawnCanvas dCan = getCanvas("canvas");
-				Canvas can = dCan.getCanvas();
+				super.keyEvent(key);
 				if(key == 'g') {
 					can.input(1);
 				}
@@ -212,21 +222,21 @@ public class test {
 					can.setZoom(can.getZoom() - 1);
 				}
 				if(key == 'a') {
-					moveElement("canvas", dCan.getX() + 25, dCan.getY());
+					moveElement("canvas", getElementX(CANVAS_NAME) + 25, getElementY(CANVAS_NAME));
 				}
 				if(key == 's') {
-					moveElement("canvas", dCan.getX(), dCan.getY() + 25);
+					moveElement("canvas", getElementX(CANVAS_NAME), getElementY(CANVAS_NAME) + 25);
 				}
 			}
 			
 			
 		};
 		
-		pan3.addCanvas("canvas", 15, false, 0, 0, 300, 500, can, 5);
+		pan3.addCanvas(CANVAS_NAME, 15, false, 0, 0, 300, 500, can, 5);
 		
 		ElementPanel stlth = new ElementPanel(300, 0, 100, 100) {
 			@Override
-			public void clickBehaviour(int code, int x, int y) {
+			public void clickEvent(int code, int x, int y) {
 				fram.showActiveWindow("window");
 				fram.hideActiveWindow("other");
 			}
@@ -282,7 +292,8 @@ public class test {
 		fra.reserveWindow("window");
 		ElementPanel pan = new ElementPanel(0, 0, wid, hei) {
 			
-			public void clickBehaviour(int code, int x, int y) {
+			public void clickEvent(int code, int x, int y) {
+				super.clickEvent(code, x, y);
 				System.out.println(y);
 				//fra.resize(300, 400);
 				//resize(300, 400);

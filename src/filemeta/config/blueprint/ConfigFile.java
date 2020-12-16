@@ -9,9 +9,13 @@ import filemeta.config.ConfigFileParser;
 
 public class ConfigFile {
 
+//---  Instance Variables   -------------------------------------------------------------------
+	
 	private String name;
 	private String fileComment;
 	private HashSet<FileEntry> fileEntries;
+	
+//---  Constructors   -------------------------------------------------------------------------
 	
 	public ConfigFile(String nom, String comment) {
 		name = nom;
@@ -19,9 +23,7 @@ public class ConfigFile {
 		fileEntries = new HashSet<FileEntry>();
 	}
 	
-	public void addFileEntry(String nom, String comment, String value) {
-		fileEntries.add(new FileEntry(nom, comment, value));
-	}
+//---  Operations   ---------------------------------------------------------------------------
 	
 	public void write(String path, boolean erase) throws IOException{
 		File f = new File(path + name);
@@ -44,6 +46,14 @@ public class ConfigFile {
 		File f = new File(path + name);
 		f.delete();
 	}
+	
+//---  Adder Methods   ------------------------------------------------------------------------
+	
+	public void addFileEntry(String nom, String comment, String value) {
+		fileEntries.add(new FileEntry(nom, comment, value));
+	}
+
+//---  Getter Methods   -----------------------------------------------------------------------
 	
 	public String getName() {
 		return name;

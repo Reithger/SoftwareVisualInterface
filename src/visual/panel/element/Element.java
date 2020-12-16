@@ -43,7 +43,8 @@ public abstract class Element implements Comparable<Element>{
 	public abstract void drawToScreen(Graphics g, int offsetX, int offsetY);
 	
 	public void moveElement(int newX, int newY) {
-		
+		setX(newX);
+		setY(newY);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -95,6 +96,17 @@ public abstract class Element implements Comparable<Element>{
 	public void setDrawPriority(int in) {
 		priority = in;
 	}
+
+	public void setHash(String in) {
+		hash = in.hashCode();
+	}
+	
+//---  Mechanics   ----------------------------------------------------------------------------
+	
+	@Override
+	public int hashCode() {
+		return hash;
+	}
 	
 	@Override
 	public int compareTo(Element d) {
@@ -110,15 +122,4 @@ public abstract class Element implements Comparable<Element>{
 		return 0;
 	}
 
-	public void setHash(String in) {
-		hash = in.hashCode();
-	}
-	
-//---  Mechanics   ----------------------------------------------------------------------------
-	
-	@Override
-	public int hashCode() {
-		return hash;
-	}
-	
 }

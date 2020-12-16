@@ -9,8 +9,6 @@ public class DrawnImage extends Element{
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** */
-	private double scaleFactor;
-	/** */
 	private Image image;
 	
 	private boolean center;
@@ -22,7 +20,6 @@ public class DrawnImage extends Element{
 		setY(y);
 		Image drawImage = null;
 		center = inCenter;
-		scaleFactor = 1;
 		if(proportion) {
 			int small = width < height ? width : height;
 			drawImage = img.getScaledInstance(small, small, Image.SCALE_DEFAULT);
@@ -36,26 +33,6 @@ public class DrawnImage extends Element{
 		image = drawImage;
 		setDrawPriority(prior);
 	}
-	
-	/**
-	 * 
-	 * @param x
-	 * @param y
-	 * @param img
-	 * @param scale
-	 */
-	
-	public DrawnImage(int x, int y, int prior, boolean inCenter, Image img, double scale) {
-		setX(x);
-		setY(y);
-		scaleFactor = scale;
-		center = inCenter;
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		Image drawImage = img.getScaledInstance((int)(img.getWidth(null) * scaleFactor), (int)(img.getHeight(null) * scaleFactor), Image.SCALE_DEFAULT);
-		while(!tk.prepareImage(drawImage, -1, -1, null)){	}
-		image = drawImage;
-		setDrawPriority(prior);
-	}	
 
 	/**
 	 * 
@@ -69,7 +46,6 @@ public class DrawnImage extends Element{
 		setY(y);
 		image = img;
 		center = inCenter;
-		scaleFactor = 1;
 		setDrawPriority(prior);
 	}	
 

@@ -4,7 +4,7 @@ package input.mouse;
  * This class implements the Detectable interface to specify a rectangular region of the screen
  * for which a ClickComponent object may generate a defined code value when interacted with.
  * 
- * @author Mac Clevinger
+ * @author Ada Clevinger
  *
  */
 
@@ -85,6 +85,8 @@ public class ClickRegionRectangle implements Detectable{
 	public int getPriority() {
 		return priority;
 	}
+	
+//---  Mechanics   ----------------------------------------------------------------------------
 	
 	@Override
 	public int compareTo(Detectable d) {

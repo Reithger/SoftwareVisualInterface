@@ -1,9 +1,7 @@
 package visual.panel.element;
 
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.util.ArrayList;
 
 import input.mouse.ClickRegionRectangle;
 import input.mouse.Detectable;

@@ -5,8 +5,12 @@ import java.io.IOException;
 
 import filemeta.config.blueprint.ConfigBlueprint;
 
+//TODO: Closing function that stops all this data from being active
+
 public class Config {
 
+//---  Constants   ----------------------------------------------------------------------------
+	
 	public final static int CONFIG_VERIFY_SUCCESS = 958273;
 	
 //---  Instance Variables   -------------------------------------------------------------------
@@ -59,6 +63,8 @@ public class Config {
 		bp.eraseBlueprint();
 	}
 	
+//---  Adder Methods   ------------------------------------------------------------------------
+	
 	public String addFilePath(String path) {
 		return bp.addFilePath(path);
 	}
@@ -71,27 +77,8 @@ public class Config {
 		bp.addFileEntry(path, file, entry, comment, value);
 	}
 	
-	private void setErrorCode(int in) {
-		errorCode = in;
-	}
-	
-	public int getErrorCode() {
-		return errorCode;
-	}
-	
-	//TODO: Closing function that stops all this data from being active
-	
-	public static String getConfigFileEntry(String fullPath, String entryName) {
-		try {
-			return ConfigFileParser.getContents(new File(fullPath), entryName);
-		}
-		catch(IOException e) {
-			e.printStackTrace();
-			System.out.println("Failure to retrieve data in file: \"" + fullPath + "\" with entry name: " + entryName);
-			return null;
-		}
-	}
-	
+//---  Setter Methods   -----------------------------------------------------------------------
+
 	public static boolean setConfigFileEntry(String fullPath, String entryName, String newValue) {
 		try {
 			return ConfigFileParser.setContents(new File(fullPath), entryName, newValue);
@@ -102,6 +89,23 @@ public class Config {
 			return false;
 		}
 	}
+
+	public static boolean setConfigFileEntry(File fil, String entryName, String newValue) {
+		try {
+			return ConfigFileParser.setContents(fil, entryName, newValue);
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+			System.out.println("Failure to assign data: \"" + newValue + "\" to entry: \"" + entryName + "\" in file: \"" + fil.getAbsolutePath() + "\".");
+			return false;
+		}
+	}
+	
+	private void setErrorCode(int in) {
+		errorCode = in;
+	}
+
+//---  Getter Methods   -----------------------------------------------------------------------
 	
 	public static String getConfigFileEntry(File fil, String entryName) {
 		try {
@@ -114,15 +118,19 @@ public class Config {
 		}
 	}
 	
-	public static boolean setConfigFileEntry(File fil, String entryName, String newValue) {
+	public static String getConfigFileEntry(String fullPath, String entryName) {
 		try {
-			return ConfigFileParser.setContents(fil, entryName, newValue);
+			return ConfigFileParser.getContents(new File(fullPath), entryName);
 		}
 		catch(IOException e) {
 			e.printStackTrace();
-			System.out.println("Failure to assign data: \"" + newValue + "\" to entry: \"" + entryName + "\" in file: \"" + fil.getAbsolutePath() + "\".");
-			return false;
+			System.out.println("Failure to retrieve data in file: \"" + fullPath + "\" with entry name: " + entryName);
+			return null;
 		}
 	}
 	
+	public int getErrorCode() {
+		return errorCode;
+	}
+
 }

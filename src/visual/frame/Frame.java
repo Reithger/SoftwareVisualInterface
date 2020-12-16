@@ -3,7 +3,6 @@ package visual.frame;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.Timer;
@@ -43,6 +42,8 @@ public abstract class Frame{
 	
 	public Frame(int width, int height) {
 		frame = new JFrame() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void paintComponents(Graphics g) {
 				if(wipe) {

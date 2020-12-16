@@ -2,9 +2,13 @@ package filemeta.config.blueprint;
 
 public class FileEntry {
 
+//---  Instance Variables   -------------------------------------------------------------------
+	
 	private String name;
 	private String comments;
 	private String value;
+	
+//---  Constructors   -------------------------------------------------------------------------
 	
 	public FileEntry(String nom, String nomment) {
 		name = nom;
@@ -18,6 +22,8 @@ public class FileEntry {
 		value = entryData;
 	}
 	
+//---  Getter Methods   -----------------------------------------------------------------------
+	
 	public String getName() {
 		return name;
 	}
@@ -29,6 +35,8 @@ public class FileEntry {
 	public String getValue() {
 		return value;
 	}
+	
+//---  Mechanics   ----------------------------------------------------------------------------
 	
 	@Override
 	public int hashCode() {

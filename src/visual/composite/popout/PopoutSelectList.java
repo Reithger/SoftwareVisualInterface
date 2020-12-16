@@ -94,34 +94,5 @@ public class PopoutSelectList extends PopoutWindow{
 		}
 		
 	}
-
-	@Override
-	public void keyAction(char code) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void scrollAction(int scroll) {
-		
-	}
-
-	@Override
-	public void clickPressAction(int code, int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void clickReleaseAction(int code, int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void dragAction(int code, int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }

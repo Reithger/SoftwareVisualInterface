@@ -2,7 +2,6 @@ package visual.panel.element;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 
 import input.mouse.ClickRegionRectangle;
 import input.mouse.Detectable;

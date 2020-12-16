@@ -8,6 +8,8 @@ import java.awt.event.FocusListener;
 
 import javax.swing.JPanel;
 
+import input.ComponentReceiver;
+import input.CustomEventReceiver;
 import input.EventFielder;
 import input.EventReceiver;
 import input.mouse.Detectable;
@@ -24,12 +26,12 @@ import visual.frame.Frame;
  *
  */
 
-public abstract class Panel implements Comparable<Panel>, EventReceiver{
+public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** */
-	protected JPanelWrap panel;
+	protected JPanel panel;
 	/** Frame object that houses this Panel object; may be null if unassociated, parentFrame may not always show this Panel*/
 	private Frame parentFrame;
 	
@@ -45,6 +47,8 @@ public abstract class Panel implements Comparable<Panel>, EventReceiver{
 	
 	private volatile boolean mutex;
 	
+	private EventReceiver inputHandler;
+	
 //---  Constructor Support   ------------------------------------------------------------------
 	
 	/**
@@ -58,7 +62,17 @@ public abstract class Panel implements Comparable<Panel>, EventReceiver{
 	 */
 	
 	public Panel(int x, int y, int width, int height) {
-		panel = new JPanelWrap(this);
+		Panel p = this;
+		setEventReceiver(new CustomEventReceiver());
+		panel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				p.paintComponent(g);
+			}
+		};
 		panel.setDoubleBuffered(true);
 		panel.setFocusable(true);
 		panel.setLocation(x, y);
@@ -122,9 +136,12 @@ public abstract class Panel implements Comparable<Panel>, EventReceiver{
 		
 	}
 	
+	public void setEventReceiver(EventReceiver in) {
+		inputHandler = in;
+	}
+	
 	public void setPriority(int in) {
 		priority = in;
-		panel.setDrawPriority(in);
 	}
 	
 	public void setAttention(boolean atten) {
@@ -167,17 +184,16 @@ public abstract class Panel implements Comparable<Panel>, EventReceiver{
 		panel.setLocation(x, y);
 	}
 	
-	private void bullshitResize(int width, int height) {
-		panel.setSize(width - Frame.BULLSHIT_OFFSET_X, height - Frame.BULLSHIT_OFFSET_Y);
-		panel.setPreferredSize(new Dimension(width - Frame.BULLSHIT_OFFSET_X, height - Frame.BULLSHIT_OFFSET_Y));
-	}
-	
 	public void resize(int width, int height) {
 		panel.setSize(width, height);
 		panel.setPreferredSize(new Dimension(width, height));
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
+	
+	public EventReceiver getEventReceiver() {
+		return inputHandler;
+	}
 	
 	public Component getListenerRecipient() {
 		return getPanel();
@@ -309,41 +325,5 @@ public abstract class Panel implements Comparable<Panel>, EventReceiver{
 			return -1;
 		return 0;
 	}
-	
-//---  Support Class   ------------------------------------------------------------------------
-	
-	class JPanelWrap extends JPanel implements Comparable<JPanelWrap>{
-		
-		private Panel container;
-		private int priority;
-		
-		public JPanelWrap(Panel pan) {
-			container = pan;
-		}
-				
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			container.paintComponent(g);
-		}
-		
-		public int getDrawPriority() {
-			return priority;
-		}
-		
-		public void setDrawPriority(int in) {
-			priority = in;
-		}
-		
-		@Override
-		public int compareTo(JPanelWrap p) {
-			int a = this.getDrawPriority();
-			int b = p.getDrawPriority();
-			if(a > b)
-				return 1;
-			if(a < b)
-				return -1;
-			return 0;
-		}
-	}
-	
+
 }

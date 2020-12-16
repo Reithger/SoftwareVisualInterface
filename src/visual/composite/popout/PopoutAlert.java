@@ -22,30 +22,5 @@ public class PopoutAlert extends PopoutWindow{
 	public void keyAction(char code) {
 		dispose();	
 	}
-
-	@Override
-	public void scrollAction(int scroll) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void clickPressAction(int code, int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void clickReleaseAction(int code, int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void dragAction(int code, int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }
