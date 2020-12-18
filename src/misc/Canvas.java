@@ -27,24 +27,29 @@ public class Canvas {
 	private int zoom;
 	/** */
 	private int subGridSize;
+	
+	private int subGridSizeMaximum;
 
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public Canvas(int canWid, int canHei) {
 		zoom = 1;
 		canvas = new Color[canWid][canHei];
+		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
 		formatSubImages();
 		initialize();
 	}
 	
 	public Canvas(Color[][] cols) {
 		zoom = 1;
+		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
 		canvas = cols;
 		formatSubImages();
 	}
 	
 	public Canvas(File in) throws IOException {
 		BufferedImage bI = ImageIO.read(in);
+		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
 		zoom = 1;
 		canvas = new Color[bI.getWidth()][bI.getHeight()];
 		for(int i = 0; i < bI.getWidth(); i++) {
@@ -57,6 +62,7 @@ public class Canvas {
 	
 	public Canvas(BufferedImage in) {
 		zoom = 1;
+		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
 		canvas = new Color[in.getWidth()][in.getHeight()];
 		for(int i = 0; i < in.getWidth(); i++) {
 			for(int j = 0; j < in.getHeight(); j++) {
@@ -168,7 +174,16 @@ public class Canvas {
 		}
 	}
 
+	public void setSubGridSizeMaximum(int in) {
+		subGridSizeMaximum = in;
+		formatSubImages();
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
+	
+	public int getSubGridSizeMaximum() {
+		return subGridSizeMaximum;
+	}
 	
 	public int getCanvasWidth() {
 		return canvas.length;
@@ -250,7 +265,7 @@ public class Canvas {
 	}
 	
 	private void calculateSubGridSize() {
-		subGridSize = zoom * (SUB_GRID_SIZE_MAXIMUM / zoom);
+		subGridSize = zoom * (subGridSizeMaximum / zoom);
 		subGridSize = ((subGridSize == 0) ? 1 : subGridSize);
 	}
 	
