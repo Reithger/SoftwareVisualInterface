@@ -83,8 +83,8 @@ public class test {
 				//System.out.println(psL.getSelected());
 			}
 			
-			public void clickEvent(int event, int x, int y) {
-				super.clickEvent(event, x, y);
+			public void clickEvent(int event, int x, int y, int clickType) {
+				super.clickEvent(event, x, y, clickType);
 				System.out.println(x + " " + y);
 				
 			} 
@@ -96,11 +96,11 @@ public class test {
 		pan.addRectangle("rect", 1, false, pan.getWidth() / 20, pan.getHeight() / 10, pan.getWidth() * 18/20, pan.getHeight() * 17/20, false, Color.blue);
 		
 		pan.addRectangle("rect2", 8, false,  pan.getWidth() / 18,  pan.getHeight() / 18, pan.getWidth() * 16 / 18,  pan.getHeight() * 2 / 18, false, Color.white, Color.black);
-		pan.addText("tex", 10, false,  pan.getWidth() / 18, pan.getHeight() / 18, pan.getWidth() * 16 / 18, pan.getHeight() * 2 / 18, "This is a test phrase for a text\n object", defaultFont, false, true, true);
+		pan.addText("tex", 10, false,  pan.getWidth() / 18, pan.getHeight() / 18, pan.getWidth() * 16 / 18, pan.getHeight() * 2 / 18, "This is a test phrase for a text\n object", defaultFont, true, true, false);
 		
 		pan.addRectangle("rect3", 8, false,  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, true, Color.white, Color.black);
-		pan.addText("tex1", 10, false,  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T T T", defaultFont, true, true, true);
-		pan.addText("tex2", 10, false,  pan.getWidth() / 2, pan.getHeight() /  2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "F F F", defaultFont, false, false, false);
+		pan.addText("tex1", 10, false,  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T T T", defaultFont, true, true, false);
+		pan.addText("tex2", 10, false,  pan.getWidth() / 2, pan.getHeight() /  2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "F F F", defaultFont, true, false, false);
 		pan.addText("tex3", 10, false,  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T F T", defaultFont, true, false, true);
 		
 		pan.addAnimation("anim", 23, false,  pan.getWidth() / 2, pan.getHeight() * 3 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
@@ -124,16 +124,16 @@ public class test {
 			}
 			
 			@Override
-			public void clickPressEvent(int code, int x, int y) {
-				super.clickPressEvent(code, x, y);
+			public void clickPressEvent(int code, int x, int y, int clickType) {
+				super.clickPressEvent(code, x, y, clickType);
 				dragging = true;
 				lastX = x;
 				lastY = y;
 			}
 			
 			@Override
-			public void dragEvent(int code, int x, int y) {
-				super.dragEvent(code, x, y);
+			public void dragEvent(int code, int x, int y, int clickType) {
+				super.dragEvent(code, x, y, clickType);
 				if(dragging) {
 					resize(getWidth() + (x - lastX), getHeight() + (y - lastY));
 					lastX = x;
@@ -143,14 +143,14 @@ public class test {
 			}
 			
 			@Override
-			public void clickReleaseEvent(int code, int x, int y) {
-				super.clickReleaseEvent(code, x, y);
+			public void clickReleaseEvent(int code, int x, int y, int clickType) {
+				super.clickReleaseEvent(code, x, y, clickType);
 				dragging = false;
 			}
 			
 			@Override
-			public void clickEvent(int event, int x, int y) {
-				super.clickEvent(event, x, y);
+			public void clickEvent(int event, int x, int y, int clickType) {
+				super.clickEvent(event, x, y, clickType);
 				System.out.println(event + " " + x + " " + y);
 				System.out.println(getFocusElement());
 				moveElement("line5", 40, 900);
@@ -197,15 +197,15 @@ public class test {
 		ElementPanel pan3 = new ElementPanel(800, 0, 300, 500) {
 			
 			@Override
-			public void clickEvent(int code, int x, int y) {
-				super.clickEvent(code, x, y);
+			public void clickEvent(int code, int x, int y, int clickType) {
+				super.clickEvent(code, x, y, clickType);
 				can.setPixelColor(x - getElementX(CANVAS_NAME) - getOffsetX(), y - getElementY(CANVAS_NAME) - getOffsetY(), Color.blue);
 			}
 			
 			@Override
-			public void dragEvent(int code, int x, int y) {
-				super.dragEvent(code, x, y);
-				clickEvent(code, x, y);
+			public void dragEvent(int code, int x, int y, int clickType) {
+				super.dragEvent(code, x, y, clickType);
+				clickEvent(code, x, y, clickType);
 			}
 			
 			@Override
@@ -236,7 +236,7 @@ public class test {
 		
 		ElementPanel stlth = new ElementPanel(300, 0, 100, 100) {
 			@Override
-			public void clickEvent(int code, int x, int y) {
+			public void clickEvent(int code, int x, int y, int clickType) {
 				fram.showActiveWindow("window");
 				fram.hideActiveWindow("other");
 			}
@@ -292,8 +292,8 @@ public class test {
 		fra.reserveWindow("window");
 		ElementPanel pan = new ElementPanel(0, 0, wid, hei) {
 			
-			public void clickEvent(int code, int x, int y) {
-				super.clickEvent(code, x, y);
+			public void clickEvent(int code, int x, int y, int clickType) {
+				super.clickEvent(code, x, y, clickType);
 				System.out.println(y);
 				//fra.resize(300, 400);
 				//resize(300, 400);

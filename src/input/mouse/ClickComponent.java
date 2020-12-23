@@ -28,7 +28,7 @@ import input.manager.actionevent.ActionEventGenerator;
  */
 
 public class ClickComponent implements MouseListener, MouseMotionListener, MouseWheelListener{
-	
+
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** ArrayList<Integer[]> object containing the coordinates and codes for each event-region*/
@@ -177,10 +177,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		boolean happened = false;
 		for(Detectable d : findClicked(x, y)) {
 			happened = true;
-			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_CLICK, d.getCode(), x, y));
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_CLICK, d.getCode(), x, y, e.getButton()));
 		}
 		if(!happened){
-			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_CLICK, -1, x, y));
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_CLICK, -1, x, y, e.getButton()));
 		}
 	}
 	
@@ -192,10 +192,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		boolean happened = false;
 		for(Detectable d : findClicked(x, y)) {
 			happened = true;
-			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_RELEASE, d.getCode(), x, y));
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_RELEASE, d.getCode(), x, y, e.getButton()));
 		}
 		if(!happened) {
-			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_RELEASE, -1, x, y));
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_RELEASE, -1, x, y, e.getButton()));
 			
 		}
 	}
@@ -213,10 +213,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		boolean happened = false;
 		for(Detectable d : findClicked(x, y)) {
 			happened = true;
-			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_PRESS, d.getCode(), x, y));
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_PRESS, d.getCode(), x, y, e.getButton()));
 		}
 		if(!happened){
-			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_PRESS, -1, x, y));
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_PRESS, -1, x, y, e.getButton()));
 		}
 	}
 	
@@ -233,10 +233,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		boolean happened = false;
 		for(Detectable d : findClicked(x, y)) {
 			happened = true;
-			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_DRAG, d.getCode(), x, y));
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_DRAG, d.getCode(), x, y, e.getButton()));
 		}
 		if(!happened){
-			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_DRAG, -1, x, y));
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_DRAG, -1, x, y, e.getButton()));
 		}
 		
 	}
@@ -249,10 +249,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 		boolean happened = false;
 		for(Detectable d : findClicked(x, y)) {
 			happened = true;
-			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_MOVE, d.getCode(), x, y));
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_MOVE, d.getCode(), x, y, e.getButton()));
 		}
 		if(!happened)
-			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_MOVE, -1, x, y));
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateMouseActionEvent(ActionEventGenerator.MOUSE_MOVE, -1, x, y, e.getButton()));
 	}
 
 	@Override

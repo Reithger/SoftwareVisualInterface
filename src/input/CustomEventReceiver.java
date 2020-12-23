@@ -3,25 +3,25 @@ package input;
 public class CustomEventReceiver implements EventReceiver{
 
 	@Override
-	public void clickEvent(int event, int x, int y) {
+	public void clickEvent(int event, int x, int y, int clickType) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void clickReleaseEvent(int event, int x, int y) {
+	public void clickReleaseEvent(int event, int x, int y, int clickType) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void clickPressEvent(int event, int x, int y) {
+	public void clickPressEvent(int event, int x, int y, int clickType) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void dragEvent(int event, int x, int y) {
+	public void dragEvent(int event, int x, int y, int clickType) {
 		// TODO Auto-generated method stub
 		
 	}

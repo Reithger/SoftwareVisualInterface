@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
@@ -230,7 +231,7 @@ public class ElementPanel extends Panel{
 	 */
 	
 	@Override
-	public void clickEvent(int event, int x, int y){
+	public void clickEvent(int event, int x, int y, int clickType){
 		if(clickFired) {
 			return;
 		}
@@ -246,28 +247,28 @@ public class ElementPanel extends Panel{
 				}
 			}
 		}
-		getEventReceiver().clickEvent(event, x, y);
+		getEventReceiver().clickEvent(event, x, y, clickType);
 	}
 	
 	@Override
-	public void clickReleaseEvent(int event, int x, int y) {
+	public void clickReleaseEvent(int event, int x, int y, int clickType) {
 		scrollbar.processClickRelease();
 		double dist = Math.sqrt(Math.pow(x - dragClickX, 2) + Math.pow(y - dragClickY, 2));
 		if(!clickFired && dist < dragClickSensitivity) {
-			clickEvent(event, x, y);
+			clickEvent(event, x, y, clickType);
 		}
-		getEventReceiver().clickReleaseEvent(event, x, y);
+		getEventReceiver().clickReleaseEvent(event, x, y, clickType);
 	}
 	
 	@Override
-	public void clickPressEvent(int event, int x, int y) {
+	public void clickPressEvent(int event, int x, int y, int clickType) {
 		clickFired = false;
 		if(!scrollbar.processClickPress(event, x , y)) {
 			return;
 		}
 		dragClickX = x;
 		dragClickY = y;
-		getEventReceiver().clickPressEvent(event, x, y);
+		getEventReceiver().clickPressEvent(event, x, y, clickType);
 	}
 	
 	/**
@@ -277,9 +278,9 @@ public class ElementPanel extends Panel{
 	 */
 	
 	@Override
-	public void dragEvent(int event, int x, int y) {
+	public void dragEvent(int event, int x, int y, int clickType) {
 		scrollbar.processDrag(event,  x,  y);
-		getEventReceiver().dragEvent(event, x, y);
+		getEventReceiver().dragEvent(event, x, y, clickType);
 	}
 	
 	public void mouseMoveEvent(int event, int x, int y) {
@@ -694,6 +695,26 @@ public class ElementPanel extends Panel{
 	
 //---  Getter Methods   -----------------------------------------------------------------------
 
+	public int getTextWidth(String text, Font use) {
+		Graphics g = this.getPanel().getGraphics();
+		Font save = g.getFont();
+		g.setFont(use);
+		FontMetrics fM = g.getFontMetrics();
+		int out = fM.stringWidth(text);
+		g.setFont(save);
+		return out;
+	}
+	
+	public int getTextHeight(Font use) {
+		Graphics g = this.getPanel().getGraphics();
+		Font save = g.getFont();
+		g.setFont(use);
+		FontMetrics fM = g.getFontMetrics();
+		int out = fM.getHeight();
+		g.setFont(save);
+		return out;
+	}
+	
 	/**
 	 * This method requests one of the Elements attributed to this ElementPanel to be returned,
 	 * defined by the provided String object representing a name associated to that Element.

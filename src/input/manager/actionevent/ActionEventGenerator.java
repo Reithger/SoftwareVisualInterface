@@ -24,8 +24,8 @@ public class ActionEventGenerator {
 		return new MouseWheelActionEvent(scroll);
 	}
 	
-	public static ActionEvent generateMouseActionEvent(int type, int code, int x, int y) {
-		return new MouseActionEvent(type, x, y, code);
+	public static ActionEvent generateMouseActionEvent(int type, int code, int x, int y, int button) {
+		return new MouseActionEvent(type, x, y, code, button);
 	}
 	
 }

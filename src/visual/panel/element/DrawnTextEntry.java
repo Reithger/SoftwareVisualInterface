@@ -6,24 +6,14 @@ import java.awt.Graphics;
 import input.mouse.ClickRegionRectangle;
 import input.mouse.Detectable;
 
-public class DrawnTextEntry extends Element implements Clickable, TextStorage{
+public class DrawnTextEntry extends DrawnText implements Clickable, TextStorage{
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** */
 	private StringBuilder storedText;
 	
-	private DrawnText drText;
-
 	private int code;
-	
-	private int width;
-	
-	private int height;
-	
-	private boolean centeredX;
-	
-	private boolean centeredY;
 	
 	private boolean indicator;
 
@@ -43,39 +33,27 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 	 */
 	
 	public DrawnTextEntry(int inX, int inY, int wid, int hei, int prior, boolean centerX, boolean centerY, boolean centerText, String word, Font inFont, int inCode) {
-		drText = new DrawnText(inX, inY, wid, hei, prior, centerX, centerY, centerText, word, inFont);
+		super(inX, inY, wid, hei, prior, centerX, centerY, centerText, word, inFont);
 		code = inCode;
 		storedText = new StringBuilder().append(word);
-		setX(inX);
-		setY(inY);
-		width = wid;
-		height = hei;
-		centeredX = centerX;
-		centeredY = centerY;
 		indicator = false;
-		setDrawPriority(prior);
 	}
 
 //---  Operations   ---------------------------------------------------------------------------
 	
 	@Override
-	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
-		drText.drawToScreen(g, offsetX, offsetY);
-	}
-	
-	@Override
 	public Detectable getDetectionRegion(int offsetX, int offsetY) {
-		return new ClickRegionRectangle(getX() - (centeredX ? width / 2 : 0) + offsetX, getY() - (centeredY ? height / 2 : 0) + offsetY, width, height, code, getDrawPriority());
+		return new ClickRegionRectangle(getX() - (getCenterX() ? getWidth() / 2 : 0) + offsetX, getY() - (getCenterY() ? getHeight() / 2 : 0) + offsetY, getWidth(), getHeight(), code, getDrawPriority());
 	}
 
 	public void addText(char in) {
 		storedText.append(in);
-		drText.changeText(getText());
+		changeText(getText());
 	}
 	
 	public void addText(String in) {
 		storedText.append(in);
-		drText.changeText(getText());
+		changeText(getText());
 	}
 	
 	public boolean focusEvent(char in) {
@@ -92,20 +70,8 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 		else {
 			addText(in+"");
 		}
-		drText.changeText(getText());
+		changeText(getText());
 		return false;
-	}
-	
-	@Override
-	public void setX(int inX) {
-		drText.setX(inX);
-		super.setX(inX);
-	}
-	
-	@Override
-	public void setY(int inY) {
-		drText.setY(inY);
-		super.setY(inY);
 	}
 	
 //---  Setter Methods   -----------------------------------------------------------------------
@@ -113,7 +79,7 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 	public void setText(String text) {
 		storedText = new StringBuilder();
 		storedText.append(text);
-		drText.changeText(getText());
+		changeText(getText());
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -126,23 +92,4 @@ public class DrawnTextEntry extends Element implements Clickable, TextStorage{
 		return code;
 	}
 
-	@Override
-	public int getMinimumX() {
-		return drText.getMinimumX();
-	}
-
-	@Override
-	public int getMaximumX() {
-		return drText.getMaximumX();
-	}
-
-	@Override
-	public int getMinimumY() {
-		return drText.getMinimumY();
-	}
-
-	@Override
-	public int getMaximumY() {
-		return drText.getMaximumY();
-	}
 }

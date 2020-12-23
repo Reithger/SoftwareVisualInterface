@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
@@ -18,7 +19,7 @@ public class Canvas {
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** 2D Color array describing the colors that compose the canvas*/
-	private Color[][] canvas;
+	private int[][] canvas;
 	/** 2D BufferedImage array containing the sub-images of size subGridSize x subGridSize that compose the total image*/
 	private BufferedImage[][] display;
 	/** 2D boolean array describing which sub-images need to be redrawn based off input that has changed the 2D Color array*/
@@ -29,13 +30,16 @@ public class Canvas {
 	private int subGridSize;
 	
 	private int subGridSizeMaximum;
+	
+	private static HashMap<Integer, Color> cache;
 
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public Canvas(int canWid, int canHei) {
 		zoom = 1;
-		canvas = new Color[canWid][canHei];
+		canvas = new int[canWid][canHei];
 		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
+		cache = new HashMap<Integer, Color>();
 		formatSubImages();
 		initialize();
 	}
@@ -43,18 +47,17 @@ public class Canvas {
 	public Canvas(Color[][] cols) {
 		zoom = 1;
 		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
-		canvas = cols;
-		formatSubImages();
+		updateCanvas(cols);
 	}
 	
 	public Canvas(File in) throws IOException {
 		BufferedImage bI = ImageIO.read(in);
 		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
 		zoom = 1;
-		canvas = new Color[bI.getWidth()][bI.getHeight()];
+		canvas = new int[bI.getWidth()][bI.getHeight()];
 		for(int i = 0; i < bI.getWidth(); i++) {
 			for(int j = 0; j < bI.getHeight(); j++) {
-				canvas[i][j] = new Color(bI.getRGB(i, j));
+				canvas[i][j] = bI.getRGB(i, j);
 			}
 		}
 		formatSubImages();
@@ -63,10 +66,10 @@ public class Canvas {
 	public Canvas(BufferedImage in) {
 		zoom = 1;
 		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
-		canvas = new Color[in.getWidth()][in.getHeight()];
+		canvas = new int[in.getWidth()][in.getHeight()];
 		for(int i = 0; i < in.getWidth(); i++) {
 			for(int j = 0; j < in.getHeight(); j++) {
-				canvas[i][j] = new Color(in.getRGB(i, j));
+				canvas[i][j] = in.getRGB(i, j);
 			}
 		}
 		formatSubImages();
@@ -77,7 +80,7 @@ public class Canvas {
 	public void initialize() {
 		for(int i = 0; i < canvas.length; i++) {
 			for(int j = 0; j < canvas[i].length; j++) {
-				canvas[i][j] =  new Color(i  % 255, j % 255, (i * j) % 255);
+				canvas[i][j] =  new Color(i  % 255, j % 255, (i * j) % 255).getRGB();
 			}
 		}
 	}
@@ -131,7 +134,7 @@ public class Canvas {
 	}
 	
 	public void updateCanvasSize(int canWid, int canHei) {
-		Color[][] out = new Color[canWid][canHei];
+		int[][] out = new int[canWid][canHei];
 		for(int i = 0; i < canWid; i++) {
 			for(int j = 0; j < canHei; j++) {
 				if(i < canvas.length && j < canvas[i].length) {
@@ -143,8 +146,13 @@ public class Canvas {
 		formatSubImages();
 	}
 
-	public void updateCanvas(Color[][] newCan) {
-		canvas = newCan;
+	public void updateCanvas(Color[][] cols) {
+		canvas = new int[cols.length][cols[0].length];
+		for(int i = 0; i < cols.length; i++) {
+			for(int j = 0; j < cols[i].length; j++) {
+				canvas[i][j] = cols[i][j].getRGB();
+			}
+		}
 		formatSubImages();
 	}
 
@@ -161,26 +169,42 @@ public class Canvas {
 	public void setPixelColor(int x, int y, Color col) {
 		int canX = x / zoom;
 		int canY = y / zoom;
-		if(canX < canvas.length && canY < canvas[0].length) {
+		if(col != null && canX < canvas.length && canY < canvas[0].length) {
+			canvas[canX][canY] = col.getRGB();
+			update[x  / subGridSize][y / subGridSize] = true;
+		}
+	}
+	
+	public void setPixelColor(int x, int y, Integer col) {
+		int canX = x / zoom;
+		int canY = y / zoom;
+		if(col != null && canX < canvas.length && canY < canvas[0].length) {
 			canvas[canX][canY] = col;
 			update[x  / subGridSize][y / subGridSize] = true;
 		}
 	}
 	
 	public void setCanvasColor(int x, int y, Color col) {
-		if(x < canvas.length && y < canvas[0].length) {
-			canvas[x][y] = col;
+		if(col != null && x < canvas.length && y < canvas[0].length) {
+			canvas[x][y] = col.getRGB();
 			update[x * zoom / subGridSize][y * zoom / subGridSize] = true;
 		}
 	}
 
+	public void setCanvasColor(int x, int y, Integer col) {
+		if(col != null && x < canvas.length && y < canvas[0].length) {
+			canvas[x][y] = col;
+			update[x * zoom / subGridSize][y * zoom / subGridSize] = true;
+		}
+	}
+	
 	public void setSubGridSizeMaximum(int in) {
 		subGridSizeMaximum = in;
 		formatSubImages();
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
-	
+
 	public int getSubGridSizeMaximum() {
 		return subGridSizeMaximum;
 	}
@@ -209,6 +233,16 @@ public class Canvas {
 	}
 
 	public Color[][] getColorData(){
+		Color[][] out = new Color[canvas.length][canvas[0].length];
+		for(int i = 0; i < out.length; i++) {
+			for(int j = 0; j < out[i].length; j++) {
+				out[i][j] = getCachedColor(canvas[i][j]);
+			}
+		}
+		return out;
+	}
+	
+	public int[][] getColorIntData(){
 		return canvas;
 	}
 	
@@ -216,11 +250,11 @@ public class Canvas {
 		BufferedImage out = new BufferedImage(canvas.length, canvas[0].length, BufferedImage.TYPE_INT_ARGB);
 		for(int i = 0; i < canvas.length; i++) {
 			for(int j = 0; j < canvas[i].length; j++) {
-				if(canvas[i][j] == null) {
+				if(canvas[i][j] == 0) {
 					out.setRGB(i, j, Color.white.getRGB());
 				}
 				else {
-					out.setRGB(i, j, canvas[i][j].getRGB());
+					out.setRGB(i, j, canvas[i][j]);
 				}
 			}
 		}
@@ -233,7 +267,7 @@ public class Canvas {
 		BufferedImage out = new BufferedImage(wid, hei, BufferedImage.TYPE_INT_ARGB);
 		for(int i = 0; i < out.getWidth(); i++) {
 			for(int j = 0; j < out.getHeight(); j++) {
-				out.setRGB(i, j, canvas[(int)(i / scale)][(int)(j / scale)].getRGB());
+				out.setRGB(i, j, canvas[(int)(i / scale)][(int)(j / scale)]);
 			}
 		}
 		return out;
@@ -241,20 +275,41 @@ public class Canvas {
 
 	public Color getPixelColor(int x, int y) {
 		if(x/zoom < canvas.length && y / zoom < canvas[x / zoom].length) {
-			return canvas[x / zoom][y / zoom];
+			return getCachedColor(canvas[x / zoom][y / zoom]);
 		}
 		return null;
 	}
 	
 	public Color getCanvasColor(int x, int y) {
 		if(x < canvas.length && y < canvas[x].length) {
-			return canvas[x][y];
+			return getCachedColor(canvas[x][y]);
+		}
+		return null;
+	}
+	
+	public Integer getPixelIntValue(int x, int y) {
+		if(x/zoom < canvas.length && y / zoom < canvas[x / zoom].length) {
+			return canvas[x / zoom][y / zoom];
 		}
 		return null;
 	}
 
+	public Integer getCanvasIntValue(int x, int y) {
+		if(x < canvas.length && y < canvas[x].length) {
+			return canvas[x][y];
+		}
+		return null;
+	}
+	
 //---  Mechanics   ----------------------------------------------------------------------------
-
+	
+	private Color getCachedColor(int in) {
+		if(cache.get(in) == null) {
+			cache.put(in, new Color(in, true));
+		}
+		return cache.get(in);
+	}
+	
 	private void formatSubImages() {
 		calculateSubGridSize();
 		int xBlock = getNumXBlocks();
@@ -286,11 +341,11 @@ public class Canvas {
 			for(int j = 0; j < hei; j++) {
 				int indX = (displayX * subGridSize + i) / zoom;
 				int indY = (displayY * subGridSize + j) / zoom;
-				if(indX >= canvas.length || indY >= canvas[0].length || canvas[indX][indY] == null) {
+				if(indX >= canvas.length || indY >= canvas[0].length || canvas[indX][indY] == 0) {
 					out.setRGB(i, j, new Color(255, 255, 255, 255).getRGB());
 				}
 				else {
-					out.setRGB(i, j, canvas[indX][indY].getRGB());
+					out.setRGB(i, j, canvas[indX][indY]);
 				}
 			}
 		}

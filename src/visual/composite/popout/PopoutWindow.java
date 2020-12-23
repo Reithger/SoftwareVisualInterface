@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 
+import input.CustomEventReceiver;
 import visual.composite.HandleElements;
 import visual.composite.HandlePanel;
 import visual.frame.WindowFrame;
@@ -35,45 +36,40 @@ public abstract class PopoutWindow implements HandleElements{
 		parFrame.setName("Popup Window");
 		parFrame.setResizable(false);
 		parFrame.setExitOnClose(false);
-		panel = new HandlePanel(0, 0, width, height) {
+		panel = new HandlePanel(0, 0, width, height);
+		panel.setEventReceiver(new CustomEventReceiver(){
 			@Override
-			public void clickEvent(int code, int x, int y){
-				super.clickEvent(code, x, y);
+			public void clickEvent(int code, int x, int y, int clickType){
 				clickAction(code, x, y);
 			}
 			
 			@Override
 			public void keyEvent(char code) {
-				super.keyEvent(code);
 				keyAction(code);
 			}
 			
 			@Override
 			public void mouseWheelEvent(int scroll) {
-				super.mouseWheelEvent(scroll);
-				this.setOffsetYBounded(this.getOffsetY() - scroll * ROTATION_MULTIPLIER);
+				panel.setOffsetYBounded(panel.getOffsetY() - scroll * ROTATION_MULTIPLIER);
 				scrollAction(scroll);
 			}
 
 			@Override
-			public void clickPressEvent(int code, int x, int y) {
-				super.clickPressEvent(code, x, y);
+			public void clickPressEvent(int code, int x, int y, int clickType) {
 				clickPressAction(code, x, y);
 			}
 
 			@Override
-			public void clickReleaseEvent(int code, int x, int y) {
-				super.clickReleaseEvent(code, x, y);
+			public void clickReleaseEvent(int code, int x, int y, int clickType) {
 				clickReleaseAction(code, x, y);
 			}
 
 			@Override
-			public void dragEvent(int code, int x, int y) {
-				super.dragEvent(code, x, y);
+			public void dragEvent(int code, int x, int y, int clickType) {
 				dragAction(code, x, y);
 			}
 			
-		};
+		});
 		parFrame.reserveWindow("popout");
 		parFrame.showActiveWindow("popout");
 		parFrame.addPanelToWindow("popout", "pan", panel);
