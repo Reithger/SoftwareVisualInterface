@@ -1,7 +1,11 @@
 package filemeta.config;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import filemeta.config.blueprint.ConfigBlueprint;
 
@@ -133,4 +137,21 @@ public class Config {
 		return errorCode;
 	}
 
+//---  Support   ------------------------------------------------------------------------------
+	
+	public static BufferedReader retrieveFileReader(String pathIn) {
+		String path = pathIn.replace("\\", "/");
+		InputStream is = Config.class.getResourceAsStream(path.substring(path.indexOf("/"))); 
+		if(is == null) {
+			try {
+				is = new FileInputStream(new File(path));
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return new BufferedReader(new InputStreamReader(is));
+	}
+	
 }
