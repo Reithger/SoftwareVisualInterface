@@ -61,6 +61,9 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 		if(!moveElement(nom, x, y)){
 			addTextEntry(nom, 15, frame, x, y, wid, hei, cod, phr, font == null ? ENTRY_FONT : font, true, true, true);	//TODO: Smaller font for entry?
 		}
+		if(!getElementStoredText(nom).equals(phr)) {
+			setElementStoredText(nom, phr);
+		}
 	}
 
 	@Override

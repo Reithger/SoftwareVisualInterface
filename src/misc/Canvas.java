@@ -19,7 +19,7 @@ public class Canvas {
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** 2D Color array describing the colors that compose the canvas*/
-	private int[][] canvas;
+	private Integer[][] canvas;
 	/** 2D BufferedImage array containing the sub-images of size subGridSize x subGridSize that compose the total image*/
 	private BufferedImage[][] display;
 	/** 2D boolean array describing which sub-images need to be redrawn based off input that has changed the 2D Color array*/
@@ -37,7 +37,7 @@ public class Canvas {
 	
 	public Canvas(int canWid, int canHei) {
 		zoom = 1;
-		canvas = new int[canWid][canHei];
+		canvas = new Integer[canWid][canHei];
 		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
 		cache = new HashMap<Integer, Color>();
 		formatSubImages();
@@ -50,11 +50,18 @@ public class Canvas {
 		updateCanvas(cols);
 	}
 	
+	public Canvas(Integer[][] cols) {
+		zoom = 1;
+		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
+		canvas = cols;
+		formatSubImages();
+	}
+	
 	public Canvas(File in) throws IOException {
 		BufferedImage bI = ImageIO.read(in);
 		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
 		zoom = 1;
-		canvas = new int[bI.getWidth()][bI.getHeight()];
+		canvas = new Integer[bI.getWidth()][bI.getHeight()];
 		for(int i = 0; i < bI.getWidth(); i++) {
 			for(int j = 0; j < bI.getHeight(); j++) {
 				canvas[i][j] = bI.getRGB(i, j);
@@ -66,7 +73,7 @@ public class Canvas {
 	public Canvas(BufferedImage in) {
 		zoom = 1;
 		subGridSizeMaximum = SUB_GRID_SIZE_MAXIMUM;
-		canvas = new int[in.getWidth()][in.getHeight()];
+		canvas = new Integer[in.getWidth()][in.getHeight()];
 		for(int i = 0; i < in.getWidth(); i++) {
 			for(int j = 0; j < in.getHeight(); j++) {
 				canvas[i][j] = in.getRGB(i, j);
@@ -134,7 +141,7 @@ public class Canvas {
 	}
 	
 	public void updateCanvasSize(int canWid, int canHei) {
-		int[][] out = new int[canWid][canHei];
+		Integer[][] out = new Integer[canWid][canHei];
 		for(int i = 0; i < canWid; i++) {
 			for(int j = 0; j < canHei; j++) {
 				if(i < canvas.length && j < canvas[i].length) {
@@ -147,12 +154,17 @@ public class Canvas {
 	}
 
 	public void updateCanvas(Color[][] cols) {
-		canvas = new int[cols.length][cols[0].length];
+		canvas = new Integer[cols.length][cols[0].length];
 		for(int i = 0; i < cols.length; i++) {
 			for(int j = 0; j < cols[i].length; j++) {
 				canvas[i][j] = cols[i][j].getRGB();
 			}
 		}
+		formatSubImages();
+	}
+	
+	public void updateCanvas(Integer[][] cols) {
+		canvas = cols;
 		formatSubImages();
 	}
 
@@ -242,7 +254,7 @@ public class Canvas {
 		return out;
 	}
 	
-	public int[][] getColorIntData(){
+	public Integer[][] getColorIntData(){
 		return canvas;
 	}
 	
@@ -250,7 +262,7 @@ public class Canvas {
 		BufferedImage out = new BufferedImage(canvas.length, canvas[0].length, BufferedImage.TYPE_INT_ARGB);
 		for(int i = 0; i < canvas.length; i++) {
 			for(int j = 0; j < canvas[i].length; j++) {
-				if(canvas[i][j] == 0) {
+				if(canvas[i][j] == null) {
 					out.setRGB(i, j, Color.white.getRGB());
 				}
 				else {
@@ -341,7 +353,7 @@ public class Canvas {
 			for(int j = 0; j < hei; j++) {
 				int indX = (displayX * subGridSize + i) / zoom;
 				int indY = (displayY * subGridSize + j) / zoom;
-				if(indX >= canvas.length || indY >= canvas[0].length || canvas[indX][indY] == 0) {
+				if(indX >= canvas.length || indY >= canvas[0].length || canvas[indX][indY] == null) {
 					out.setRGB(i, j, new Color(255, 255, 255, 255).getRGB());
 				}
 				else {

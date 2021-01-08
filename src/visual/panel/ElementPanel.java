@@ -303,6 +303,7 @@ public class ElementPanel extends Panel{
 	public void keyEvent(char event){
 		if(focusElement != null) {
 			if(!focusElement.focusEvent(event)) {
+				focusEventReaction(getFocusElementCode());
 				return;
 			}
 		}
@@ -315,6 +316,10 @@ public class ElementPanel extends Panel{
 	
 	public void keyReleaseEvent(char event) {
 		getEventReceiver().keyReleaseEvent(event);
+	}
+	
+	public void focusEventReaction(int code) {
+		getEventReceiver().focusEventReaction(code);
 	}
 
 //---  Draw   ---------------------------------------------------------------------------------
@@ -641,17 +646,8 @@ public class ElementPanel extends Panel{
 	public void removeElementPrefixed(String prefix) {
 		openLock();
 		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
+		cs.addAll(frameList.keySet());
 		HashSet<String> remv = new HashSet<String>();
-		for(int i = 0; i < cs.size(); i++) {
-			String s = cs.get(i);
-			if(s == null) {
-				continue;
-			}
-			if(s.matches(prefix + ".*")) {
-				remv.add(s);
-			}
-		}
-		cs = new ArrayList<String>(frameList.keySet());
 		for(int i = 0; i < cs.size(); i++) {
 			String s = cs.get(i);
 			if(s == null) {
@@ -822,6 +818,10 @@ public class ElementPanel extends Panel{
 	
 	public Clickable getFocusElement() {
 		return focusElement;
+	}
+	
+	public int getFocusElementCode() {
+		return getFocusElement().getCode();
 	}
 	
 	/**

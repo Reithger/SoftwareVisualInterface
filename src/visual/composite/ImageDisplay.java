@@ -20,7 +20,6 @@ public class ImageDisplay {
 	private static final double UI_BOX_RATIO_X = 4 / 5.0;
 	private static final double UI_BOX_RATIO = 3.0 / 4.0;
 	public static final String IMAGE_NAME = "img";
-	public static final String IMAGE_DOUBLE_NAME = "img2";
 	
 	//-- Codes  -----------------------------------------------
 	private static final int CODE_MOVE_RIGHT = 10;
@@ -59,8 +58,9 @@ public class ImageDisplay {
 	
 	public ImageDisplay(String path, ElementPanel in) {
 		reference = in.retrieveImage(path);
+		int wid = reference.getWidth(null);
 		p = in;
-		zoom = 1;
+		zoom = (p.getWidth() / (double)wid);
 		originUIX = 0;
 		originUIY = 0;
 		refresh();
@@ -68,8 +68,9 @@ public class ImageDisplay {
 	
 	public ImageDisplay(Image ref, ElementPanel in) {
 		reference = ref;
+		int wid = reference.getWidth(null);
 		p = in;
-		zoom = 1;
+		zoom = (p.getWidth() / (double)wid);
 		originUIX = 0;
 		originUIY = 0;
 		refresh();
@@ -196,11 +197,6 @@ public class ImageDisplay {
 	public void drawPage() {
 		if(!p.moveElement(IMAGE_NAME, 0, 0)) {
 			p.addImage(IMAGE_NAME, 10, false, 0, 0, false, getImage(), getZoom());
-			p.removeElement(IMAGE_DOUBLE_NAME);
-		}
-		else {
-			p.addImage(IMAGE_DOUBLE_NAME, 10, false, 0, 0, false, getImage(), getZoom());
-			p.removeElement(IMAGE_NAME);
 		}
 		drawUI();
 	}
@@ -282,11 +278,13 @@ public class ImageDisplay {
 	
 	public void setImage(String in) {
 		reference = p.retrieveImage(in);
+		zoom = (p.getWidth() / (double)reference.getWidth(null));
 		refresh();
 	}
 	
 	public void setImage(Image in) {
 		reference = in;
+		zoom = (p.getWidth() / (double)reference.getWidth(null));
 		refresh();
 	}
 	
@@ -316,11 +314,13 @@ public class ImageDisplay {
 	
 	public void increaseZoom() {
 		zoom *= ZOOM_FACTOR;
+		p.removeElement(IMAGE_NAME);
 		drawPage();
 	}
 	
 	public void decreaseZoom() {
 		zoom /= ZOOM_FACTOR;
+		p.removeElement(IMAGE_NAME);
 		drawPage();
 	}
 	

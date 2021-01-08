@@ -46,4 +46,6 @@ public interface EventReceiver {
 	
 	public abstract void keyReleaseEvent(char event);
 
+	public abstract void focusEventReaction(int code);
+	
 }
