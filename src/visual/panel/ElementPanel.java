@@ -693,6 +693,9 @@ public class ElementPanel extends Panel{
 
 	public int getTextWidth(String text, Font use) {
 		Graphics g = this.getPanel().getGraphics();
+		if(g == null) {
+			return -1;
+		}
 		Font save = g.getFont();
 		g.setFont(use);
 		FontMetrics fM = g.getFontMetrics();
@@ -703,6 +706,9 @@ public class ElementPanel extends Panel{
 	
 	public int getTextHeight(Font use) {
 		Graphics g = this.getPanel().getGraphics();
+		if(g == null) {
+			return -1;
+		}
 		Font save = g.getFont();
 		g.setFont(use);
 		FontMetrics fM = g.getFontMetrics();

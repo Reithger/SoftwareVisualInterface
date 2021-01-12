@@ -59,8 +59,11 @@ public class ImageDisplay {
 	public ImageDisplay(String path, ElementPanel in) {
 		reference = in.retrieveImage(path);
 		int wid = reference.getWidth(null);
+		int hei = reference.getHeight(null);
 		p = in;
 		zoom = (p.getWidth() / (double)wid);
+		double ot = (p.getHeight() / (double)hei);
+		zoom = zoom < ot ? zoom : ot;
 		originUIX = 0;
 		originUIY = 0;
 		refresh();
@@ -69,8 +72,11 @@ public class ImageDisplay {
 	public ImageDisplay(Image ref, ElementPanel in) {
 		reference = ref;
 		int wid = reference.getWidth(null);
+		int hei = reference.getHeight(null);
 		p = in;
 		zoom = (p.getWidth() / (double)wid);
+		double ot = (p.getHeight() / (double)hei);
+		zoom = zoom < ot ? zoom : ot;
 		originUIX = 0;
 		originUIY = 0;
 		refresh();

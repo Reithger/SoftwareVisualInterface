@@ -20,7 +20,7 @@ public class DrawnImage extends Element{
 		setY(y);
 		Image drawImage = null;
 		center = inCenter;
-		if(proportion) {
+		if(!proportion) {
 			int small = width < height ? width : height;
 			drawImage = img.getScaledInstance(small, small, Image.SCALE_DEFAULT);
 		}
