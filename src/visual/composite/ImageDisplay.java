@@ -1,8 +1,10 @@
 package visual.composite;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
 
+import input.CustomEventReceiver;
 import visual.panel.ElementPanel;
 
 public class ImageDisplay {
@@ -31,6 +33,8 @@ public class ImageDisplay {
 	private static final int CODE_RESET_POSITION = 17;
 	private static final int CODE_DRAG_UI = 18;
 	private static final int CODE_HIDE_UI = 19;
+	private static final int CODE_AUTOFIT_ZOOM = 20;
+	private static final int CODE_HELP_PAGE = 21;
 	private static final char KEY_MOVE_RIGHT = 'd';
 	private static final char KEY_MOVE_DOWN = 's';
 	private static final char KEY_MOVE_LEFT = 'a';
@@ -39,6 +43,23 @@ public class ImageDisplay {
 	private static final char KEY_ZOOM_OUT = 'e';
 	private static final char KEY_RESET_POSITION = 'h';
 	private static final char KEY_HIDE_UI = 't';
+	private static final char KEY_AUTOFIT_ZOOM = 'z';
+	private static final char KEY_HELP_PAGE = '?';
+	
+	private static final String ELEMENT_HELP = "help";
+	private static final Font HELP_FONT = new Font("Serif", Font.BOLD, 22);
+	private static final String HELP_PAGE = 
+			"Keybinds:\n"
+			+ "'d' - move camera right\n"
+			+ "'s' - move camera down\n"
+			+ "'a' - move camera left\n"
+			+ "'w' - move camera up\n"
+			+ "'q' - zoom in\n"
+			+ "'e' - zoom out\n"
+			+ "'h' - reset coordinate position\n"
+			+ "'z' - autofit image to container\n"
+			+ "'t' - show/hide UI (if enabled)\n"
+			+ "'?' - open Help Page";
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -48,43 +69,78 @@ public class ImageDisplay {
 	private int originUIX;
 	private int originUIY;
 	private boolean hideUI;
+	private boolean disableToggleUI;
 	
 	private int dragStartX;
 	private int dragStartY;
 	private boolean dragState;
 	private boolean dragUI;
 	
+	private boolean disableHelp;
+	private boolean help;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public ImageDisplay(String path, ElementPanel in) {
 		reference = in.retrieveImage(path);
-		int wid = reference.getWidth(null);
-		int hei = reference.getHeight(null);
-		p = in;
-		zoom = (p.getWidth() / (double)wid);
-		double ot = (p.getHeight() / (double)hei);
-		zoom = zoom < ot ? zoom : ot;
 		originUIX = 0;
 		originUIY = 0;
-		refresh();
+		zoom = 1;
+		p = in;
 	}
 	
 	public ImageDisplay(Image ref, ElementPanel in) {
 		reference = ref;
-		int wid = reference.getWidth(null);
-		int hei = reference.getHeight(null);
 		p = in;
-		zoom = (p.getWidth() / (double)wid);
-		double ot = (p.getHeight() / (double)hei);
-		zoom = zoom < ot ? zoom : ot;
+		zoom = 1;
 		originUIX = 0;
 		originUIY = 0;
-		refresh();
 	}
 
 //---  Operations   ---------------------------------------------------------------------------
 	
+	public CustomEventReceiver generateEventReceiver() {
+		return new CustomEventReceiver() {
+			
+			@Override
+			public void clickEvent(int code, int x, int y, int mouseType) {
+				processClickInput(code);
+			}
+			
+			@Override 
+			public void clickPressEvent(int code, int x, int y, int mouseType) {
+				processPressInput(code, x, y);
+			}
+			
+			@Override
+			public void clickReleaseEvent(int code, int x, int y, int mouseType) {
+				processReleaseInput(code, x, y);
+			}
+			
+			@Override
+			public void mouseWheelEvent(int scroll) {
+				processMouseWheelInput(scroll);
+			}
+			
+			@Override
+			public void dragEvent(int code, int x, int y, int mouseType) {
+				processDragInput(code, x, y);
+			}
+			
+			@Override
+			public void keyEvent(char key) {
+				processKeyInput(key);
+			}
+			
+		};
+	}
+	
 	public void processClickInput(int code) {
+		if(help) {
+			help = false;
+			refresh();
+			return;
+		}
 		switch(code) {
 			case CODE_MOVE_RIGHT:
 				decreaseOriginX();
@@ -100,22 +156,28 @@ public class ImageDisplay {
 				break;
 			case CODE_ZOOM_IN:
 				increaseZoom();
+				refreshImage();
 				break;
 			case CODE_ZOOM_OUT:
 				decreaseZoom();
+				refreshImage();
 				break;
 			case CODE_RESET_POSITION:
 				resetPosition();
 				break;
 			case CODE_HIDE_UI:
-				hideUI = !hideUI;
-				p.removeElementPrefixed("");
-				drawPage();
+				toggleUI();
+				refresh();
 				break;
 			}
 	}
 	
 	public void processKeyInput(char code) {
+		if(help) {
+			help = false;
+			refresh();
+			return;
+		}
 		switch(code) {
 			case KEY_MOVE_RIGHT:
 				decreaseOriginX();
@@ -131,17 +193,28 @@ public class ImageDisplay {
 				break;
 			case KEY_ZOOM_IN:
 				increaseZoom();
+				refreshImage();
 				break;
 			case KEY_ZOOM_OUT:
 				decreaseZoom();
+				refreshImage();
 				break;
 			case KEY_RESET_POSITION:
 				resetPosition();
 				break;
+			case KEY_AUTOFIT_ZOOM:
+				autofitImage();
+				refreshImage();
+				break;
 			case KEY_HIDE_UI:
-				hideUI = !hideUI;
-				p.removeElementPrefixed("");
-				drawPage();
+				toggleUI();
+				refresh();
+				break;
+			case KEY_HELP_PAGE:
+				if(!disableHelp) {
+					help = true;
+					refresh();
+				}
 				break;
 			}
 	}
@@ -181,7 +254,7 @@ public class ImageDisplay {
 		else {
 			decreaseZoom();
 		}
-		drawPage();
+		refreshImage();
 	}
 	
 	public void processDragInput(int code, int x, int y) {
@@ -201,10 +274,18 @@ public class ImageDisplay {
 	}
 	
 	public void drawPage() {
-		if(!p.moveElement(IMAGE_NAME, 0, 0)) {
-			p.addImage(IMAGE_NAME, 10, false, 0, 0, false, getImage(), getZoom());
+		if(help) {
+			p.removeAllElements();
+			p.addRectangle(ELEMENT_HELP + "_rect", 2, true, p.getWidth() / 2, p.getHeight() / 2, p.getWidth() * 9 / 10, p.getHeight() * 9 / 10, true, Color.white, Color.black);
+			p.addText(ELEMENT_HELP + "_text", 5, true, p.getWidth() / 2, p.getHeight() / 2, p.getWidth() * 9 / 10, p.getHeight() * 9 / 10, HELP_PAGE, HELP_FONT, true, true, true);
 		}
-		drawUI();
+		else {
+			p.removeElementPrefixed(ELEMENT_HELP);
+			if(!p.moveElement(IMAGE_NAME, 0, 0)) {
+				p.addImage(IMAGE_NAME, 10, false, 0, 0, false, getImage(), getZoom());
+			}
+			drawUI();
+		}
 	}
 	
 	public void drawUI() {
@@ -243,25 +324,58 @@ public class ImageDisplay {
 			handleImageButton("ui_box_move_down", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/down_arrow.png", CODE_MOVE_DOWN);
 			
 		}
-		handleImageButton("ui_hide_ui", true, p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, hideUI ? "/visual/composite/assets/eye_open-2.png" : "/visual/composite/assets/eye_closed-2.png", CODE_HIDE_UI);
-		p.addRectangle("rect_hide_ui", 13, true, p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, true, Color.white, Color.black);
+		if(!disableToggleUI) {
+			handleImageButton("ui_hide_ui", true, p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, hideUI ? "/visual/composite/assets/eye_open-2.png" : "/visual/composite/assets/eye_closed-2.png", CODE_HIDE_UI);
+			p.addRectangle("rect_hide_ui", 13, true, p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, true, Color.white, Color.black);
+		}
 	}
 
+	public void toggleUI() {
+		hideUI = !hideUI;
+	}
+	
+	/**
+	 * Metaproperty version of UI toggle that removes ability to toggle its view
+	 * 
+	 */
+	
+	public void toggleDisableToggleUI() {
+		disableToggleUI = !disableToggleUI;
+	}
+	
+	public void toggleDisableHelp() {
+		disableHelp = !disableHelp;
+	}
+	
+	public void autofitImage() {
+		int wid = reference.getWidth(null);
+		int hei = reference.getHeight(null);
+		zoom = (p.getWidth() / (double)wid);
+		double ot = (p.getHeight() / (double)hei);
+		zoom = zoom < ot ? zoom : ot;
+	}
+	
+	public void refreshImage() {
+		p.removeElement(IMAGE_NAME);
+		drawPage();
+	}
+	
 	public void refresh() {
 		clear();
 		drawPage();
 	}
 	
 	public void clear() {
-		p.removeElement(IMAGE_NAME);
 		p.removeElementPrefixed("");
 	}
 	
 	public void resetPosition() {
 		p.setOffsetX(0);
 		p.setOffsetY(0);
-		zoom = DEFAULT_ZOOM;
-		drawPage();
+	}
+	
+	public void resetZoom() {
+		zoom = 1;
 	}
 
 	public void handleImageButton(String name, boolean frame, int x, int y, int wid, int hei, String path, int code) {
@@ -284,14 +398,10 @@ public class ImageDisplay {
 	
 	public void setImage(String in) {
 		reference = p.retrieveImage(in);
-		zoom = (p.getWidth() / (double)reference.getWidth(null));
-		refresh();
 	}
 	
 	public void setImage(Image in) {
 		reference = in;
-		zoom = (p.getWidth() / (double)reference.getWidth(null));
-		refresh();
 	}
 	
 	public void increaseOriginX() {
@@ -320,14 +430,22 @@ public class ImageDisplay {
 	
 	public void increaseZoom() {
 		zoom *= ZOOM_FACTOR;
-		p.removeElement(IMAGE_NAME);
-		drawPage();
 	}
 	
 	public void decreaseZoom() {
 		zoom /= ZOOM_FACTOR;
-		p.removeElement(IMAGE_NAME);
-		drawPage();
+	}
+	
+	public void setZoom(double in) {
+		zoom = in;
+	}
+	
+	public void setOffsetX(int in) {
+		p.setOffsetX(in);
+	}
+	
+	public void setOffsetY(int in) {
+		p.setOffsetY(in);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -338,6 +456,14 @@ public class ImageDisplay {
 	
 	public double getZoom() {
 		return zoom;
+	}
+	
+	public int getOffsetX() {
+		return p.getOffsetX();
+	}
+	
+	public int getOffsetY() {
+		return p.getOffsetY();
 	}
 	
 }

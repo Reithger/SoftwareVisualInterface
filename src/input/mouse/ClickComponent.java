@@ -36,7 +36,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	/** EventReceiver object representing the EventReceiver to which this ClickComponent is attached (the EventReceiver that is being clicked)*/
 	private EventFielder eventHandler;
 	
-	private boolean mutex;
+	private volatile boolean mutex;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	

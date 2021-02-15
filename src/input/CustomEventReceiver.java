@@ -58,6 +58,7 @@ public class CustomEventReceiver implements EventReceiver{
 
 	@Override
 	public void focusEventReaction(int code) {
+		// TODO Auto-generated method stub
 		
 	}
 	

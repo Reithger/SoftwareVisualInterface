@@ -73,7 +73,8 @@ public class DrawnText extends Element{
 	private void drawText(Graphics g, int otX, int otY, String[] words, FontMetrics fM) {
 		ArrayList<String> lines = new ArrayList<String>();
 		String lin = "";
-		for(String s : words) {
+		for(int i = 0; i < words.length; i++) {
+			String s = words[i];
 			if(s.equals("\n")) {
 				lines.add(lin);
 				lin = "";
@@ -87,7 +88,7 @@ public class DrawnText extends Element{
 					while(fM.stringWidth(holdOver) > width) {
 						String holdOn = "";
 						for(char l : holdOver.toCharArray()) {
-							if(fM.stringWidth(lin + l) < width) {
+							if(lin.equals("") || fM.stringWidth(lin + l) < width) {
 								lin += l;
 							}
 							else {
@@ -104,6 +105,7 @@ public class DrawnText extends Element{
 				else {
 					lines.add(lin);
 					lin = "";
+					i--;
 				}
 			}
 		}

@@ -27,7 +27,6 @@ public class DrawnImage extends Element{
 		else {
 			drawImage = img.getScaledInstance(width, height, Image.SCALE_DEFAULT);
 		}
-		
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		while(!tk.prepareImage(drawImage, -1, -1, null)){	}
 		image = drawImage;

@@ -39,6 +39,8 @@ import visual.panel.element.TextStorage;
  * TODO: Review adding functions, they're getting cluttered
  * TODO: Decorator class to wrap it in Scrollbar and Drag Navigation functionality? Otherwise cluttered with booleans.
  * TODO: This needs major refactoring, it's almost 1000 lines! That was the size of that whole game you made in the summer of 2016! Good memories...
+ * TODO: Frame Elements are always on top of regular elements regardless of priority, not desired
+ * 
  * 
  * @author Ada Clevinger
  * 
@@ -122,6 +124,12 @@ public class ElementPanel extends Panel{
 	 * lower the value, the sooner it is drawn (higher values are drawn on top of
 	 * lower values.)
 	 * 
+	 * Elements are also sorted into two categories, regular and frame; this decides
+	 * whether or not changing the origin point of the perspective space will move the
+	 * element or not. As it stands, any Frame Element will always be on top of regular
+	 * elements due to some design issues.
+	 * TODO: Fix that, not intended
+	 * 
 	 */
 	
 	public void paintComponent(Graphics gIn) {
@@ -160,6 +168,7 @@ public class ElementPanel extends Panel{
 	public void moveElementPrefixed(String prefix, int x, int y) {
 		openLock();
 		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
+		cs.addAll(new ArrayList<String>(frameList.keySet()));
 		closeLock();
 		for(String s : cs) {
 			if(s.matches(prefix + ".*")) {
