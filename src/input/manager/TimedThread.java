@@ -48,7 +48,7 @@ public class TimedThread extends Thread {
 	public void run() {
 		while(reference != null) {
 			open = true;
-			while(open) {
+			while(open && reference != null) {
 				try {
 					sleep(250);
 				}

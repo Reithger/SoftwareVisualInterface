@@ -40,7 +40,7 @@ import visual.panel.element.TextStorage;
  * TODO: Decorator class to wrap it in Scrollbar and Drag Navigation functionality? Otherwise cluttered with booleans.
  * TODO: This needs major refactoring, it's almost 1000 lines! That was the size of that whole game you made in the summer of 2016! Good memories...
  * TODO: Frame Elements are always on top of regular elements regardless of priority, not desired
- * 
+ * TODO: NestedEventReceiver should be able to remove composite receivers
  * 
  * @author Ada Clevinger
  * 
