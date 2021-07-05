@@ -25,7 +25,14 @@ public class DrawnImage extends Element{
 			drawImage = img.getScaledInstance(small, small, Image.SCALE_DEFAULT);
 		}
 		else {
-			drawImage = img.getScaledInstance(width, height, Image.SCALE_DEFAULT);
+			int actX = img.getWidth(null);
+			int actY = img.getHeight(null);
+			if((double)width / actX * actY < height) {
+				drawImage = img.getScaledInstance(width, (int)((double)width / actX * actY), Image.SCALE_DEFAULT);
+			}
+			else {
+				drawImage = img.getScaledInstance((int)((double)height / actY * actX), height, Image.SCALE_DEFAULT);
+			}
 		}
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		while(!tk.prepareImage(drawImage, -1, -1, null)){	}
