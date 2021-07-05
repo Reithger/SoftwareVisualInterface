@@ -276,13 +276,13 @@ public class ImageDisplay {
 	public void drawPage() {
 		if(help) {
 			p.removeAllElements();
-			p.addRectangle(ELEMENT_HELP + "_rect", 2, true, p.getWidth() / 2, p.getHeight() / 2, p.getWidth() * 9 / 10, p.getHeight() * 9 / 10, true, Color.white, Color.black);
-			p.addText(ELEMENT_HELP + "_text", 5, true, p.getWidth() / 2, p.getHeight() / 2, p.getWidth() * 9 / 10, p.getHeight() * 9 / 10, HELP_PAGE, HELP_FONT, true, true, true);
+			p.addRectangle(ELEMENT_HELP + "_rect", 2, "no_move", p.getWidth() / 2, p.getHeight() / 2, p.getWidth() * 9 / 10, p.getHeight() * 9 / 10, true, Color.white, Color.black);
+			p.addText(ELEMENT_HELP + "_text", 5, "no_move", p.getWidth() / 2, p.getHeight() / 2, p.getWidth() * 9 / 10, p.getHeight() * 9 / 10, HELP_PAGE, HELP_FONT, true, true, true);
 		}
 		else {
 			p.removeElementPrefixed(ELEMENT_HELP);
 			if(!p.moveElement(IMAGE_NAME, 0, 0)) {
-				p.addImage(IMAGE_NAME, 10, false, 0, 0, false, getImage(), getZoom());
+				p.addImage(IMAGE_NAME, 10, "move", 0, 0, false, getImage(), getZoom());
 			}
 			drawUI();
 		}
@@ -303,30 +303,30 @@ public class ImageDisplay {
 		
 		if(!hideUI) {
 			if(!p.moveElement("ui_box_drag_button", originUIX, originUIY))
-				p.addButton("ui_box_drag_button", 10, true, originUIX, originUIY, useWid, useHei, CODE_DRAG_UI, false);
+				p.addButton("ui_box_drag_button", 10, "no_move", originUIX, originUIY, useWid, useHei, CODE_DRAG_UI, false);
 			int spacing = imageSize * 5 / 4;
 
 			int posX = originUIX + useWid / 2;
 			int posY = originUIY + spacing * 3 / 5;
 
 			if(!p.moveElement("rect_ui", originUIX, originUIY))
-				p.addRectangle("rect_ui", 13, true,  originUIX, originUIY, useWid, useHei, false, Color.white, Color.black);
+				p.addRectangle("rect_ui", 13, "no_move",  originUIX, originUIY, useWid, useHei, false, Color.white, Color.black);
 			
-			handleImageButton("ui_box_zoom_in", true, posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_in.png", CODE_ZOOM_IN);
-			handleImageButton("ui_box_zoom_out", true, posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_out.png", CODE_ZOOM_OUT);
+			handleImageButton("ui_box_zoom_in", "no_move", posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_in.png", CODE_ZOOM_IN);
+			handleImageButton("ui_box_zoom_out", "no_move", posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_out.png", CODE_ZOOM_OUT);
 			posY += spacing;
-			handleImageButton("ui_box_move_up", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/up_arrow.png", CODE_MOVE_UP);
+			handleImageButton("ui_box_move_up", "no_move", posX, posY, imageSize, imageSize, "/visual/composite/assets/up_arrow.png", CODE_MOVE_UP);
 			posY += spacing;
-			handleImageButton("ui_box_move_left", true, posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/left_arrow.png", CODE_MOVE_LEFT);
-			handleImageButton("ui_box_move_right", true, posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/right_arrow.png", CODE_MOVE_RIGHT);
-			handleImageButton("ui_box_UI_ring", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/UI_ring.png", CODE_RESET_POSITION);
+			handleImageButton("ui_box_move_left", "no_move", posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/left_arrow.png", CODE_MOVE_LEFT);
+			handleImageButton("ui_box_move_right", "no_move", posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/right_arrow.png", CODE_MOVE_RIGHT);
+			handleImageButton("ui_box_UI_ring", "no_move", posX, posY, imageSize, imageSize, "/visual/composite/assets/UI_ring.png", CODE_RESET_POSITION);
 			posY += spacing;
-			handleImageButton("ui_box_move_down", true, posX, posY, imageSize, imageSize, "/visual/composite/assets/down_arrow.png", CODE_MOVE_DOWN);
+			handleImageButton("ui_box_move_down", "no_move", posX, posY, imageSize, imageSize, "/visual/composite/assets/down_arrow.png", CODE_MOVE_DOWN);
 			
 		}
 		if(!disableToggleUI) {
-			handleImageButton("ui_hide_ui", true, p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, hideUI ? "/visual/composite/assets/eye_open-2.png" : "/visual/composite/assets/eye_closed-2.png", CODE_HIDE_UI);
-			p.addRectangle("rect_hide_ui", 13, true, p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, true, Color.white, Color.black);
+			handleImageButton("ui_hide_ui", "no_move", p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, hideUI ? "/visual/composite/assets/eye_open-2.png" : "/visual/composite/assets/eye_closed-2.png", CODE_HIDE_UI);
+			p.addRectangle("rect_hide_ui", 13, "no_move", p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, true, Color.white, Color.black);
 		}
 	}
 
@@ -370,15 +370,15 @@ public class ImageDisplay {
 	}
 	
 	public void resetPosition() {
-		p.setOffsetX(0);
-		p.setOffsetY(0);
+		p.setOffsetX("move", 0);
+		p.setOffsetY("move", 0);
 	}
 	
 	public void resetZoom() {
 		zoom = 1;
 	}
 
-	public void handleImageButton(String name, boolean frame, int x, int y, int wid, int hei, String path, int code) {
+	public void handleImageButton(String name, String frame, int x, int y, int wid, int hei, String path, int code) {
 		String imageName = name + "_image";
 		if(!p.moveElement(imageName, x, y)) {
 			double imgWid = p.retrieveImage(path).getWidth(null);
@@ -405,27 +405,27 @@ public class ImageDisplay {
 	}
 	
 	public void increaseOriginX() {
-		p.setOffsetX((int)(p.getOffsetX() + reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
+		p.setOffsetX("move", (int)(p.getOffsetX("move") + reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
 	}
 
 	public void increaseOriginY() {
-		p.setOffsetY((int)(p.getOffsetY() + reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
+		p.setOffsetY("move", (int)(p.getOffsetY("move") + reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
 	}
 	
 	public void decreaseOriginX() {
-		p.setOffsetX((int)(p.getOffsetX() - reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
+		p.setOffsetX("move", (int)(p.getOffsetX("move") - reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
 	}
 	
 	public void decreaseOriginY() {
-		p.setOffsetY((int)(p.getOffsetY() - reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
+		p.setOffsetY("move", (int)(p.getOffsetY("move") - reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
 	}
 	
 	public void dragOriginX(int amount) {
-		p.setOffsetX(p.getOffsetX() + amount);
+		p.setOffsetX("move", p.getOffsetX("move") + amount);
 	}
 	
 	public void dragOriginY(int amount) {
-		p.setOffsetY(p.getOffsetY() + amount);
+		p.setOffsetY("move", p.getOffsetY("move") + amount);
 	}
 	
 	public void increaseZoom() {
@@ -441,11 +441,11 @@ public class ImageDisplay {
 	}
 	
 	public void setOffsetX(int in) {
-		p.setOffsetX(in);
+		p.setOffsetX("move", in);
 	}
 	
 	public void setOffsetY(int in) {
-		p.setOffsetY(in);
+		p.setOffsetY("move", in);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -459,11 +459,11 @@ public class ImageDisplay {
 	}
 	
 	public int getOffsetX() {
-		return p.getOffsetX();
+		return p.getOffsetX("move");
 	}
 	
 	public int getOffsetY() {
-		return p.getOffsetY();
+		return p.getOffsetY("move");
 	}
 	
 }

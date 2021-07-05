@@ -50,7 +50,7 @@ public abstract class PopoutWindow implements HandleElements{
 			
 			@Override
 			public void mouseWheelEvent(int scroll) {
-				panel.setOffsetYBounded(panel.getOffsetY() - scroll * ROTATION_MULTIPLIER);
+				panel.setOffsetY("move", panel.getOffsetY("move") - scroll * ROTATION_MULTIPLIER);
 				scrollAction(scroll);
 			}
 
@@ -86,11 +86,6 @@ public abstract class PopoutWindow implements HandleElements{
 
 	public void dispose() {
 		parFrame.disposeFrame();
-	}
-	
-	protected void allowScrollbars(boolean set) {
-		panel.setScrollBarVertical(set);
-		panel.setScrollBarHorizontal(set);
 	}
 	
 	public void clickAction(int code, int x, int y) {
@@ -156,57 +151,57 @@ public abstract class PopoutWindow implements HandleElements{
 //---  Drawing Support   ----------------------------------------------------------------------
 
 	@Override
-	public void handleTextButton(String nom, boolean frame, int x, int y, int wid, int hei, Font font, String phr, int code, Color fill, Color border) {
-		panel.handleTextButton(nom, frame, x, y, wid, hei, font, phr, code, fill, border);
+	public void handleTextButton(String nom, String group, int x, int y, int wid, int hei, Font font, String phr, int code, Color fill, Color border) {
+		panel.handleTextButton(nom, group, x, y, wid, hei, font, phr, code, fill, border);
 	}
 
 	@Override
-	public void handleText(String nom, boolean frame, int x, int y, int wid, int hei, Font font, String phr) {
-		panel.handleText(nom, frame, x, y, wid, hei, font, phr);
+	public void handleText(String nom, String group, int x, int y, int wid, int hei, Font font, String phr) {
+		panel.handleText(nom, group, x, y, wid, hei, font, phr);
 	}
 
 	@Override
-	public void handleImage(String nom, boolean frame, int x, int y, String path, double scale) {
-		panel.handleImage(nom, frame, x, y, path, scale);
+	public void handleImage(String nom, String group, int x, int y, String path, double scale) {
+		panel.handleImage(nom, group, x, y, path, scale);
 	}
 
 	@Override
-	public void handleImage(String nom, boolean frame, int x, int y, Image img, double scale) {
-		panel.handleImage(nom, frame, x, y, img, scale);
+	public void handleImage(String nom, String group, int x, int y, Image img, double scale) {
+		panel.handleImage(nom, group, x, y, img, scale);
 	}
 
 	@Override
-	public void handleImage(String nom, boolean frame, int x, int y, int wid, int hei, String imgPath) {
-		panel.handleImage(nom, frame, x, y, wid, hei, imgPath);
+	public void handleImage(String nom, String group, int x, int y, int wid, int hei, String imgPath) {
+		panel.handleImage(nom, group, x, y, wid, hei, imgPath);
 	}
 	
 	@Override
-	public void handleTextEntry(String nom, boolean frame, int x, int y, int wid, int hei, int cod, Font font, String phr) {
-		panel.handleTextEntry(nom, frame, x, y, wid, hei, cod, font, phr);
+	public void handleTextEntry(String nom, String group, int x, int y, int wid, int hei, int cod, Font font, String phr) {
+		panel.handleTextEntry(nom, group, x, y, wid, hei, cod, font, phr);
 	}
 
 	@Override
-	public void handleButton(String nom, boolean frame, int x, int y, int wid, int hei, int code) {
-		panel.handleButton(nom, frame, x, y, wid, hei, code);
+	public void handleButton(String nom, String group, int x, int y, int wid, int hei, int code) {
+		panel.handleButton(nom, group, x, y, wid, hei, code);
 	}
 
 	@Override
-	public void handleLine(String nom, boolean frame, int prior, int x, int y, int x2, int y2, int thck, Color fill) {
-		panel.handleLine(nom, frame, prior, x, y, x2, y2, thck, fill);
+	public void handleLine(String nom, String group, int prior, int x, int y, int x2, int y2, int thck, Color fill) {
+		panel.handleLine(nom, group, prior, x, y, x2, y2, thck, fill);
 	}
 
 	@Override
-	public void handleRectangle(String nom, boolean frame, int prior, int x, int y, int wid, int hei, Color fill, Color border) {
-		panel.handleRectangle(nom, frame, prior, x, y, wid, hei, fill, border);
+	public void handleRectangle(String nom, String group, int prior, int x, int y, int wid, int hei, Color fill, Color border) {
+		panel.handleRectangle(nom, group, prior, x, y, wid, hei, fill, border);
 	}
 	
 	@Override
-	public void handleThickRectangle(String nom, boolean frame, int x, int y, int x2, int y2, Color border, int thick) {
-		panel.handleThickRectangle(nom, frame, x, y, x2, y2, border, thick);
+	public void handleThickRectangle(String nom, String group, int prior, int x, int y, int x2, int y2, Color border, int thick) {
+		panel.handleThickRectangle(nom, group, prior, x, y, x2, y2, border, thick);
 	}
 
 	@Override
-	public void handleImageButton(String name, boolean frame, int x, int y, int wid, int hei, String path, int code) {
-		panel.handleImageButton(name, frame, x, y, wid, hei, path, code);
+	public void handleImageButton(String name, String group, int x, int y, int wid, int hei, String path, int code) {
+		panel.handleImageButton(name, group, x, y, wid, hei, path, code);
 	}
 }

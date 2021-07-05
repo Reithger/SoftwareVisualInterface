@@ -59,14 +59,14 @@ public class EventFielder {
 	
 //---  Adder Methods   ------------------------------------------------------------------------
 	
-	public void addClickRegion(Detectable detect) {
-		mouseEvent.addClickRegion(detect);
+	public void addClickRegion(int identity, Detectable detect) {
+		mouseEvent.addClickRegion(identity, detect);
 	}
 	
 //---  Remover Methods   ----------------------------------------------------------------------
 	
-	public boolean removeDetectionRegion(int code) {
-		return mouseEvent.removeDetectionRegion(code);
+	public boolean removeDetectionRegion(int identity) {
+		return mouseEvent.removeDetectionRegion(identity);
 	}
 	
 	public boolean removeDetectionRegions(int x, int y) {

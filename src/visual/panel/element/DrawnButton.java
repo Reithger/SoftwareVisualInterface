@@ -83,7 +83,12 @@ public class DrawnButton extends Element implements Clickable{
 	}
 
 	@Override
-	public boolean focusEvent(char in) {
+	public boolean focusKeyEvent(char in) {
+		return true;
+	}
+	
+	@Override
+	public boolean focusDragEvent(int x, int y, int mouseType) {
 		return true;
 	}
 	
@@ -97,6 +102,9 @@ public class DrawnButton extends Element implements Clickable{
 		return code;
 	}
 
+	public int getIdentity() {
+		return hashCode();
+	}
 
 	@Override
 	public int getMinimumX() {

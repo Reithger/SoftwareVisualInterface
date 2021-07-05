@@ -40,14 +40,16 @@ import visual.panel.element.TextStorage;
  * TODO: Decorator class to wrap it in Scrollbar and Drag Navigation functionality? Otherwise cluttered with booleans.
  * TODO: This needs major refactoring, it's almost 1000 lines! That was the size of that whole game you made in the summer of 2016! Good memories...
  * TODO: Frame Elements are always on top of regular elements regardless of priority, not desired
- * TODO: NestedEventReceiver should be able to remove composite receivers
+ * TODO: NestedEventReceiver should be able to remove composite receivers and label them
+ * TODO: Element groupings with custom offset values - can remove FrameList?
+ * TODO: Generic scrollbarElement for ease of manipulating offsets
  * 
  * @author Ada Clevinger
  * 
  *
  */
 
-public class ElementPanel extends Panel{
+public class ElementPanel extends Panel implements OffsetManager{
 
 //---  Constant Values   ----------------------------------------------------------------------
 	
@@ -58,16 +60,21 @@ public class ElementPanel extends Panel{
 	
 	private static final int DRAG_CLICK_SENSITIVITY = 25;
 	
+	private static int SCROLLBAR_CODE_VALUE = -50;
+	
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	//-- Element Storage/Management  --------------------------
 	
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
-	private HashMap<String, Element> drawList;	//TODO: Abstract these out
-	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
-	private HashMap<String, Element> frameList;
+	private volatile HashMap<String, Element> drawList;	//TODO: Abstract these out
+	
+	private volatile ElementGroupManager elementGroupMappings;
+	
+	private volatile HashMap<String, OffsetValues> groupOffsets;
+	
 	/** HashMap that assigns a name to defined regions of the screen that generate a specified code upon interaction*/
-	private LinkedList<String> clickList;	
+	private volatile LinkedList<String> clickList;	
 	/** 
 	 * 	Clickable object representing the most recently selected interactive Element by the User for directing Key Inputs towards.
 	 * 
@@ -75,14 +82,12 @@ public class ElementPanel extends Panel{
 	 * 	occur, typically absorbing other forms of input such as keyboard input into a TextEntry. This can sometimes stop
 	 * 	that input from reaching behavioral functions such as clickBehavior or keyBehavior.
 	 */
-	private Clickable focusElement;
+	private String focusElement;
 		
 	//-- 
 
 	/** HashMap linking String system paths to Images to cache images that may be used repeatedly*/
 	private HashMap<String, Image> images;	//TODO: Image manager? Can be a small class, but still
-	
-	private Scrollbar scrollbar;		//TODO: Common interface so we can wrap these into pseudo-recursive structure
 	
 	private int dragClickX;
 	
@@ -107,11 +112,11 @@ public class ElementPanel extends Panel{
  	public ElementPanel(int x, int y, int width, int height){
 		super(x, y, width, height);
 		drawList = new HashMap<String, Element>();
-		frameList = new HashMap<String, Element>();
+		elementGroupMappings = new ElementGroupManager();
+		groupOffsets = new HashMap<String, OffsetValues>();
 		clickList = new LinkedList<String>();
 		images = new HashMap<String, Image>();
 		dragClickSensitivity = DRAG_CLICK_SENSITIVITY;
-		scrollbar = new Scrollbar(this);
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -128,7 +133,6 @@ public class ElementPanel extends Panel{
 	 * whether or not changing the origin point of the perspective space will move the
 	 * element or not. As it stands, any Frame Element will always be on top of regular
 	 * elements due to some design issues.
-	 * TODO: Fix that, not intended
 	 * 
 	 */
 	
@@ -139,44 +143,26 @@ public class ElementPanel extends Panel{
 		closeLock();
 		Collections.sort(elements);
 		for(int i = 0; i < elements.size(); i++) {
-			elements.get(i).drawToScreen(g, getOffsetX(), getOffsetY());
-		}
-		openLock();
-		elements = new ArrayList<Element>(frameList.values());
-		closeLock();
-		Collections.sort(elements);
-		for(int i = 0; i < elements.size(); i++) {
-			elements.get(i).drawToScreen(g, 0, 0);
-		}
-		updateClickRegions();
-		scrollbar.update(gIn);
-	}
-
-	public boolean moveElement(String name, int x, int y) {
-		Element e = getElement(name);
-		if(e == null) {
-			return false;
-		}
-		e.moveElement(x, y);
-		if(clickList.contains(name)) {
-			updateClickRegions();
-		}
-		scrollbar.designateUpdate();
-		return true;
-	}
-	
-	public void moveElementPrefixed(String prefix, int x, int y) {
-		openLock();
-		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
-		cs.addAll(new ArrayList<String>(frameList.keySet()));
-		closeLock();
-		for(String s : cs) {
-			if(s.matches(prefix + ".*")) {
-				moveElement(s, x, y);
+			Element e = elements.get(i);
+			HashSet<String> group = elementGroupMappings.getGroups(e.hashCode());
+			if(group == null) {
+				elements.get(i).drawToScreen(g, 0, 0);
+			}
+			else {
+				int offX = 0;
+				int offY = 0;
+				for(String s : group) {
+					OffsetValues offset = groupOffsets.get(s);
+					offX += offset.getOffsetX();
+					offY += offset.getOffsetY();
+				}
+				elements.get(i).drawToScreen(g, offX, offY);
 			}
 		}
 	}
 
+	//-- Element Adding/Removing  -----------------------------
+	
 	/**
 	 * Support method to consolidate the actions necessary when adding an Element to this
 	 * ElementPanel object.
@@ -185,23 +171,177 @@ public class ElementPanel extends Panel{
 	 * @param e - Element object being added to the screen associated to the String n
 	 */
 	
-	private void handleAddElement(String n, Element e, boolean frame) {
+	private void handleAddElement(String n, Element e, String frame) {
 		if(n == null || e == null) {
 			System.out.println("Error: Null added to drawList or frameList for pair <" + n + ", " + e.toString() + ">");
 			return;
 		}
 		openLock();
 		e.setHash(n);
-		if(!frame) {
-			drawList.put(n, e);
+		drawList.put(n, e);
+		if(frame != null) {
+			if(groupOffsets.get(frame) == null) {
+				addGroup(frame);
+			}
+			elementGroupMappings.addMapping(e.hashCode(), frame);
 		}
-		else {
-			frameList.put(n, e);
+		closeLock();
+		if(clickList.contains(n))
+			updateClickRegion(n);
+	}
+	
+	/**
+	 * This method allows the removal of an Element object from this ElementPanel (both in
+	 * being drawn and in being an interactive field) through the use of the String name
+	 * associated to the Element at its construction.
+	 * 
+	 * @param name - String object representing the name of the Element to be removed.
+	 */
+	
+	public void removeElement(String name) {
+		if(clickList.contains(name)) {
+			Clickable c = getClickableElement(name);
+			openLock();
+			if(c != null && clickList.contains(name))
+				removeClickRegion(c.getIdentity());
+			closeLock();
 		}
-		scrollbar.designateUpdate();
+		openLock();
+		elementGroupMappings.removeMapping(drawList.get(name).hashCode());
+		drawList.remove(name);
+		clickList.remove(name);
 		closeLock();
 	}
 	
+	/**
+	 * This method augments the removeElement method by removing every Element object in drawList
+	 * that matches the regex: [prefix].*
+	 * 
+	 * That is to say, all Element objects whose names are prefixed by the provided String phrase are
+	 * removed instead of looking for an exact match to the provided String.
+	 * 
+	 * @param prefix - String object describing the phrase that is used to search for all Elements who have this phrase as a prefix
+	 */
+	
+	public void removeElementPrefixed(String prefix) {
+		openLock();
+		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
+		HashSet<String> remv = new HashSet<String>();
+		for(int i = 0; i < cs.size(); i++) {
+			String s = cs.get(i);
+			if(s == null) {
+				continue;
+			}
+			if(s.matches(prefix + ".*")) {
+				remv.add(s);
+			}
+		}
+		closeLock();
+		for(String s : remv) {
+			removeElement(s);
+		}
+	}
+	
+	public void removeAllElements() {
+		removeElementPrefixed("");
+		resetDetectionRegions();
+	}
+	
+	//-- Group Stuff  -----------------------------------------
+	
+	public boolean adjustGroupOffset(String ref, int newOffsetX, int newOffsetY) {
+		OffsetValues offset = groupOffsets.get(ref);
+		if(offset == null) {
+			return false;
+		}
+		offset.setOffsetX(newOffsetX);
+		offset.setOffsetY(newOffsetY);
+		return true;
+	}
+	
+	public boolean addElementToGroup(String elemName, String groupName) {
+		Element e = getElement(elemName);
+		if(e == null) {
+			return false;
+		}
+		if(groupOffsets.get(groupName) == null) {
+			addGroup(groupName);
+		}
+		elementGroupMappings.addMapping(e.hashCode(), groupName);
+		return true;
+	}
+	
+	public boolean removeElementFromGroup(String elemName, String groupName) {
+		Element e = getElement(elemName);
+		if(e == null) {
+			return false;
+		}
+		
+		elementGroupMappings.removeMapping(e.hashCode(), groupName);
+		return true;
+	}
+	
+	public void removeElementPrefixedFromGroup(String pref, String groupName) {
+		openLock();
+		for(String n : drawList.keySet()) {
+			if(n.matches(pref + ".*")) {
+				removeElementFromGroup(n, groupName);
+			}
+		}
+		closeLock();
+	}
+	
+	public void addElementPrefixedToGroup(String pref, String groupName) {
+		if(groupOffsets.get(groupName) == null) {
+			addGroup(groupName);
+		}
+		openLock();
+		for(String n : drawList.keySet()) {
+			if(n.matches(pref + ".*")) {
+				addElementToGroup(n, groupName);
+			}
+		}
+		closeLock();
+	}
+
+	public boolean addGroup(String nom) {
+		if(groupOffsets.get(nom) != null) {
+			return false;
+		}
+		groupOffsets.put(nom, new OffsetValues(0, 0));
+		return true;
+	}
+	
+	public void removeGroup(String nom) {
+		elementGroupMappings.removeGroup(nom);
+		groupOffsets.remove(nom);
+	}
+	
+	//-- Adjust Element Property  -----------------------------
+	
+	public boolean moveElement(String name, int x, int y) {
+		Element e = getElement(name);
+		if(e == null) {
+			return false;
+		}
+		e.moveElement(x, y);
+		if(clickList.contains(name)) {
+			updateClickRegion(name);
+		}
+		return true;
+	}
+	
+	public void moveElementPrefixed(String prefix, int x, int y) {
+		openLock();
+		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
+		closeLock();
+		for(String s : cs) {
+			if(s.matches(prefix + ".*")) {
+				moveElement(s, x, y);
+			}
+		}
+	}
+
 	/**
 	 * This method reassigns the regions of the screen that detect user input and
 	 * trigger a clickEvent() with the corresponding generated code value.
@@ -213,18 +353,47 @@ public class ElementPanel extends Panel{
 	 */
 	
 	private void updateClickRegions() {
-		resetDetectionRegions();
 		for(int i = 0; i < clickList.size(); i++) {
-			if(frameList.get(clickList.get(i)) != null) {
-				Clickable c = getClickableElement(clickList.get(i));
-				if(c != null) {
-					addClickRegion(c.getDetectionRegion(0, 0));
-				}
+			updateClickRegion(clickList.get(i));
+		}
+	}
+	
+	private void updateClickRegions(String groupName) {
+		for(int i = 0; i < clickList.size(); i++) {
+			Clickable c = getClickableElement(clickList.get(i));
+			if(elementGroupMappings.getGroups(c.getIdentity()).contains(groupName)) {
+				updateClickRegion(clickList.get(i));
+			}
+		}
+	}
+	
+	private void updateClickRegion(String name) {
+		Clickable c = getClickableElement(name);
+		if(c != null) {
+			HashSet<String> group = elementGroupMappings.getGroups(c.getIdentity());
+			if(group == null) {
+				addClickRegion(c.getIdentity(), c.getDetectionRegion(0, 0));
 			}
 			else {
-				Clickable c = getClickableElement(clickList.get(i));
-				if(c != null) {
-					addClickRegion(c.getDetectionRegion(getOffsetX(), getOffsetY()));
+				int offX = 0;
+				int offY = 0;
+				for(String s : group) {
+					OffsetValues offset = groupOffsets.get(s);
+					offX += offset.getOffsetX();
+					offY += offset.getOffsetY();
+				}
+				addClickRegion(c.getIdentity(), c.getDetectionRegion(offX, offY));
+			}
+		}
+	}
+	
+	private void updateFocusElement(int event) {
+		focusElement = null;
+		for(String s : clickList) {
+			Clickable c = getClickableElement(s);
+			if(c != null) {
+				if(c.getCode() == event) { //TODO: Change this to getting the identity instead of the code
+					focusElement = s;
 				}
 			}
 		}
@@ -247,21 +416,11 @@ public class ElementPanel extends Panel{
 		clickFired = true;
 		getParentFrame().dispenseAttention();
 		setAttention(true);
-		focusElement = null;
-		for(String s : clickList) {
-			Clickable c = getClickableElement(s);
-			if(c != null) {
-				if(c.getCode() == event) {
-					focusElement = c;
-				}
-			}
-		}
 		getEventReceiver().clickEvent(event, x, y, clickType);
 	}
-	
+
 	@Override
 	public void clickReleaseEvent(int event, int x, int y, int clickType) {
-		scrollbar.processClickRelease();
 		double dist = Math.sqrt(Math.pow(x - dragClickX, 2) + Math.pow(y - dragClickY, 2));
 		if(!clickFired && dist < dragClickSensitivity) {
 			clickEvent(event, x, y, clickType);
@@ -271,10 +430,9 @@ public class ElementPanel extends Panel{
 	
 	@Override
 	public void clickPressEvent(int event, int x, int y, int clickType) {
+		updateFocusElement(event);
 		clickFired = false;
-		if(!scrollbar.processClickPress(event, x , y)) {
-			return;
-		}
+		
 		dragClickX = x;
 		dragClickY = y;
 		getEventReceiver().clickPressEvent(event, x, y, clickType);
@@ -288,7 +446,14 @@ public class ElementPanel extends Panel{
 	
 	@Override
 	public void dragEvent(int event, int x, int y, int clickType) {
-		scrollbar.processDrag(event,  x,  y);
+		if(focusElement != null) {
+			Clickable c = getClickableElement(focusElement);
+			if(!c.focusDragEvent(x, y, clickType)) {
+				updateClickRegion(focusElement);
+				return;
+			}
+			updateClickRegion(focusElement);
+		}
 		getEventReceiver().dragEvent(event, x, y, clickType);
 	}
 	
@@ -311,10 +476,13 @@ public class ElementPanel extends Panel{
 	
 	public void keyEvent(char event){
 		if(focusElement != null) {
-			if(!focusElement.focusEvent(event)) {
+			Clickable c = getClickableElement(focusElement);
+			if(!c.focusKeyEvent(event)) {
 				focusEventReaction(getFocusElementCode());
+				updateClickRegion(focusElement);
 				return;
 			}
+			updateClickRegion(focusElement);
 		}
 		getEventReceiver().keyEvent(event);
 	}
@@ -335,17 +503,24 @@ public class ElementPanel extends Panel{
 	
 	//-- Canvas  ----------------------------------------------
 	
-	public Canvas addCanvas(String name, int priority, boolean frame, int x, int y, int elemWidth, int elemHeight, int canWidth, int canHeight, int inCode) {
+	public Canvas addCanvas(String name, int priority, String frame, int x, int y, int elemWidth, int elemHeight, int canWidth, int canHeight, int inCode) {
 		Canvas c = new Canvas(canWidth, canHeight);
-		handleAddElement(name, ElementFactory.generateCanvas(priority, x, y, elemWidth, elemHeight, c, inCode), frame);
 		clickList.add(name);
+		handleAddElement(name, ElementFactory.generateCanvas(priority, x, y, elemWidth, elemHeight, c, inCode), frame);
 		return c;
 	}
 	
-	public void addCanvas(String name, int priority, boolean frame, int x, int y, int elemWidth, int elemHeight, Canvas inCanvas, int inCode) {
-		handleAddElement(name, ElementFactory.generateCanvas(priority, x, y, elemWidth, elemHeight, inCanvas, inCode), frame);
+	public void addCanvas(String name, int priority, String frame, int x, int y, int elemWidth, int elemHeight, Canvas inCanvas, int inCode) {
 		clickList.add(name);
+		handleAddElement(name, ElementFactory.generateCanvas(priority, x, y, elemWidth, elemHeight, inCanvas, inCode), frame);
 	}
+	
+	//-- Scrollbar  -------------------------------------------
+	
+	public void addScrollbar(String name, int priority, String frame, int scrollX, int scrollY, int scrollWid, int scrollHei, int windowOrigin, int windowSize, String groupControl, boolean isVert) {
+		clickList.add(name);
+		handleAddElement(name, ElementFactory.generateScrollbar(priority, scrollX, scrollY, scrollWid, scrollHei, windowOrigin, windowSize, SCROLLBAR_CODE_VALUE--, groupControl, isVert, this), frame);
+}
 	
 	//-- Image  -----------------------------------------------
 	
@@ -363,7 +538,7 @@ public class ElementPanel extends Panel{
 	 * @param path - String object representing the file path that the Image is located at in memory.
 	 */
 	
-	public void addImage(String name, int priority, boolean frame, int x, int y, boolean center, String path){
+	public void addImage(String name, int priority, String frame, int x, int y, boolean center, String path){
 		Image img = retrieveImage(path);
 		handleAddElement(name, ElementFactory.generateImage(priority, x, y, center, img), frame);
 	}
@@ -383,7 +558,7 @@ public class ElementPanel extends Panel{
 	 * @param img
 	 */
 	
-	public void addImage(String name, int priority, boolean frame, int x, int y, boolean center, Image img) {
+	public void addImage(String name, int priority, String frame, int x, int y, boolean center, Image img) {
 		handleAddElement(name, ElementFactory.generateImage(priority, x, y, center, img), frame);
 	}
 	
@@ -401,7 +576,7 @@ public class ElementPanel extends Panel{
 	 * @param path - String object representing the file path that the Image is located at in memory.
 	 */
 	
-	public void addImage(String name, int priority, boolean frame, int x, int y, boolean center, String path, double scale){
+	public void addImage(String name, int priority, String frame, int x, int y, boolean center, String path, double scale){
 		Image img = retrieveImage(path);
 		handleAddElement(name, ElementFactory.generateImage(priority, x, y, (int)(img.getWidth(null) * scale), (int)(img.getHeight(null) * scale), center, img, true), frame);
 	}
@@ -421,7 +596,7 @@ public class ElementPanel extends Panel{
 	 * @param img
 	 */
 	
-	public void addImage(String name, int priority, boolean frame, int x, int y, boolean center, Image img, double scale) {
+	public void addImage(String name, int priority, String frame, int x, int y, boolean center, Image img, double scale) {
 		handleAddElement(name, ElementFactory.generateImage(priority, x, y, (int)(img.getWidth(null) * scale), (int)(img.getHeight(null) * scale), center, img, true), frame);
 	}
 
@@ -439,7 +614,7 @@ public class ElementPanel extends Panel{
 	 * @param path - String object representing the file path that the Image is located at in memory.
 	 */
 	
-	public void addImage(String name, int priority, boolean frame, int x, int y, int width, int height, boolean center, String path, boolean proportion){
+	public void addImage(String name, int priority, String frame, int x, int y, int width, int height, boolean center, String path, boolean proportion){
 		Image img = retrieveImage(path);
 		handleAddElement(name, ElementFactory.generateImage(priority, x, y, width, height, center, img, proportion), frame);
 	}
@@ -459,13 +634,13 @@ public class ElementPanel extends Panel{
 	 * @param img
 	 */
 	
-	public void addImage(String name, int priority, boolean frame, int x, int y, int width, int height, boolean center, Image img, boolean proportion) {
+	public void addImage(String name, int priority, String frame, int x, int y, int width, int height, boolean center, Image img, boolean proportion) {
 		handleAddElement(name, ElementFactory.generateImage(priority, x, y, width, height, center, img, proportion), frame);
 	}
 	
 	//-- Animations  ------------------------------------------
 	
-	public void addAnimation(String name, int priority, boolean frame, int x, int y, boolean center, int period, double scale, String[] images) {
+	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int period, double scale, String[] images) {
 		Image[] rec = new Image[images.length];
 		for(int i = 0; i < rec.length; i++) {
 			rec[i] = retrieveImage(images[i]);
@@ -477,7 +652,7 @@ public class ElementPanel extends Panel{
 		handleAddElement(name, ElementFactory.generateAnimation(priority, x, y, center, periods, scale, rec), frame);
 	}
 	
-	public void addAnimation(String name, int priority, boolean frame, int x, int y, boolean center, int[] period, double scale, String[] images) {
+	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int[] period, double scale, String[] images) {
 		Image[] rec = new Image[images.length];
 		for(int i = 0; i < rec.length; i++) {
 			rec[i] = retrieveImage(images[i]);
@@ -485,7 +660,7 @@ public class ElementPanel extends Panel{
 		handleAddElement(name, ElementFactory.generateAnimation(priority, x, y, center, period, scale, rec), frame);
 	}
 	
-	public void addAnimation(String name, int priority, boolean frame, int x, int y, boolean center, int period, double scale, Image[] images) {
+	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int period, double scale, Image[] images) {
 		int[] periods = new int[images.length];
 		for(int i = 0; i < periods.length; i++) {
 			periods[i] = period;
@@ -493,7 +668,7 @@ public class ElementPanel extends Panel{
 		handleAddElement(name, ElementFactory.generateAnimation(priority, x, y, center, periods, scale, images), frame);
 	}
 	
-	public void addAnimation(String name, int priority, boolean frame, int x, int y, boolean center, int[] period, double scale, Image[] images) {
+	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int[] period, double scale, Image[] images) {
 		handleAddElement(name, ElementFactory.generateAnimation(priority, x, y, center, period, scale, images), frame);
 	}
 	
@@ -521,9 +696,9 @@ public class ElementPanel extends Panel{
 	 * @param key - int value describing the value that is generated when this DrawnButton object is clicked
 	 */
 
-	public void addButton(String name, int priority, boolean frame, int x, int y, int wid, int hei, int key, boolean centered){
-		handleAddElement(name, ElementFactory.generateButton(priority, x, y, wid, hei, key, centered), frame);
+	public void addButton(String name, int priority, String frame, int x, int y, int wid, int hei, int key, boolean centered){
 		clickList.add(name);
+		handleAddElement(name, ElementFactory.generateButton(priority, x, y, wid, hei, key, centered), frame);
 	}	
 	
 	//-- Text  ------------------------------------------------
@@ -542,7 +717,7 @@ public class ElementPanel extends Panel{
 	 * @param font - Font object describing the font with which to draw the provided String phrase
 	 */
 	
-	public void addText(String name, int priority, boolean frame, int x, int y, int width, int height, String phrase, Font font, boolean centeredX, boolean centeredY, boolean centeredText){
+	public void addText(String name, int priority, String frame, int x, int y, int width, int height, String phrase, Font font, boolean centeredX, boolean centeredY, boolean centeredText){
 		handleAddElement(name, ElementFactory.generateText(priority, x, y, width, height, phrase, font, centeredX, centeredY, centeredText), frame);
 	}
 
@@ -565,9 +740,9 @@ public class ElementPanel extends Panel{
 	 * @param font - Font object describing the font with which to draw the provided String phrase
 	 */
 	
-	public void addTextEntry(String name, int priority, boolean frame, int x, int y, int width, int height, int code, String defaultText, Font font, boolean centeredX, boolean centeredY, boolean centeredText) {
-		handleAddElement(name, ElementFactory.generateTextEntry(priority, x, y, width, height, code, defaultText, font, centeredX, centeredY, centeredText), frame);
+	public void addTextEntry(String name, int priority, String frame, int x, int y, int width, int height, int code, String defaultText, Font font, boolean centeredX, boolean centeredY, boolean centeredText) {
 		clickList.add(name);
+		handleAddElement(name, ElementFactory.generateTextEntry(priority, x, y, width, height, code, defaultText, font, centeredX, centeredY, centeredText), frame);
 	}
 	
 	//-- Shapes  ----------------------------------------------
@@ -584,7 +759,7 @@ public class ElementPanel extends Panel{
 	 * @param col - Color object describing the color with which to draw this DrawnRectangle Element
 	 */
 	
-	public void addRectangle(String name, int priority, boolean frame, int x, int y, int width, int height, boolean center, Color col) {
+	public void addRectangle(String name, int priority, String frame, int x, int y, int width, int height, boolean center, Color col) {
 		handleAddElement(name, ElementFactory.generateRectangle(priority, x, y, width, height, center, col, col), frame);
 	}
 	
@@ -602,7 +777,7 @@ public class ElementPanel extends Panel{
 	 * @param borderColor - Color object describing the color with which to draw the outline of this DrawnRectangle Element
 	 */
 	
-	public void addRectangle(String name, int priority, boolean frame, int x, int y, int width, int height, boolean center, Color fillColor, Color borderColor) {
+	public void addRectangle(String name, int priority, String frame, int x, int y, int width, int height, boolean center, Color fillColor, Color borderColor) {
 		handleAddElement(name, ElementFactory.generateRectangle(priority, x, y, width, height, center, fillColor, borderColor), frame);
 	}
 
@@ -620,72 +795,14 @@ public class ElementPanel extends Panel{
 	 * @param choice
 	 */
 	
-	public void addLine(String name, int priority, boolean frame, int x1, int y1, int x2, int y2, int thickness, Color choice) {
+	public void addLine(String name, int priority, String frame, int x1, int y1, int x2, int y2, int thickness, Color choice) {
 		handleAddElement(name, ElementFactory.generateLine(priority, x1, y1, x2, y2, thickness, choice), frame);
 	}
 	
 //---  Remove Elements   ----------------------------------------------------------------------
-	
-	/**
-	 * This method allows the removal of an Element object from this ElementPanel (both in
-	 * being drawn and in being an interactive field) through the use of the String name
-	 * associated to the Element at its construction.
-	 * 
-	 * @param name - String object representing the name of the Element to be removed.
-	 */
-	
-	public void removeElement(String name) {
-		openLock();
-		drawList.remove(name);
-		frameList.remove(name);
-		clickList.remove(name);
-		closeLock();
-	}
-	
-	/**
-	 * This method augments the removeElement method by removing every Element object in drawList
-	 * that matches the regex: [prefix].*
-	 * 
-	 * That is to say, all Element objects whose names are prefixed by the provided String phrase are
-	 * removed instead of looking for an exact match to the provided String.
-	 * 
-	 * @param prefix - String object describing the phrase that is used to search for all Elements who have this phrase as a prefix
-	 */
-	
-	public void removeElementPrefixed(String prefix) {
-		openLock();
-		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
-		cs.addAll(frameList.keySet());
-		HashSet<String> remv = new HashSet<String>();
-		for(int i = 0; i < cs.size(); i++) {
-			String s = cs.get(i);
-			if(s == null) {
-				continue;
-			}
-			if(s.matches(prefix + ".*")) {
-				remv.add(s);
-			}
-		}
-		closeLock();
-		for(String s : remv) {
-			removeElement(s);
-		}
-	}
-	
-	public void removeAllElements() {
-		removeElementPrefixed("");
-	}
-	
+
 //---  Setter Methods   -----------------------------------------------------------------------
-	
-	public void setScrollBarHorizontal(boolean in) {
-		scrollbar.setScrollBarHorizontal(in);
-	}
-	
-	public void setScrollBarVertical(boolean in) {
-		scrollbar.setScrollBarVertical(in);
-	}
-	
+
 	public void setElementStoredText(String elementName, String newText) {
 		TextStorage sT = getStoredTextElement(elementName);
 		if(sT == null) {
@@ -698,8 +815,26 @@ public class ElementPanel extends Panel{
 		dragClickSensitivity = in;
 	}
 	
+	public void setOffsetX(String groupName, int newOffsetX) {
+		groupOffsets.get(groupName).setOffsetX(newOffsetX);
+		updateClickRegions(groupName);
+	}
+	
+	public void setOffsetY(String groupName, int newOffsetY) {
+		groupOffsets.get(groupName).setOffsetY(newOffsetY);
+		updateClickRegions(groupName);
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
-
+	
+	public int getOffsetX(String groupName) {
+		return groupOffsets.get(groupName).getOffsetX();
+	}
+	
+	public int getOffsetY(String groupName) {
+		return groupOffsets.get(groupName).getOffsetY();
+	}
+	
 	public int getTextWidth(String text, Font use) {
 		Graphics g = this.getPanel().getGraphics();
 		if(g == null) {
@@ -737,9 +872,6 @@ public class ElementPanel extends Panel{
 	private Element getElement(String name) {
 		openLock();
 		Element e = drawList.get(name);
-		if(e == null) {
-			e = frameList.get(name);
-		}
 		closeLock();
 		return e;
 	}
@@ -777,6 +909,18 @@ public class ElementPanel extends Panel{
 			System.out.println("Attempted to retrieve " + name);
 			return null;
 		}
+	}
+	
+	private Element getElementByCode(int code) {
+		for(String s : clickList) {
+			Clickable c = getClickableElement(s);
+			if(c != null) {
+				if(c.getCode() == code) {
+					return getElement(s);
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -831,12 +975,12 @@ public class ElementPanel extends Panel{
 	 * @return - Returns a Clickable-implementing object representing the current Clickable object the ElementPanel is focusing on.
 	 */
 	
-	public Clickable getFocusElement() {
+	public String getFocusElement() {
 		return focusElement;
 	}
 	
 	public int getFocusElementCode() {
-		return getFocusElement().getCode();
+		return getClickableElement(getFocusElement()).getCode();
 	}
 	
 	/**
@@ -853,60 +997,56 @@ public class ElementPanel extends Panel{
 		return out;
 	}
 	
-	public int getMinimumScreenX() {
+	public int getMinimumScreenX(String groupName) {
 		int minX = 0;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		elements.addAll(frameList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
-			if(e.getMinimumX() < minX) {
+			if((groupName == null || elementGroupMappings.getGroups(e.hashCode()).contains(groupName)) && e.getMinimumX() < minX) {
 				minX = e.getMinimumX();
 			}
 		}
 		return minX > 0 ? 0 : minX;
 	}
 	
-	public int getMaximumScreenX() {
+	public int getMaximumScreenX(String groupName) {
 		int maxX = 0;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		elements.addAll(frameList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
-			if(e.getMaximumX() > maxX) {
+			if((groupName == null || elementGroupMappings.getGroups(e.hashCode()).contains(groupName)) && e.getMaximumX() > maxX) {
 				maxX = e.getMaximumX();
 			}
 		}
 		return maxX < getWidth() ? getWidth() : maxX;
 	}
 	
-	public int getMinimumScreenY() {
+	public int getMinimumScreenY(String groupName) {
 		int minY = 0;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		elements.addAll(frameList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
-			if(e.getMinimumY() < minY) {
+			if((groupName == null || elementGroupMappings.getGroups(e.hashCode()).contains(groupName)) && e.getMinimumY() < minY) {
 				minY = e.getMinimumY();
 			}
 		}
 		return minY > 0 ? 0 : minY;
 	}
 	
-	public int getMaximumScreenY() {
+	public int getMaximumScreenY(String groupName) {
 		int maxY = 0;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		elements.addAll(frameList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
-			if(e.getMaximumY() > maxY) {
+			if((groupName == null || elementGroupMappings.getGroups(e.hashCode()).contains(groupName)) && e.getMaximumY() > maxY) {
 				maxY = e.getMaximumY();
 			}
 		}

@@ -44,8 +44,12 @@ public class DrawnCanvas extends Element implements Clickable{
 	
 //---  Operations   ---------------------------------------------------------------------------
 
-	public boolean focusEvent(char in) {
+	public boolean focusKeyEvent(char in) {
 		canvas.input(in);
+		return true;
+	}
+	
+	public boolean focusDragEvent(int x, int y, int mouseType) {
 		return true;
 	}
 
@@ -70,7 +74,11 @@ public class DrawnCanvas extends Element implements Clickable{
 	public Canvas getCanvas() {
 		return canvas;
 	}
-	
+
+	public int getIdentity() {
+		return hashCode();
+	}
+
 	public int getCode() {
 		return code;
 	}

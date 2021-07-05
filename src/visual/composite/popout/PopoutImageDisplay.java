@@ -8,7 +8,6 @@ public class PopoutImageDisplay extends PopoutWindow {
 	
 	public PopoutImageDisplay(int wid, int hei, String ref) {
 		super(wid, hei);
-		this.allowScrollbars(false);
 		this.setResizable(true);
 		imageDisplay = new ImageDisplay(ref, getHandlePanel());
 		imageDisplay.drawPage();

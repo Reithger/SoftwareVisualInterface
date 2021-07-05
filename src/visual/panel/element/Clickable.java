@@ -36,6 +36,8 @@ public interface Clickable {
 	
 	public abstract int getCode();
 	
+	public abstract int getIdentity();
+	
 //---  Operations   ---------------------------------------------------------------------------
 	
 	/**
@@ -48,6 +50,8 @@ public interface Clickable {
 	 * @return - Returns a boolean value describing whether or not Key Input can be interpreted after usage here.
 	 */
 	
-	public abstract boolean focusEvent(char in);
+	public abstract boolean focusKeyEvent(char in);
+	
+	public abstract boolean focusDragEvent(int x, int y, int mouseType);
 	
 }

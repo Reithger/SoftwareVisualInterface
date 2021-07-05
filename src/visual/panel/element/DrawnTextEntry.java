@@ -14,7 +14,7 @@ public class DrawnTextEntry extends DrawnText implements Clickable, TextStorage{
 	
 	private int code;
 	
-	private boolean indicator;
+	private boolean indicator;  //TODO: Show where is selected
 
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -55,7 +55,7 @@ public class DrawnTextEntry extends DrawnText implements Clickable, TextStorage{
 		changeText(getText());
 	}
 	
-	public boolean focusEvent(char in) {
+	public boolean focusKeyEvent(char in) {
 		if((int) in == 65535)
 			return false;
 		if((int) in == 8){
@@ -73,6 +73,10 @@ public class DrawnTextEntry extends DrawnText implements Clickable, TextStorage{
 		return false;
 	}
 	
+	public boolean focusDragEvent(int x, int y, int mouseType) {
+		return true; //TODO: Everything
+	}
+	
 //---  Setter Methods   -----------------------------------------------------------------------
 	
 	public void setText(String text) {
@@ -86,7 +90,11 @@ public class DrawnTextEntry extends DrawnText implements Clickable, TextStorage{
 	public String getText() {
 		return storedText.toString();
 	}
-	
+
+	public int getIdentity() {
+		return hashCode();
+	}
+
 	public int getCode() {
 		return code;
 	}

@@ -70,6 +70,15 @@ public class ClickRegionRectangle implements Detectable{
 		priority = inPriority;
 	}
 	
+//---  Setter Methods   -----------------------------------------------------------------------
+	
+	public void setRegion(int inX, int inY, int wid, int hei) {
+		x = inX;
+		y = inY;
+		width = wid;
+		height = hei;
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	@Override

@@ -7,6 +7,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import input.EventFielder;
 import input.manager.actionevent.ActionEventGenerator;
@@ -32,7 +33,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** ArrayList<Integer[]> object containing the coordinates and codes for each event-region*/
-	private ArrayList<Detectable> detectionRegions;
+	private HashMap<Integer, Detectable> detectionRegions;
 	/** EventReceiver object representing the EventReceiver to which this ClickComponent is attached (the EventReceiver that is being clicked)*/
 	private EventFielder eventHandler;
 	
@@ -48,7 +49,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	 */
 	
 	public ClickComponent(EventFielder eventReceiver){
-		detectionRegions = new ArrayList<Detectable>();
+		detectionRegions = new HashMap<Integer, Detectable>();
 		eventHandler = eventReceiver;
 	}
 	
@@ -61,7 +62,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	
 	public void resetDetectionRegions() {
 		openLock();
-		detectionRegions = new ArrayList<Detectable>();
+		detectionRegions = new HashMap<Integer, Detectable>();
 		closeLock();
 	}
 	
@@ -76,16 +77,9 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	 * @return - Returns a boolean value describing whether or not a Detectable object was found and removed or not.
 	 */
 	
-	public boolean removeDetectionRegion(int code) {
+	public boolean removeDetectionRegion(int identity) {
 		openLock();
-		for(int i = 0; i < detectionRegions.size(); i++) {
-			Detectable d = detectionRegions.get(i);
-			if(d.getCode() == code) {
-				detectionRegions.remove(i);
-				closeLock();
-				return true;
-			}
-		}
+		detectionRegions.remove(identity);
 		closeLock();
 		return false;
 	}
@@ -123,8 +117,10 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	 * @param updated - ArrayList<<r>Detectable> object containing Detectable objects
 	 */
 	
-	public void setDetectionRegions(ArrayList<Detectable> updated){
+	public void setDetectionRegions(HashMap<Integer, Detectable> updated){
+		openLock();
 		detectionRegions = updated;
+		closeLock();
 	}
 
 	/**
@@ -152,9 +148,9 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	 * @return - Returns a boolean value representing whether or not the Detectable object was successfully added.
 	 */
 	
-	public void addClickRegion(Detectable region){
+	public void addClickRegion(int identity, Detectable region){
 		openLock();
-		detectionRegions.add(region);
+		detectionRegions.put(identity, region);
 		closeLock();
 	}
 	
@@ -265,7 +261,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	private ArrayList<Detectable> findClicked(int x, int y) {
 		ArrayList<Detectable> response = new ArrayList<Detectable>();
 		openLock();
-		for(Detectable d : new ArrayList<Detectable>(detectionRegions)) {
+		for(Detectable d : (new HashMap<Integer, Detectable>(detectionRegions)).values()) {
 			if(d.wasClicked(x, y)) {
 				response.add(d);
 			}

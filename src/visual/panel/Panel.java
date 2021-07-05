@@ -38,10 +38,6 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	private EventFielder eventHandler;
 	
 	private boolean attention;
-	/** int value representing how displaced along the x-axis elements within this Panel need to be drawn relative to their origin point in the Frame*/
-	private int offsetX;
-	
-	private int offsetY;
 	
 	private int priority;
 	
@@ -148,38 +144,6 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 		attention = atten;
 	}
 		
-	public void setOffsetX(int inX) {
-		offsetX = inX;
-	}
-	
-	public void setOffsetY(int inY) {
-		offsetY = inY;
-	}
-
-	public void setOffsetXBounded(int inX) {
-		if(inX > -getMinimumScreenX()) {
-			offsetX = -getMinimumScreenX();
-		}
-		else if(inX < getWidth() - getMaximumScreenX()) {
-			offsetX = getWidth() - getMaximumScreenX();
-		}
-		else {
-			offsetX = inX;
-		}
-	}
-	
-	public void setOffsetYBounded(int inY) {
-		if(inY > -getMinimumScreenY()) {
-			offsetY = -getMinimumScreenY();
-		}
-		else if(inY < getHeight() - getMaximumScreenY()) {
-			offsetY = getHeight() - getMaximumScreenY();
-		}
-		else {
-			offsetY = inY;
-		}
-	}
-	
 	public void setLocation(int x, int y) {
 		panel.setLocation(x, y);
 	}
@@ -240,23 +204,7 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	public Frame getParentFrame() {
 		return parentFrame;
 	}
-	
-	public int getOffsetX() {
-		return offsetX;
-	}
-	
-	public int getOffsetY() {
-		return offsetY;
-	}
-	
-	public abstract int getMinimumScreenX();
-	
-	public abstract int getMaximumScreenX();
-	
-	public abstract int getMinimumScreenY();
-	
-	public abstract int getMaximumScreenY();
-	
+
 //---  Adder Methods   ------------------------------------------------------------------------
 	
 	/**
@@ -271,8 +219,8 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	 * @return - returns a boolean value representing the result of this operation; true if detect was added, false otherwise.
 	 */
 	
-	public void addClickRegion(Detectable detect) {
-		eventHandler.addClickRegion(detect);
+	public void addClickRegion(int identity, Detectable detect) {
+		eventHandler.addClickRegion(identity, detect);
 	}
 	
 //---  Remove Methods   -----------------------------------------------------------------------
@@ -286,8 +234,8 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	 * false if no matching object was found.
 	 */
 	
-	public boolean removeClickRegion(int code) {
-		return eventHandler.removeDetectionRegion(code);
+	public boolean removeClickRegion(int identity) {
+		return eventHandler.removeDetectionRegion(identity);
 	}
 	
 	/**

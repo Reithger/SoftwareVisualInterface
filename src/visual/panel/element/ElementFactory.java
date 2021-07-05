@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Image;
 
 import misc.Canvas;
+import visual.panel.OffsetManager;
 
 public class ElementFactory {
 	
@@ -12,6 +13,12 @@ public class ElementFactory {
 	
 	public static Element generateCanvas(int priority, int x, int y, int elemWidth, int elemHeight, Canvas inCanvas, int inCode) {
 		return new DrawnCanvas(x, y, priority, elemWidth, elemHeight, inCode, inCanvas);
+	}
+	
+	//-- Scrollbar  -------------------------------------------
+	
+	public static Element generateScrollbar(int priority, int x, int y, int scrollWid, int scrollHei, int windowOrigin, int windowSize, int code, String groupName, boolean isVert, OffsetManager offset) {
+		return new DrawnScrollbar(x, y, scrollWid, scrollHei, windowOrigin, windowSize, offset, code, priority, groupName, isVert);
 	}
 	
 	//-- Image  -----------------------------------------------

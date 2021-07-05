@@ -12,8 +12,6 @@ public class TestImageDisplay {
 		ElementPanel pa = new ElementPanel(0, 0, 500, 500);
 		ImageDisplay iD = new ImageDisplay("src\\test\\assets\\ada.png", pa);
 		pa.setEventReceiver(new NestedEventReceiver(iD.generateEventReceiver()));
-		pa.setScrollBarHorizontal(false);
-		pa.setScrollBarVertical(false);
 		fra.reserveWindow("default");
 		fra.showActiveWindow("default");
 		fra.addPanelToWindow("default", "pan", pa);
