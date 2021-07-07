@@ -4,7 +4,7 @@ import java.awt.Graphics;
 
 import input.mouse.ClickRegionRectangle;
 import input.mouse.Detectable;
-import visual.panel.OffsetManager;
+import visual.panel.group.OffsetManager;
 
 public class DrawnScrollbar extends Element implements Clickable{
 	
@@ -104,8 +104,6 @@ public class DrawnScrollbar extends Element implements Clickable{
 		int high = maxBound - (windowOrigin + windowSize);
 		
 		int newOffset = (int)((low + high) * prop - high);
-		
-		System.out.println(minBound + " " + act + " " + prop + " " + low + " " + high + " " + newOffset);
 		
 		newOffset = newOffset > windowOrigin - minBound ? windowOrigin - minBound : newOffset < windowOrigin + windowSize - maxBound ? windowOrigin + windowSize - maxBound : newOffset;
 		if(isVert) {

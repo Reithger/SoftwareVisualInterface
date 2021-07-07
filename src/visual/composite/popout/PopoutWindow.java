@@ -151,38 +151,38 @@ public abstract class PopoutWindow implements HandleElements{
 //---  Drawing Support   ----------------------------------------------------------------------
 
 	@Override
-	public void handleTextButton(String nom, String group, int x, int y, int wid, int hei, Font font, String phr, int code, Color fill, Color border) {
-		panel.handleTextButton(nom, group, x, y, wid, hei, font, phr, code, fill, border);
+	public void handleTextButton(String nom, String group, int prior, int x, int y, int wid, int hei, Font font, String phr, int code, Color fill, Color border) {
+		panel.handleTextButton(nom, group, prior, x, y, wid, hei, font, phr, code, fill, border);
 	}
 
 	@Override
-	public void handleText(String nom, String group, int x, int y, int wid, int hei, Font font, String phr) {
-		panel.handleText(nom, group, x, y, wid, hei, font, phr);
+	public void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, Font font, String phr) {
+		panel.handleText(nom, group, prior, x, y, wid, hei, font, phr);
 	}
 
 	@Override
-	public void handleImage(String nom, String group, int x, int y, String path, double scale) {
-		panel.handleImage(nom, group, x, y, path, scale);
+	public void handleImage(String nom, String group, int prior, int x, int y, String path, double scale) {
+		panel.handleImage(nom, group, prior, x, y, path, scale);
 	}
 
 	@Override
-	public void handleImage(String nom, String group, int x, int y, Image img, double scale) {
-		panel.handleImage(nom, group, x, y, img, scale);
+	public void handleImage(String nom, String group, int prior, int x, int y, Image img, double scale) {
+		panel.handleImage(nom, group, prior, x, y, img, scale);
 	}
 
 	@Override
-	public void handleImage(String nom, String group, int x, int y, int wid, int hei, String imgPath) {
-		panel.handleImage(nom, group, x, y, wid, hei, imgPath);
+	public void handleImage(String nom, String group, int prior, int x, int y, int wid, int hei, String imgPath) {
+		panel.handleImage(nom, group, prior, x, y, wid, hei, imgPath);
 	}
 	
 	@Override
-	public void handleTextEntry(String nom, String group, int x, int y, int wid, int hei, int cod, Font font, String phr) {
-		panel.handleTextEntry(nom, group, x, y, wid, hei, cod, font, phr);
+	public void handleTextEntry(String nom, String group, int prior, int x, int y, int wid, int hei, int cod, Font font, String phr) {
+		panel.handleTextEntry(nom, group, prior, x, y, wid, hei, cod, font, phr);
 	}
 
 	@Override
-	public void handleButton(String nom, String group, int x, int y, int wid, int hei, int code) {
-		panel.handleButton(nom, group, x, y, wid, hei, code);
+	public void handleButton(String nom, String group, int prior, int x, int y, int wid, int hei, int code) {
+		panel.handleButton(nom, group, prior, x, y, wid, hei, code);
 	}
 
 	@Override
@@ -201,7 +201,7 @@ public abstract class PopoutWindow implements HandleElements{
 	}
 
 	@Override
-	public void handleImageButton(String name, String group, int x, int y, int wid, int hei, String path, int code) {
-		panel.handleImageButton(name, group, x, y, wid, hei, path, code);
+	public void handleImageButton(String name, String group, int prior, int x, int y, int wid, int hei, String path, int code) {
+		panel.handleImageButton(name, group, prior, x, y, wid, hei, path, code);
 	}
 }

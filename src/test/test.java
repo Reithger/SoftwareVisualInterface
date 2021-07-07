@@ -103,14 +103,18 @@ public class test {
 		pan.addText("tex2", 10, "move",  pan.getWidth() / 2, pan.getHeight() /  2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "F F F", defaultFont, true, false, false);
 		pan.addText("tex3", 10, "move",  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T F T", defaultFont, true, false, true);
 		
-		pan.addAnimation("anim", 23, "move",  pan.getWidth() / 2, pan.getHeight() * 3 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
+		pan.addAnimation("anim", 23, "move",  pan.getWidth() / 2, pan.getHeight() * 3 / 4, true, new int[] {13, 7, 12}, 5, imagesPaths);
 		
 		pan.addImage("ada", 15, "move", pan.getWidth() / 4, pan.getHeight() / 3, 125, 75, true, imagePath2, true);
 		pan.addImage("ada2", 15, "move", pan.getWidth() * 2 / 3, pan.getHeight() / 3, 125, 75, true, imagePath2, false);
 
-		pan.addRectangle("rectout", 25, "no_move", 0, 40, pan.getWidth() / 3, pan.getHeight() - 80, false, Color.gray, Color.black);
-		pan.addRectangle("rectout2", 25, "no_move", 2 * pan.getWidth() / 3, 40, pan.getWidth() / 3, pan.getHeight() - 80, false, Color.gray, Color.black);
+		pan.addRectangle("rectout", 25, "no_move", pan.getWidth() / 3 - 5, 40, 5, pan.getHeight() - 80, false, Color.gray, Color.black);
+		pan.addRectangle("rectout2", 25, "no_move", 2 * pan.getWidth() / 3, 40, 5, pan.getHeight() - 80, false, Color.gray, Color.black);
 		
+		pan.addRectangle("rectout3", 25, "move", -150, 40, 5, pan.getHeight() - 80, false, Color.gray, Color.black);
+		
+		
+		pan.setGroupDrawOutsideWindow("move", false);
 		
 		pan.addScrollbar("scrollbar", 30, "no_move", 0, pan.getHeight() - 20, pan.getWidth() / 2, 20, pan.getWidth() / 3, pan.getWidth() / 3, "move", false);
 		

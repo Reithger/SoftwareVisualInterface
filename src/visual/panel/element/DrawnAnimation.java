@@ -101,10 +101,10 @@ public class DrawnAnimation extends Element{
 
 	@Override
 	public int getMinimumX() {
-		int low = 0;
+		Integer low = null;
 		for(Image i : images) {
 			int wid = i.getWidth(null);
-			if(getX() - (centered ? wid / 2 : wid) < low) {
+			if(low == null || getX() - (centered ? wid / 2 : wid) < low) {
 				low = getX() - (centered ? wid / 2 : wid);
 			}
 		}
@@ -113,10 +113,10 @@ public class DrawnAnimation extends Element{
 
 	@Override
 	public int getMaximumX() {
-		int max = 0;
+		Integer max = null;
 		for(Image i : images) {
 			int wid = i.getWidth(null);
-			if(getX() + (centered ? wid / 2 : wid) > max) {
+			if(max == null || getX() + (centered ? wid / 2 : wid) > max) {
 				max = getX() + (centered ? wid / 2 : wid);
 			}
 		}
@@ -125,10 +125,10 @@ public class DrawnAnimation extends Element{
 
 	@Override
 	public int getMinimumY() {
-		int low = 0;
+		Integer low = null;
 		for(Image i : images) {
 			int hei = i.getHeight(null);
-			if(getY() - (centered ? hei / 2 : hei) < low) {
+			if(low == null || getY() - (centered ? hei / 2 : hei) < low) {
 				low = getY() - (centered ? hei / 2 : hei);
 			}
 		}
@@ -137,10 +137,10 @@ public class DrawnAnimation extends Element{
 
 	@Override
 	public int getMaximumY() {
-		int max = 0;
+		Integer max = null;
 		for(Image i : images) {
 			int hei = i.getHeight(null);
-			if(getY() + (centered ? hei / 2 : hei) > max) {
+			if(max == null || getY() + (centered ? hei / 2 : hei) > max) {
 				max = getY() + (centered ? hei / 2 : hei);
 			}
 		}

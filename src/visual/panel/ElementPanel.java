@@ -19,6 +19,8 @@ import visual.panel.element.ElementFactory;
 import visual.panel.element.Clickable;
 import visual.panel.element.Element;
 import visual.panel.element.TextStorage;
+import visual.panel.group.ElementGroupManager;
+import visual.panel.group.OffsetManager;
 
 
 /**
@@ -69,9 +71,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
 	private volatile HashMap<String, Element> drawList;	//TODO: Abstract these out
 	
-	private volatile ElementGroupManager elementGroupMappings;
-	
-	private volatile HashMap<String, OffsetValues> groupOffsets;
+	private volatile ElementGroupManager groupInfoManager;
 	
 	/** HashMap that assigns a name to defined regions of the screen that generate a specified code upon interaction*/
 	private volatile LinkedList<String> clickList;	
@@ -112,8 +112,7 @@ public class ElementPanel extends Panel implements OffsetManager{
  	public ElementPanel(int x, int y, int width, int height){
 		super(x, y, width, height);
 		drawList = new HashMap<String, Element>();
-		elementGroupMappings = new ElementGroupManager();
-		groupOffsets = new HashMap<String, OffsetValues>();
+		groupInfoManager = new ElementGroupManager();
 		clickList = new LinkedList<String>();
 		images = new HashMap<String, Image>();
 		dragClickSensitivity = DRAG_CLICK_SENSITIVITY;
@@ -144,21 +143,48 @@ public class ElementPanel extends Panel implements OffsetManager{
 		Collections.sort(elements);
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
-			HashSet<String> group = elementGroupMappings.getGroups(e.hashCode());
+			HashSet<String> group = groupInfoManager.getGroups(e.hashCode());
 			if(group == null) {
 				elements.get(i).drawToScreen(g, 0, 0);
 			}
 			else {
 				int offX = 0;
 				int offY = 0;
+				boolean compl = false;
 				for(String s : group) {
-					OffsetValues offset = groupOffsets.get(s);
-					offX += offset.getOffsetX();
-					offY += offset.getOffsetY();
+					offX += groupInfoManager.getOffsetX(s);
+					offY += groupInfoManager.getOffsetY(s);
+					if(!groupInfoManager.getGroupDrawSetting(s)) {
+						compl = true;
+					}
 				}
-				elements.get(i).drawToScreen(g, offX, offY);
+				if(compl) {
+					if(canDrawElement(e, group)) {
+						e.drawToScreen(g, offX, offY);
+					}
+				}
+				else {
+					e.drawToScreen(g, offX, offY);
+				}
+
 			}
 		}
+	}
+	
+	private boolean canDrawElement(Element e, HashSet<String> group) {
+		boolean canDraw = true;
+		int offX = 0;
+		int offY = 0;
+		for(String s : group) {
+			offX += groupInfoManager.getOffsetX(s);
+			offY += groupInfoManager.getOffsetY(s);
+		}
+		for(String s : group) {	
+			if(!groupInfoManager.getGroupDrawSetting(s)) {
+				canDraw = canDraw && ((groupInfoManager.isPositionInWindowBounds(s, e.getMinimumX() + offX, e.getMaximumX() + offX, false) && groupInfoManager.isPositionInWindowBounds(s, e.getMinimumY() + offY, e.getMaximumY() + offY, true)));
+			}
+		}
+		return canDraw;
 	}
 
 	//-- Element Adding/Removing  -----------------------------
@@ -180,10 +206,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 		e.setHash(n);
 		drawList.put(n, e);
 		if(frame != null) {
-			if(groupOffsets.get(frame) == null) {
-				addGroup(frame);
-			}
-			elementGroupMappings.addMapping(e.hashCode(), frame);
+			groupInfoManager.addMapping(e.hashCode(), frame);
 		}
 		closeLock();
 		if(clickList.contains(n))
@@ -207,7 +230,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 			closeLock();
 		}
 		openLock();
-		elementGroupMappings.removeMapping(drawList.get(name).hashCode());
+		groupInfoManager.removeMapping(drawList.get(name).hashCode());
 		drawList.remove(name);
 		clickList.remove(name);
 		closeLock();
@@ -250,12 +273,11 @@ public class ElementPanel extends Panel implements OffsetManager{
 	//-- Group Stuff  -----------------------------------------
 	
 	public boolean adjustGroupOffset(String ref, int newOffsetX, int newOffsetY) {
-		OffsetValues offset = groupOffsets.get(ref);
-		if(offset == null) {
+		if(!groupInfoManager.hasGroup(ref)) {
 			return false;
 		}
-		offset.setOffsetX(newOffsetX);
-		offset.setOffsetY(newOffsetY);
+		groupInfoManager.setOffsetX(ref, newOffsetX);
+		groupInfoManager.setOffsetY(ref, newOffsetY);
 		return true;
 	}
 	
@@ -264,10 +286,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 		if(e == null) {
 			return false;
 		}
-		if(groupOffsets.get(groupName) == null) {
-			addGroup(groupName);
-		}
-		elementGroupMappings.addMapping(e.hashCode(), groupName);
+		groupInfoManager.addMapping(e.hashCode(), groupName);
 		return true;
 	}
 	
@@ -277,7 +296,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 			return false;
 		}
 		
-		elementGroupMappings.removeMapping(e.hashCode(), groupName);
+		groupInfoManager.removeMapping(e.hashCode(), groupName);
 		return true;
 	}
 	
@@ -292,9 +311,6 @@ public class ElementPanel extends Panel implements OffsetManager{
 	}
 	
 	public void addElementPrefixedToGroup(String pref, String groupName) {
-		if(groupOffsets.get(groupName) == null) {
-			addGroup(groupName);
-		}
 		openLock();
 		for(String n : drawList.keySet()) {
 			if(n.matches(pref + ".*")) {
@@ -305,16 +321,23 @@ public class ElementPanel extends Panel implements OffsetManager{
 	}
 
 	public boolean addGroup(String nom) {
-		if(groupOffsets.get(nom) != null) {
+		if(groupInfoManager.hasGroup(nom)) {
 			return false;
 		}
-		groupOffsets.put(nom, new OffsetValues(0, 0));
+		groupInfoManager.addGroup(nom);
 		return true;
 	}
 	
 	public void removeGroup(String nom) {
-		elementGroupMappings.removeGroup(nom);
-		groupOffsets.remove(nom);
+		groupInfoManager.removeGroup(nom);
+	}
+	
+	public void setGroupWindow(String groupName, int origin, int breadth, boolean isVert) {
+		groupInfoManager.setWindow(groupName, origin, breadth, isVert);
+	}
+	
+	public void setGroupDrawOutsideWindow(String groupName, boolean set) {
+		groupInfoManager.setGroupDrawSetting(groupName, set);
 	}
 	
 	//-- Adjust Element Property  -----------------------------
@@ -361,8 +384,14 @@ public class ElementPanel extends Panel implements OffsetManager{
 	private void updateClickRegions(String groupName) {
 		for(int i = 0; i < clickList.size(); i++) {
 			Clickable c = getClickableElement(clickList.get(i));
-			if(elementGroupMappings.getGroups(c.getIdentity()).contains(groupName)) {
-				updateClickRegion(clickList.get(i));
+			HashSet<String> group = groupInfoManager.getGroups(c.getIdentity());
+			if(group.contains(groupName)) {
+				if(canDrawElement(getElement(clickList.get(i)), group)) {
+					updateClickRegion(clickList.get(i));
+				}
+				else {
+					removeClickRegion(c.getIdentity());
+				}
 			}
 		}
 	}
@@ -370,7 +399,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	private void updateClickRegion(String name) {
 		Clickable c = getClickableElement(name);
 		if(c != null) {
-			HashSet<String> group = elementGroupMappings.getGroups(c.getIdentity());
+			HashSet<String> group = groupInfoManager.getGroups(c.getIdentity());
 			if(group == null) {
 				addClickRegion(c.getIdentity(), c.getDetectionRegion(0, 0));
 			}
@@ -378,9 +407,8 @@ public class ElementPanel extends Panel implements OffsetManager{
 				int offX = 0;
 				int offY = 0;
 				for(String s : group) {
-					OffsetValues offset = groupOffsets.get(s);
-					offX += offset.getOffsetX();
-					offY += offset.getOffsetY();
+					offX += groupInfoManager.getOffsetX(s);
+					offY += groupInfoManager.getOffsetY(s);
 				}
 				addClickRegion(c.getIdentity(), c.getDetectionRegion(offX, offY));
 			}
@@ -519,8 +547,9 @@ public class ElementPanel extends Panel implements OffsetManager{
 	
 	public void addScrollbar(String name, int priority, String frame, int scrollX, int scrollY, int scrollWid, int scrollHei, int windowOrigin, int windowSize, String groupControl, boolean isVert) {
 		clickList.add(name);
+		setGroupWindow(groupControl, windowOrigin, windowSize, isVert);
 		handleAddElement(name, ElementFactory.generateScrollbar(priority, scrollX, scrollY, scrollWid, scrollHei, windowOrigin, windowSize, SCROLLBAR_CODE_VALUE--, groupControl, isVert, this), frame);
-}
+	}
 	
 	//-- Image  -----------------------------------------------
 	
@@ -816,23 +845,23 @@ public class ElementPanel extends Panel implements OffsetManager{
 	}
 	
 	public void setOffsetX(String groupName, int newOffsetX) {
-		groupOffsets.get(groupName).setOffsetX(newOffsetX);
+		groupInfoManager.setOffsetX(groupName, newOffsetX);
 		updateClickRegions(groupName);
 	}
 	
 	public void setOffsetY(String groupName, int newOffsetY) {
-		groupOffsets.get(groupName).setOffsetY(newOffsetY);
+		groupInfoManager.setOffsetY(groupName, newOffsetY);
 		updateClickRegions(groupName);
 	}
-	
+		
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public int getOffsetX(String groupName) {
-		return groupOffsets.get(groupName).getOffsetX();
+		return groupInfoManager.getOffsetX(groupName);
 	}
 	
 	public int getOffsetY(String groupName) {
-		return groupOffsets.get(groupName).getOffsetY();
+		return groupInfoManager.getOffsetY(groupName);
 	}
 	
 	public int getTextWidth(String text, Font use) {
@@ -998,59 +1027,59 @@ public class ElementPanel extends Panel implements OffsetManager{
 	}
 	
 	public int getMinimumScreenX(String groupName) {
-		int minX = 0;
+		Integer minX = null;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
-			if((groupName == null || elementGroupMappings.getGroups(e.hashCode()).contains(groupName)) && e.getMinimumX() < minX) {
+			if((groupName == null || groupInfoManager.getGroups(e.hashCode()).contains(groupName)) && (minX == null || e.getMinimumX() < minX)) {
 				minX = e.getMinimumX();
 			}
 		}
-		return minX > 0 ? 0 : minX;
+		return minX;
 	}
 	
 	public int getMaximumScreenX(String groupName) {
-		int maxX = 0;
+		Integer maxX = null;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
-			if((groupName == null || elementGroupMappings.getGroups(e.hashCode()).contains(groupName)) && e.getMaximumX() > maxX) {
+			if((groupName == null || groupInfoManager.getGroups(e.hashCode()).contains(groupName)) && (maxX == null || e.getMaximumX() > maxX)) {
 				maxX = e.getMaximumX();
 			}
 		}
-		return maxX < getWidth() ? getWidth() : maxX;
+		return maxX;
 	}
 	
 	public int getMinimumScreenY(String groupName) {
-		int minY = 0;
+		Integer minY = null;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
-			if((groupName == null || elementGroupMappings.getGroups(e.hashCode()).contains(groupName)) && e.getMinimumY() < minY) {
+			if((groupName == null || groupInfoManager.getGroups(e.hashCode()).contains(groupName)) && (minY == null || e.getMinimumY() < minY)) {
 				minY = e.getMinimumY();
 			}
 		}
-		return minY > 0 ? 0 : minY;
+		return minY;
 	}
 	
 	public int getMaximumScreenY(String groupName) {
-		int maxY = 0;
+		Integer maxY = null;
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
 		closeLock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
-			if((groupName == null || elementGroupMappings.getGroups(e.hashCode()).contains(groupName)) && e.getMaximumY() > maxY) {
+			if((groupName == null || groupInfoManager.getGroups(e.hashCode()).contains(groupName)) && (maxY == null || e.getMaximumY() > maxY)) {
 				maxY = e.getMaximumY();
 			}
 		}
-		return (maxY < getHeight() ? getHeight() : maxY);
+		return maxY;
 	}
 	
 	public int getDragClickSensitivity() {

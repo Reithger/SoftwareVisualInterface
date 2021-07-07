@@ -5,7 +5,7 @@ import java.awt.Font;
 import java.awt.Image;
 
 import misc.Canvas;
-import visual.panel.OffsetManager;
+import visual.panel.group.OffsetManager;
 
 public class ElementFactory {
 	

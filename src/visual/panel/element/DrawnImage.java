@@ -21,8 +21,7 @@ public class DrawnImage extends Element{
 		Image drawImage = null;
 		center = inCenter;
 		if(!proportion) {
-			int small = width < height ? width : height;
-			drawImage = img.getScaledInstance(small, small, Image.SCALE_DEFAULT);
+			drawImage = img.getScaledInstance(width, height, Image.SCALE_DEFAULT);
 		}
 		else {
 			int actX = img.getWidth(null);
@@ -70,7 +69,7 @@ public class DrawnImage extends Element{
 
 	@Override
 	public int getMaximumX() {
-		return image.getWidth(null) + (center ? getX() - (center ? image.getWidth(null) / 2 : 0) : getX());
+		return image.getWidth(null) + getMinimumX();
 	}
 
 	@Override
@@ -80,6 +79,6 @@ public class DrawnImage extends Element{
 
 	@Override
 	public int getMaximumY() {
-		return image.getHeight(null) + (center ? getY() - (center ? image.getHeight(null) / 2 : 0) : getY());
+		return image.getHeight(null) + getMinimumY();
 	}
 }

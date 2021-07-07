@@ -22,44 +22,44 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 //---  Operations   ---------------------------------------------------------------------------
 	
 	@Override
-	public void handleTextButton(String nom, String frame, int x, int y, int wid, int hei, Font font, String phr, int code, Color fill, Color border) {
-		handleRectangle(nom + "_rect", frame, 5, x, y, wid, hei, fill, border);
-		handleText(nom + "_text", frame, x, y, wid, hei, font == null ? DEFAULT_FONT : font, phr);
-		handleButton(nom + "_butt", frame, x, y, wid, hei, code);
+	public void handleTextButton(String nom, String frame, int prior, int x, int y, int wid, int hei, Font font, String phr, int code, Color fill, Color border) {
+		handleRectangle(nom + "_rect", frame, prior, x, y, wid, hei, fill, border);
+		handleText(nom + "_text", frame, prior + 1, x, y, wid, hei, font == null ? DEFAULT_FONT : font, phr);
+		handleButton(nom + "_butt", frame, prior,  x, y, wid, hei, code);
 	}
 
 	@Override
-	public void handleText(String nom, String frame, int x, int y, int wid, int hei, Font font, String phr) {
+	public void handleText(String nom, String frame, int prior, int x, int y, int wid, int hei, Font font, String phr) {
 		if(!moveElement(nom, x, y)){
-			addText(nom, 15, frame, x, y, wid, hei, phr, font == null ? DEFAULT_FONT : font, true, true, true);
+			addText(nom, prior, frame, x, y, wid, hei, phr, font == null ? DEFAULT_FONT : font, true, true, true);
 		}
 	}
 
 	@Override
-	public void handleImage(String nom, String frame, int x, int y, String path, double scale) {
+	public void handleImage(String nom, String frame, int prior, int x, int y, String path, double scale) {
 		if(!moveElement(nom, x, y)){
-			addImage(nom, 15, frame, x, y, true, path, scale);
+			addImage(nom, prior, frame, x, y, true, path, scale);
 		}
 	}
 	
 	@Override
-	public void handleImage(String nom, String frame, int x, int y, Image img, double scale) {
+	public void handleImage(String nom, String frame, int prior, int x, int y, Image img, double scale) {
 		if(!moveElement(nom, x, y)){
-			addImage(nom, 15, frame, x, y, true, img, scale);
+			addImage(nom, prior, frame, x, y, true, img, scale);
 		}
 	}
 
 	@Override
-	public void handleImage(String nom, String frame, int x, int y, int wid, int hei, String imgPath) {
+	public void handleImage(String nom, String frame, int prior, int x, int y, int wid, int hei, String imgPath) {
 		if(!moveElement(nom, x, y)){
-			addImage(nom, 15, frame, x, y, wid, hei, true, imgPath, true);
+			addImage(nom, prior, frame, x, y, wid, hei, true, imgPath, true);
 		}
 	}
 	
 	@Override
-	public void handleTextEntry(String nom, String frame, int x, int y, int wid, int hei, int cod, Font font, String phr) {
+	public void handleTextEntry(String nom, String frame, int prior, int x, int y, int wid, int hei, int cod, Font font, String phr) {
 		if(!moveElement(nom, x, y)){
-			addTextEntry(nom, 15, frame, x, y, wid, hei, cod, phr, font == null ? ENTRY_FONT : font, true, true, true);	//TODO: Smaller font for entry?
+			addTextEntry(nom, prior, frame, x, y, wid, hei, cod, phr, font == null ? ENTRY_FONT : font, true, true, true);	//TODO: Smaller font for entry?
 		}
 		if(!getElementStoredText(nom).equals(phr)) {
 			setElementStoredText(nom, phr);
@@ -67,9 +67,9 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	}
 
 	@Override
-	public void handleButton(String nom, String frame, int x, int y, int wid, int hei, int code) {
+	public void handleButton(String nom, String frame, int prior, int x, int y, int wid, int hei, int code) {
 		if(!moveElement(nom, x, y)) {
-			addButton(nom, 10, frame, x, y, wid, hei, code, true);
+			addButton(nom, prior, frame, x, y, wid, hei, code, true);
 		}
 	}
 
@@ -108,7 +108,7 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	}
 
 	@Override
-	public void handleImageButton(String name, String frame, int x, int y, int wid, int hei, String path, int code) {
+	public void handleImageButton(String name, String frame, int prior, int x, int y, int wid, int hei, String path, int code) {
 		String imageName = name + "_image";
 		if(!moveElement(imageName, x, y)) {
 			double imgWid = retrieveImage(path).getWidth(null);
@@ -116,11 +116,11 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 			if(imgWid != wid) {
 				zoom = wid / imgWid;
 			}
-			addImage(imageName,15, frame, x, y, true, path, zoom);
+			addImage(imageName, prior, frame, x, y, true, path, zoom);
 		}
 		String buttonName = name + "_button";
 		if(!moveElement(buttonName, x, y)) {
-			addButton(buttonName, 15, frame,  x, y, wid, hei, code, true);
+			addButton(buttonName, prior, frame,  x, y, wid, hei, code, true);
 		}
 	}
 	
