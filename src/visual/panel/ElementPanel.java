@@ -230,7 +230,9 @@ public class ElementPanel extends Panel implements OffsetManager{
 			closeLock();
 		}
 		openLock();
-		groupInfoManager.removeMapping(drawList.get(name).hashCode());
+		Element e = drawList.get(name);
+		if(e != null)
+			groupInfoManager.removeMapping(e.hashCode());
 		drawList.remove(name);
 		clickList.remove(name);
 		closeLock();
@@ -384,6 +386,9 @@ public class ElementPanel extends Panel implements OffsetManager{
 	private void updateClickRegions(String groupName) {
 		for(int i = 0; i < clickList.size(); i++) {
 			Clickable c = getClickableElement(clickList.get(i));
+			if(c == null) {
+				continue;
+			}
 			HashSet<String> group = groupInfoManager.getGroups(c.getIdentity());
 			if(group.contains(groupName)) {
 				if(canDrawElement(getElement(clickList.get(i)), group)) {
@@ -1037,6 +1042,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 				minX = e.getMinimumX();
 			}
 		}
+		minX = minX == null ? 0 : minX;
 		return minX;
 	}
 	
@@ -1051,6 +1057,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 				maxX = e.getMaximumX();
 			}
 		}
+		maxX = maxX == null ? 0 : maxX;
 		return maxX;
 	}
 	
@@ -1065,6 +1072,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 				minY = e.getMinimumY();
 			}
 		}
+		minY = minY == null ? 0 : minY;
 		return minY;
 	}
 	
@@ -1079,6 +1087,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 				maxY = e.getMaximumY();
 			}
 		}
+		maxY = maxY == null ? 0 : maxY;
 		return maxY;
 	}
 	

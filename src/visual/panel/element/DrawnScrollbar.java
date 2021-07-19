@@ -84,8 +84,13 @@ public class DrawnScrollbar extends Element implements Clickable{
 		
 		g.drawRect(getX() + offsetX, getY() + offsetY, scrollbarWid, scrollbarHei);
 		
-		g.fillRect((isVert ? getX() : (getX() + barTopSize)) + offsetX, (isVert ? (getY() + barTopSize) : getY()) + offsetY, isVert ? scrollbarWid : barButtonSize, isVert ? barButtonSize : scrollbarHei);
-		detection.setRegion((isVert ? getX() : (getX() + barTopSize)) + offsetX, (isVert ? (getY() + barTopSize) : getY()) + offsetY, isVert ? scrollbarWid : barButtonSize, isVert ? barButtonSize : scrollbarHei);
+		int x = (isVert ? getX() : (getX() + barTopSize)) + offsetX;
+		int y = (isVert ? (getY() + barTopSize) : getY()) + offsetY;
+		int wid = isVert ? scrollbarWid : barButtonSize;
+		int hei = isVert ? barButtonSize : scrollbarHei;
+		
+		g.fillRect(x, y, wid, hei);
+		detection.setRegion(x, y, wid, hei);
 	}
 	
 	@Override
@@ -105,7 +110,11 @@ public class DrawnScrollbar extends Element implements Clickable{
 		
 		int newOffset = (int)((low + high) * prop - high);
 		
-		newOffset = newOffset > windowOrigin - minBound ? windowOrigin - minBound : newOffset < windowOrigin + windowSize - maxBound ? windowOrigin + windowSize - maxBound : newOffset;
+		int windowMax = windowOrigin + windowSize;
+		int min = minBound > windowOrigin ? windowOrigin : minBound;
+		int max = maxBound < windowMax ? windowMax : maxBound;
+		
+		newOffset = newOffset > windowOrigin - min ? windowOrigin - min : newOffset < windowMax - max ? windowMax - max : newOffset;
 		if(isVert) {
 			offsetManager.setOffsetY(groupName, newOffset);
 		}
@@ -169,8 +178,13 @@ public class DrawnScrollbar extends Element implements Clickable{
 		int offset = isVert ? offsetManager.getOffsetY(groupName) : offsetManager.getOffsetX(groupName);
 		int barSize = isVert ? scrollbarHei : scrollbarWid;
 		
-		int subSpace = Math.abs(windowOrigin - minBound - offset);
-		int overSpace = maxBound - (windowOrigin + windowSize) + offset;
+		int subSpace = Math.abs(windowOrigin - (minBound > windowOrigin ? windowOrigin : minBound) - offset);
+		int max = windowOrigin + windowSize;
+		int overSpace = (maxBound < max ? max : maxBound) - (max) + offset;
+		
+		
+		
+		
 		boolean minSize = (subSpace + overSpace + butSize) >= barSize;
 		return minSize ? butSize : barSize - subSpace - overSpace;
 	}
@@ -180,8 +194,12 @@ public class DrawnScrollbar extends Element implements Clickable{
 		int offset = isVert ? offsetManager.getOffsetY(groupName) : offsetManager.getOffsetX(groupName);
 		int barSize = isVert ? scrollbarHei : scrollbarWid;
 		
-		int subSpace = Math.abs(windowOrigin - minBound - offset);
-		int overSpace = maxBound - (windowOrigin + windowSize) + offset;
+		int subSpace = Math.abs(windowOrigin - (minBound > windowOrigin ? windowOrigin : minBound) - offset);
+		int max = windowOrigin + windowSize;
+		int overSpace = (maxBound < max ? max : maxBound) - (max) + offset;
+		
+		
+		
 		boolean minSize = (subSpace + overSpace + butSize) >= barSize;
 		int barButtonSize = minSize ? butSize : barSize - subSpace - overSpace;
 		return minSize ? (int)((barSize - barButtonSize) * (double)(subSpace / (double)(subSpace + overSpace))) : subSpace;

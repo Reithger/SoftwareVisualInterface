@@ -144,7 +144,7 @@ public class test {
 			@Override
 			public void dragEvent(int code, int x, int y, int clickType) {
 				super.dragEvent(code, x, y, clickType);
-				if(false && dragging) {
+				if(dragging) {
 					resize(getWidth() + (x - lastX), getHeight() + (y - lastY));
 					lastX = x;
 					lastY = y;

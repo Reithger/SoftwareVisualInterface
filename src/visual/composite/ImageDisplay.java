@@ -78,6 +78,7 @@ public class ImageDisplay {
 	
 	private boolean disableHelp;
 	private boolean help;
+	private boolean update;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -156,11 +157,11 @@ public class ImageDisplay {
 				break;
 			case CODE_ZOOM_IN:
 				increaseZoom();
-				refreshImage();
+				zoomRefresh();
 				break;
 			case CODE_ZOOM_OUT:
 				decreaseZoom();
-				refreshImage();
+				zoomRefresh();
 				break;
 			case CODE_RESET_POSITION:
 				resetPosition();
@@ -193,18 +194,18 @@ public class ImageDisplay {
 				break;
 			case KEY_ZOOM_IN:
 				increaseZoom();
-				refreshImage();
+				zoomRefresh();
 				break;
 			case KEY_ZOOM_OUT:
 				decreaseZoom();
-				refreshImage();
+				zoomRefresh();
 				break;
 			case KEY_RESET_POSITION:
 				resetPosition();
 				break;
 			case KEY_AUTOFIT_ZOOM:
 				autofitImage();
-				refreshImage();
+				zoomRefresh();
 				break;
 			case KEY_HIDE_UI:
 				toggleUI();
@@ -254,7 +255,8 @@ public class ImageDisplay {
 		else {
 			decreaseZoom();
 		}
-		refreshImage();
+		update = true;
+		zoomRefresh();
 	}
 	
 	public void processDragInput(int code, int x, int y) {
@@ -281,8 +283,12 @@ public class ImageDisplay {
 		}
 		else {
 			p.removeElementPrefixed(ELEMENT_HELP);
+			if(update) {
+				p.removeElement(IMAGE_NAME);
+				update = false;
+			}
 			if(!p.moveElement(IMAGE_NAME, 0, 0)) {
-				p.addImage(IMAGE_NAME, 10, "move", 0, 0, false, getImage(), getZoom());
+				p.addImage(IMAGE_NAME, 10, "image_display_navigate", 0, 0, false, getImage(), getZoom());
 			}
 			drawUI();
 		}
@@ -355,9 +361,14 @@ public class ImageDisplay {
 		zoom = zoom < ot ? zoom : ot;
 	}
 	
-	public void refreshImage() {
+	public void zoomRefresh() {
 		p.removeElement(IMAGE_NAME);
 		drawPage();
+	}
+	
+	public void refreshImage(String path) {
+		p.removeCachedImage(path);
+		refresh();
 	}
 	
 	public void refresh() {
@@ -370,8 +381,8 @@ public class ImageDisplay {
 	}
 	
 	public void resetPosition() {
-		p.setOffsetX("move", 0);
-		p.setOffsetY("move", 0);
+		p.setOffsetX("image_display_navigate", 0);
+		p.setOffsetY("image_display_navigate", 0);
 	}
 	
 	public void resetZoom() {
@@ -397,35 +408,36 @@ public class ImageDisplay {
 //---  Setter Methods   -----------------------------------------------------------------------
 	
 	public void setImage(String in) {
-		reference = p.retrieveImage(in);
+		setImage(p.retrieveImage(in));
 	}
 	
 	public void setImage(Image in) {
 		reference = in;
+		update = true;
 	}
 	
 	public void increaseOriginX() {
-		p.setOffsetX("move", (int)(p.getOffsetX("move") + reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
+		p.setOffsetX("image_display_navigate", (int)(p.getOffsetX("image_display_navigate") + reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
 	}
 
 	public void increaseOriginY() {
-		p.setOffsetY("move", (int)(p.getOffsetY("move") + reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
+		p.setOffsetY("image_display_navigate", (int)(p.getOffsetY("image_display_navigate") + reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
 	}
 	
 	public void decreaseOriginX() {
-		p.setOffsetX("move", (int)(p.getOffsetX("move") - reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
+		p.setOffsetX("image_display_navigate", (int)(p.getOffsetX("image_display_navigate") - reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
 	}
 	
 	public void decreaseOriginY() {
-		p.setOffsetY("move", (int)(p.getOffsetY("move") - reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
+		p.setOffsetY("image_display_navigate", (int)(p.getOffsetY("image_display_navigate") - reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
 	}
 	
 	public void dragOriginX(int amount) {
-		p.setOffsetX("move", p.getOffsetX("move") + amount);
+		p.setOffsetX("image_display_navigate", p.getOffsetX("image_display_navigate") + amount);
 	}
 	
 	public void dragOriginY(int amount) {
-		p.setOffsetY("move", p.getOffsetY("move") + amount);
+		p.setOffsetY("image_display_navigate", p.getOffsetY("image_display_navigate") + amount);
 	}
 	
 	public void increaseZoom() {
@@ -441,11 +453,11 @@ public class ImageDisplay {
 	}
 	
 	public void setOffsetX(int in) {
-		p.setOffsetX("move", in);
+		p.setOffsetX("image_display_navigate", in);
 	}
 	
 	public void setOffsetY(int in) {
-		p.setOffsetY("move", in);
+		p.setOffsetY("image_display_navigate", in);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -459,11 +471,11 @@ public class ImageDisplay {
 	}
 	
 	public int getOffsetX() {
-		return p.getOffsetX("move");
+		return p.getOffsetX("image_display_navigate");
 	}
 	
 	public int getOffsetY() {
-		return p.getOffsetY("move");
+		return p.getOffsetY("image_display_navigate");
 	}
 	
 }

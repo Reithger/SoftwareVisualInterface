@@ -12,6 +12,7 @@ import input.ComponentReceiver;
 import input.CustomEventReceiver;
 import input.EventFielder;
 import input.EventReceiver;
+import input.NestedEventReceiver;
 import input.mouse.Detectable;
 import visual.frame.Frame;
 
@@ -43,7 +44,7 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	
 	private volatile boolean mutex;
 	
-	private EventReceiver inputHandler;
+	private NestedEventReceiver inputHandler;
 	
 //---  Constructor Support   ------------------------------------------------------------------
 	
@@ -119,6 +120,30 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 		getPanel().requestFocusInWindow();
 	}
 	
+	public void addEventReceiver(EventReceiver in) {
+		if(inputHandler == null) {
+			inputHandler = new NestedEventReceiver(in);
+		}
+		else {
+			inputHandler.addNested(in);
+		}
+	}
+
+	public void addEventReceiver(String label, EventReceiver in) {
+		if(inputHandler == null) {
+			inputHandler = new NestedEventReceiver(in, label);
+		}
+		else {
+			inputHandler.addNested(in, label);
+		}
+	}
+	
+	public void removeEventReceiver(String label) {
+		if(inputHandler != null) {
+			inputHandler.removeNestedEventReceiver(label);
+		}
+	}
+	
 //---  Setter Methods   -----------------------------------------------------------------------
 
 	/**
@@ -133,6 +158,10 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	}
 	
 	public void setEventReceiver(EventReceiver in) {
+		inputHandler = new NestedEventReceiver(in);
+	}
+	
+	public void setEventReceiver(NestedEventReceiver in) {
 		inputHandler = in;
 	}
 	
@@ -155,7 +184,7 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
-	public EventReceiver getEventReceiver() {
+	public NestedEventReceiver getEventReceiver() {
 		return inputHandler;
 	}
 	
