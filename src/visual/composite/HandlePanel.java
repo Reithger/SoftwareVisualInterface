@@ -50,9 +50,9 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	}
 
 	@Override
-	public void handleImage(String nom, String frame, int prior, int x, int y, int wid, int hei, String imgPath) {
+	public void handleImage(String nom, String frame, int prior, int x, int y, int wid, int hei, boolean prop, String imgPath) {
 		if(!moveElement(nom, x, y)){
-			addImage(nom, prior, frame, x, y, wid, hei, true, imgPath, true);
+			addImage(nom, prior, frame, x, y, wid, hei, true, imgPath, prop);
 		}
 	}
 	

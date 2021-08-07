@@ -20,7 +20,7 @@ public interface HandleElements {
 
 	public abstract void handleImage(String nom, String group, int prior, int x, int y, Image img, double scale);
 
-	public abstract void handleImage(String nom, String group, int prior, int x, int y, int wid, int hei, String path);
+	public abstract void handleImage(String nom, String group, int prior, int x, int y, int wid, int hei, boolean prop, String path);
 	
 	public abstract void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, Font font, String phr);
 
