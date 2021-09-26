@@ -8,6 +8,10 @@ import java.util.HashSet;
 import filemeta.config.ConfigFileParser;
 
 public class ConfigFile {
+	
+//---  Constants   ----------------------------------------------------------------------------
+
+	public final static String COMMENT_SYMBOL = "#####";
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -34,9 +38,9 @@ public class ConfigFile {
 		f.createNewFile();
 		RandomAccessFile raf = new RandomAccessFile(f, "rw");
 		if(fileComment.length() > 0)
-			raf.writeBytes("#" + fileComment + "\n");
+			raf.writeBytes(COMMENT_SYMBOL + fileComment + "\n");
 		for(FileEntry s : getFileEntries()) {
-			raf.writeBytes("#" + s.getComments() + "\n");
+			raf.writeBytes(COMMENT_SYMBOL + s.getComments() + "\n");
 			raf.writeBytes(s.getName() + ConfigFileParser.ENTRY_EQUAL_SYMBOL + s.getValue() + ConfigFileParser.ENTRY_VALUE_END_SYMBOL + "\n");
 		}
 		raf.close();

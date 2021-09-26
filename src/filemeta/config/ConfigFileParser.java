@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Scanner;
 
+import filemeta.config.blueprint.ConfigFile;
+
 public class ConfigFileParser {
 
 //---  Constants   ----------------------------------------------------------------------------
 	
 	public final static String ENTRY_EQUAL_SYMBOL = " = ";
 	public final static String ENTRY_VALUE_END_SYMBOL = "</;>";
+	public final static String COMMENT_SYMBOL = ConfigFile.COMMENT_SYMBOL;
 	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
@@ -19,7 +22,7 @@ public class ConfigFileParser {
 		String line = "";
 		while(sc.hasNextLine()) {
 			line = sc.nextLine();
-			if(!line.contains("#")) {
+			if(!line.contains(COMMENT_SYMBOL)) {
 				String[] use = line.split(ENTRY_EQUAL_SYMBOL);
 				String name = use[0];
 				if(name.equals(entryName)) {
@@ -45,11 +48,14 @@ public class ConfigFileParser {
 		String out = "";
 		while(sc.hasNextLine()) {
 			line = sc.nextLine();
-			if(!line.contains("#")) {
+			if(!line.contains(COMMENT_SYMBOL)) {
 				String[] use = line.split(ENTRY_EQUAL_SYMBOL);
 				String name = use[0];
 				if(name.equals(entryName)) {
 					out += entryName + ENTRY_EQUAL_SYMBOL + newValue + ENTRY_VALUE_END_SYMBOL;
+					while(!line.contains(ENTRY_VALUE_END_SYMBOL) && sc.hasNextLine()) {
+						line = sc.nextLine();
+					}
 				}
 				else {
 					out += line;
