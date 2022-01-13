@@ -3,7 +3,6 @@ package visual.panel.element;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Toolkit;
 
 public class DrawnAnimation extends Element{
 	
@@ -35,7 +34,6 @@ public class DrawnAnimation extends Element{
 		images = imgs;
 		scale = inScale;
 		updatePeriod();
-		scaleImages();
 	}
 	
 	public DrawnAnimation(int x, int y, int prior, int[] wait, boolean center, double inScale, Image[] imgs) {
@@ -54,7 +52,6 @@ public class DrawnAnimation extends Element{
 		images = imgs;
 		scale = inScale;
 		updatePeriod();
-		scaleImages();
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -64,7 +61,9 @@ public class DrawnAnimation extends Element{
 		Color save = g.getColor();
 		int imgInd = getCurrentImage();
 		Image image = images[imgInd];
-		g.drawImage(image, getX() - (centered ? image.getWidth(null)/2 : 0) + offsetX, getY() - (centered ? image.getHeight(null)/2 : 0) + offsetY, null);
+		int actWid = (int)(image.getWidth(null) * scale);
+		int actHei = (int)(image.getHeight(null) * scale);
+		g.drawImage(image, getX() - (centered ? actWid / 2 : 0) + offsetX, getY() - (centered ? actHei / 2 : 0) + offsetY, actWid, actHei, null);
 		g.setColor(save);
 		frameNumber = (frameNumber + 1) % period;
 	}
@@ -73,16 +72,6 @@ public class DrawnAnimation extends Element{
 		period = 0;
 		for(int i : waitPeriod) {
 			period += i;
-		}
-	}
-	
-	private void scaleImages() {
-		for(int i = 0; i < images.length; i++) {
-			Toolkit tk = Toolkit.getDefaultToolkit();
-			Image img = images[i];
-			Image drawImage = img.getScaledInstance((int)(img.getWidth(null) * scale), (int)(img.getHeight(null) * scale), Image.SCALE_DEFAULT);
-			while(!tk.prepareImage(drawImage, -1, -1, null)){	}
-			images[i] = drawImage;
 		}
 	}
 

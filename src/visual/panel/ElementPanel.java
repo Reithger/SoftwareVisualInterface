@@ -36,15 +36,16 @@ import visual.panel.group.OffsetManager;
  * TODO: Big memory leak issues, need to fix that; maybe not? Still needs a good reworking though
  * TODO: ElementFactory to reduce number of dependencies on specific subclasses; simplify their input?
  * TODO: Small pixel font options for text
- * TODO: Region categories with scroll implementation, 'sub-panels'? Ugh, tricky to do.
+ * TODO: Colored text options
  * TODO: Diagnostic output of all Elements, instance variables
  * TODO: Review adding functions, they're getting cluttered
  * TODO: Decorator class to wrap it in Scrollbar and Drag Navigation functionality? Otherwise cluttered with booleans.
  * TODO: This needs major refactoring, it's almost 1000 lines! That was the size of that whole game you made in the summer of 2016! Good memories...
- * TODO: Frame Elements are always on top of regular elements regardless of priority, not desired
  * TODO: NestedEventReceiver should be able to remove composite receivers and label them
  * TODO: Element groupings with custom offset values - can remove FrameList?
- * TODO: Generic scrollbarElement for ease of manipulating offsets
+ * TODO: Hover Text (text appears when hovering over a region/element)
+ * TODO: Make an object with many attributes to assign to cut down on size of input for each function?
+ * TODO: Reconsider what HandlePanel can do, add comments to it
  * 
  * @author Ada Clevinger
  * 

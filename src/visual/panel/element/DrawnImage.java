@@ -13,29 +13,19 @@ public class DrawnImage extends Element{
 	
 	private boolean center;
 	
+	private int width;
+	
+	private int height;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
-	public DrawnImage(int x, int y, int prior, boolean inCenter, Image img, int width, int height, boolean proportion) {
+	public DrawnImage(int x, int y, int prior, boolean inCenter, Image img, int inWidth, int inHeight, boolean proportion) {
 		setX(x);
 		setY(y);
-		Image drawImage = null;
+		image = img;
 		center = inCenter;
-		if(!proportion) {
-			drawImage = img.getScaledInstance(width, height, Image.SCALE_DEFAULT);
-		}
-		else {
-			int actX = img.getWidth(null);
-			int actY = img.getHeight(null);
-			if((double)width / actX * actY < height) {
-				drawImage = img.getScaledInstance(width, (int)((double)width / actX * actY), Image.SCALE_DEFAULT);
-			}
-			else {
-				drawImage = img.getScaledInstance((int)((double)height / actY * actX), height, Image.SCALE_DEFAULT);
-			}
-		}
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		while(!tk.prepareImage(drawImage, -1, -1, null)){	}
-		image = drawImage;
+		width = inWidth;
+		height = inHeight;
 		setDrawPriority(prior);
 	}
 
@@ -52,12 +42,14 @@ public class DrawnImage extends Element{
 		image = img;
 		center = inCenter;
 		setDrawPriority(prior);
+		width = img.getWidth(null);
+		height = img.getHeight(null);
 	}	
 
 //---  Operations   ---------------------------------------------------------------------------
 	
 	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
-		g.drawImage(image, getX() - (center ? image.getWidth(null)/2 : 0) + offsetX, getY() - (center ? image.getHeight(null)/2 : 0) + offsetY, null);
+		g.drawImage(image, getX() - (center ? width / 2 : 0) + offsetX, getY() - (center ? height / 2 : 0) + offsetY, width, height, null);
 	}
 
 //---  Getter Methods   -----------------------------------------------------------------------

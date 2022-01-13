@@ -441,11 +441,41 @@ public class ImageDisplay {
 	}
 	
 	public void increaseZoom() {
+		int wid = reference.getWidth(null);
+		int hei = reference.getHeight(null);
+		
+		int origX = p.getWidth() / 2 - p.getOffsetX("image_display_navigate");
+		double propX = origX / (wid * zoom);
+		
+		int origY = p.getHeight() / 2 - p.getOffsetY("image_display_navigate");
+		double propY = origY / (hei * zoom);
+		
+		int wDif = (int)((ZOOM_FACTOR - 1) * wid * zoom * propX);
+		int hDif = (int)((ZOOM_FACTOR - 1) * hei * zoom * propY);
 		zoom *= ZOOM_FACTOR;
+		if(wDif != 0 && hDif != 0) {
+			dragOriginX(wDif * -1);
+			dragOriginY(hDif * -1);
+		}
 	}
 	
 	public void decreaseZoom() {
+		int wid = reference.getWidth(null);
+		int hei = reference.getHeight(null);
+		
+		int origX = p.getWidth() / 2 - p.getOffsetX("image_display_navigate");
+		double propX = origX / (wid * zoom);
+		
+		int origY = p.getHeight() / 2 - p.getOffsetY("image_display_navigate");
+		double propY = origY / (hei * zoom);
+		
+		int wDif = (int)((ZOOM_FACTOR - 1) * wid * zoom / ZOOM_FACTOR * propX);
+		int hDif = (int)((ZOOM_FACTOR - 1) * hei * zoom / ZOOM_FACTOR * propY);
 		zoom /= ZOOM_FACTOR;
+		if(wDif != 0 && hDif != 0) {
+			dragOriginX(wDif);
+			dragOriginY(hDif);
+		}
 	}
 	
 	public void setZoom(double in) {
