@@ -77,7 +77,7 @@ public class DrawnText extends Element{
 			String s = words[i];
 			if(s.equals("\n")) {
 				lines.add(lin);
-				lin = "";
+				lin = " ";
 			}
 			else if(fM.stringWidth(lin + (lin.equals("") ? "" : " ") + s) < width) {
 				lin += (lin.equals("") ? "" : " ") + s;
@@ -134,12 +134,20 @@ public class DrawnText extends Element{
 		return getY() + offsetY;
 	}
 	
+	protected Font getFont() {
+		return font;
+	}
+	
 	protected boolean getCenterX() {
 		return centeredX;
 	}
 	
 	protected boolean getCenterY() {
 		return centeredY;
+	}
+	
+	protected boolean getCentered() {
+		return centeredText;
 	}
 	
 	protected int getWidth() {

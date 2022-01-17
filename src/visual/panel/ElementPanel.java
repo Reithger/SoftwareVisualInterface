@@ -46,6 +46,9 @@ import visual.panel.group.OffsetManager;
  * TODO: Hover Text (text appears when hovering over a region/element)
  * TODO: Make an object with many attributes to assign to cut down on size of input for each function?
  * TODO: Reconsider what HandlePanel can do, add comments to it
+ * TODO: FocusElement currently can be updated to the wrong element if both share a code value
+ * TODO: Input Event functions can't discern which element was selected just from the code value alone
+ * TODO: Let TextEntry ignore certain key inputs so they can be interpreted at a higher level even if key input is being fed to that Element
  * 
  * @author Ada Clevinger
  * 
@@ -141,7 +144,12 @@ public class ElementPanel extends Panel implements OffsetManager{
 		openLock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
 		closeLock();
-		Collections.sort(elements);
+		try {
+			Collections.sort(elements);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
 			HashSet<String> group = groupInfoManager.getGroups(e.hashCode());
@@ -188,6 +196,18 @@ public class ElementPanel extends Panel implements OffsetManager{
 		return canDraw;
 	}
 
+	public boolean setFocusElement(String nom) {
+		if(getClickableElement(focusElement) != null) {
+			getClickableElement(focusElement).unfocus();
+		}
+		if(getClickableElement(nom) != null) {
+			focusElement = nom;
+			getClickableElement(nom).focus();
+			return true;
+		}
+		return false;
+	}
+	
 	//-- Element Adding/Removing  -----------------------------
 	
 	/**
@@ -422,12 +442,15 @@ public class ElementPanel extends Panel implements OffsetManager{
 	}
 	
 	private void updateFocusElement(int event) {
-		focusElement = null;
+		if(getClickableElement(focusElement) != null) {
+			getClickableElement(focusElement).unfocus();
+		}
 		for(String s : clickList) {
 			Clickable c = getClickableElement(s);
 			if(c != null) {
 				if(c.getCode() == event) { //TODO: Change this to getting the identity instead of the code
 					focusElement = s;
+					c.focus();
 				}
 			}
 		}

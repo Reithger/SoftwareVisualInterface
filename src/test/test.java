@@ -127,10 +127,10 @@ public class test {
 			@Override
 			public void keyEvent(char event) {
 				super.keyEvent(event);
-				if(event == 't') {
-					fram.hideActiveWindow("window");
-					fram.showActiveWindow("other");
-				}
+				//if(event == 't') {
+				//	fram.hideActiveWindow("window");
+				//	fram.showActiveWindow("other");
+				//}
 			}
 			
 			@Override

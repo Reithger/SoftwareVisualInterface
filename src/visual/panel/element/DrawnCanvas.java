@@ -52,7 +52,7 @@ public class DrawnCanvas extends Element implements Clickable{
 	public boolean focusDragEvent(int x, int y, int mouseType) {
 		return true;
 	}
-
+	
 	@Override
 	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
 		Color save = g.getColor();
@@ -64,7 +64,15 @@ public class DrawnCanvas extends Element implements Clickable{
 		elemWidth = elWid;
 		elemHeight = elHei;
 	}
-
+	
+	public void focus() {
+		
+	}
+	
+	public void unfocus() {
+		
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public Detectable getDetectionRegion(int offsetX, int offsetY) {

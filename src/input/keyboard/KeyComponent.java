@@ -2,6 +2,7 @@ package input.keyboard;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashMap;
 
 import input.EventFielder;
 import input.manager.actionevent.ActionEventGenerator;
@@ -23,7 +24,9 @@ public class KeyComponent implements KeyListener{
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** EventReceiver object providing reference to the EventReceiver to which this KeyComponent is attached*/
-	public EventFielder eventHandler;
+	private EventFielder eventHandler;
+	
+	private HashMap<Integer, Integer> VK_mapping;
 	
 //---  Constructors   -------------------------------------------------------------------------
 
@@ -36,6 +39,10 @@ public class KeyComponent implements KeyListener{
 	
 	public KeyComponent(EventFielder eventReceiver){
 		eventHandler = eventReceiver;
+		VK_mapping = new HashMap<Integer, Integer>();
+		for(int i = 0; i < 4; i++) {
+			VK_mapping.put(37 + i, i + 1);
+		}
 	}
 	
 //---  Setter Methods   -----------------------------------------------------------------------
@@ -58,6 +65,9 @@ public class KeyComponent implements KeyListener{
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() >= 37 && e.getKeyCode() <= 40) {
+			eventHandler.receiveActionEvent(ActionEventGenerator.generateKeyActionEvent(ActionEventGenerator.KEY_PRESS, (char)(VK_mapping.get(e.getKeyCode())+0)));	
+		}
 		eventHandler.receiveActionEvent(ActionEventGenerator.generateKeyActionEvent(ActionEventGenerator.KEY_DOWN, e.getKeyChar()));
 	}
 

@@ -92,6 +92,14 @@ public class DrawnButton extends Element implements Clickable{
 		return true;
 	}
 	
+	public void focus() {
+		
+	}
+	
+	public void unfocus() {
+		
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public ClickRegionRectangle getDetectionRegion(int offsetX, int offsetY) {

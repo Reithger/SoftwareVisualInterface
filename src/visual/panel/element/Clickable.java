@@ -54,4 +54,8 @@ public interface Clickable {
 	
 	public abstract boolean focusDragEvent(int x, int y, int mouseType);
 	
+	public abstract void focus();
+	
+	public abstract void unfocus();
+	
 }

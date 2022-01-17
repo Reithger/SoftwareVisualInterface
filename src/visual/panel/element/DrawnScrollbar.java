@@ -47,8 +47,8 @@ public class DrawnScrollbar extends Element implements Clickable{
 	
 	private int windowSize;
 	
-	int dynOff;
-	
+	private int dynOff;
+
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public DrawnScrollbar(int x, int y, int wid, int hei, int winOrigin, int winAcr, OffsetManager offset, int codeIn, int prior, String groupNom, boolean vert) {
@@ -123,6 +123,14 @@ public class DrawnScrollbar extends Element implements Clickable{
 		}
 		
 		return false;
+	}
+	
+	public void focus() {
+		
+	}
+	
+	public void unfocus() {
+		
 	}
 	
 	private void update() {
