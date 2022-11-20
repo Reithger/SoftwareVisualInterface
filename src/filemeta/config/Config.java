@@ -89,7 +89,7 @@ public class Config {
 		}
 		catch(IOException e) {
 			e.printStackTrace();
-			System.out.println("Failure to assign data: \"" + newValue + "\" to entry: \"" + entryName + "\" in file: \"" + fullPath + "\".");
+			System.err.println("Failure to assign data: \"" + newValue + "\" to entry: \"" + entryName + "\" in file: \"" + fullPath + "\".");
 			return false;
 		}
 	}
@@ -100,7 +100,7 @@ public class Config {
 		}
 		catch(IOException e) {
 			e.printStackTrace();
-			System.out.println("Failure to assign data: \"" + newValue + "\" to entry: \"" + entryName + "\" in file: \"" + fil.getAbsolutePath() + "\".");
+			System.err.println("Failure to assign data: \"" + newValue + "\" to entry: \"" + entryName + "\" in file: \"" + fil.getAbsolutePath() + "\".");
 			return false;
 		}
 	}
@@ -117,7 +117,7 @@ public class Config {
 		}
 		catch(IOException e) {
 			e.printStackTrace();
-			System.out.println("Failure to retrieve data in file: \"" + fil.getAbsolutePath() + "\" with entry name: " + entryName);
+			System.err.println("Failure to retrieve data in file: \"" + fil.getAbsolutePath() + "\" with entry name: " + entryName);
 			return null;
 		}
 	}
@@ -128,7 +128,7 @@ public class Config {
 		}
 		catch(IOException e) {
 			e.printStackTrace();
-			System.out.println("Failure to retrieve data in file: \"" + fullPath + "\" with entry name: " + entryName);
+			System.err.println("Failure to retrieve data in file: \"" + fullPath + "\" with entry name: " + entryName);
 			return null;
 		}
 	}
