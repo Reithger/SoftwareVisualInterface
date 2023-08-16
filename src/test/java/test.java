@@ -1,8 +1,15 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import com.github.softwarevisualinterface.filemeta.FileChooser;
 import com.github.softwarevisualinterface.config.Config;
@@ -21,7 +28,8 @@ public class test {
 	 *
 	 */
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
+
 		/*Callback.setCallback("C", new Callback() {
 			@Override
 			public void callbackFunction() {
@@ -35,14 +43,14 @@ public class test {
 		drawTest1();
 	}
 	
-	private static void testComposites() {
+	private static void testComposites() throws IOException {
 		//PopoutAlert pa = new PopoutAlert(450, 250, "yo get scared");
 		//pa.dispose();
 		PopoutSelectList psl = new PopoutSelectList(250, 150, new String[] {"var1A", "var2B", "var2C", "var1D"}, true);
 		psl.setTitle("Test");
 		System.out.println(psl.getSelected());
 		psl.dispose();
-		//PopoutImageDisplay pid = new PopoutImageDisplay(200, 200, "src\\test\\assets\\ada.png");
+		//PopoutImageDisplay pid = new PopoutImageDisplay(200, 200, ImageIO.read(IOUtils.resourceToURL("ada.png", test.class.getClassLoader())));
 	}
 	
 	private static void testConfig() {
@@ -60,16 +68,20 @@ public class test {
 	}
 	
 	private static void testFileChooser() {
-		File f = FileChooser.promptSelectFile("C:/Users/Borinor/Pictures/", true, true);
+		File f = FileChooser.promptSelectFile(SystemUtils.USER_DIR, true, true);
 		FileChooser.promptSaveFile(null, true, false, f);
 	}
 	
 	private static Canvas can;
 	
-	private static void drawTest1() {
-		String imagePath = "src\\test\\assets\\Saskia_Portrait.jpg";
-		String imagePath2 = "src\\test\\assets\\ada.png";
-		String[] imagesPaths = new String[] {"src\\test\\assets\\burner5.png","src\\test\\assets\\burner6.png","src\\test\\assets\\burner7.png"};
+	private static void drawTest1() throws IOException {
+		Image image = ImageIO.read(IOUtils.resourceToURL("Saskia_Portrait.jpg", test.class.getClassLoader()));
+		Image image2 = ImageIO.read(IOUtils.resourceToURL("ada.png", test.class.getClassLoader()));
+		Image[] images = new Image[] {
+			ImageIO.read(IOUtils.resourceToURL("burner5.png", test.class.getClassLoader())),
+			ImageIO.read(IOUtils.resourceToURL("burner6.png", test.class.getClassLoader())),
+			ImageIO.read(IOUtils.resourceToURL("burner7.png", test.class.getClassLoader()))
+		};
 		
 		WindowFrame fram = new WindowFrame(1200, 500);
 		fram.setName("Test");
@@ -101,10 +113,10 @@ public class test {
 		pan.addText("tex2", 10, "move",  pan.getWidth() / 2, pan.getHeight() /  2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "F F F", defaultFont, true, false, false);
 		pan.addText("tex3", 10, "move",  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T F T", defaultFont, true, false, true);
 		
-		pan.addAnimation("anim", 23, "move",  pan.getWidth() / 2, pan.getHeight() * 3 / 4, true, new int[] {13, 7, 12}, 5, imagesPaths);
+		pan.addAnimation("anim", 23, "move",  pan.getWidth() / 2, pan.getHeight() * 3 / 4, true, new int[] {13, 7, 12}, 5, images);
 		
-		pan.addImage("ada", 15, "move", pan.getWidth() / 4, pan.getHeight() / 3, 125, 75, true, imagePath2, true);
-		pan.addImage("ada2", 15, "move", pan.getWidth() * 2 / 3, pan.getHeight() / 3, 125, 75, true, imagePath2, false);
+		pan.addImage("ada", 15, "move", pan.getWidth() / 4, pan.getHeight() / 3, 125, 75, true, image2, true);
+		pan.addImage("ada2", 15, "move", pan.getWidth() * 2 / 3, pan.getHeight() / 3, 125, 75, true, image2, false);
 
 		pan.addRectangle("rectout", 25, "no_move", pan.getWidth() / 3 - 5, 40, 5, pan.getHeight() - 80, false, Color.gray, Color.black);
 		pan.addRectangle("rectout2", 25, "no_move", 2 * pan.getWidth() / 3, 40, 5, pan.getHeight() - 80, false, Color.gray, Color.black);
@@ -143,10 +155,14 @@ public class test {
 			public void dragEvent(int code, int x, int y, int clickType) {
 				super.dragEvent(code, x, y, clickType);
 				if(dragging) {
-					resize(getWidth() + (x - lastX), getHeight() + (y - lastY));
-					lastX = x;
-					lastY = y;
-					drawPan2(this);
+					try {
+						resize(getWidth() + (x - lastX), getHeight() + (y - lastY));
+						lastX = x;
+						lastY = y;
+						drawPan2(this);
+					} catch (IOException ioe) {
+						throw new UncheckedIOException(ioe);
+					}
 				}
 			}
 			
@@ -252,7 +268,7 @@ public class test {
 			
 		};
 		
-		hide.addAnimation("anim", 23, "move",  hide.getWidth() / 2, hide.getHeight() * 3 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
+		hide.addAnimation("anim", 23, "move",  hide.getWidth() / 2, hide.getHeight() * 3 / 4, true,	new int[] {13, 7, 12}, 5, images);
 		
 		fram.addPanel("stlth", stlth);
 		fram.reserveWindow("other");
@@ -268,14 +284,14 @@ public class test {
 		fram.addPanelToWindow("window", "canvas", pan3);
 	}
 	
-	private static void drawPan2(ElementPanel pan2) {
-		String imagePath = "src\\test\\assets\\Saskia_Portrait.jpg";
+	private static void drawPan2(ElementPanel pan2) throws IOException {
+		Image image = ImageIO.read(IOUtils.resourceToURL("Saskia_Portrait.jpg", test.class.getClassLoader()));
 		pan2.removeElementPrefixed("");
 		pan2.addRectangle("rect", 1, "move",  pan2.getWidth() /20, pan2.getHeight() / 20, pan2.getWidth() * 18/20, pan2.getHeight() * 18/20, false, Color.red);
 		pan2.addRectangle("rect2", 8, "move",  pan2.getWidth() / 2,  pan2.getHeight() / 6, pan2.getWidth() * 16 / 18,  pan2.getHeight() * 2 / 18, true, Color.white, Color.black);
 		pan2.addTextEntry("texEn", 10, "move",  pan2.getWidth() / 2, pan2.getHeight() / 6, pan2.getWidth() * 16 / 18, pan2.getHeight() * 2 / 18, 15, "This is a text entry area", new Font("Serif", Font.BOLD, 12), true, true, true);
 		
-		pan2.addImage("sas", 15, "move",  pan2.getWidth() / 2, pan2.getHeight() * 2 / 3, true, imagePath, .5);
+		pan2.addImage("sas", 15, "move",  pan2.getWidth() / 2, pan2.getHeight() * 2 / 3, true, image, .5);
 
 		pan2.addLine("line5", 30, "move",  40, -70, 50, 750, 5, Color.black);
 		pan2.addLine("line6", 30, "move",  50, 50, 150, 50, 5, Color.black);
@@ -284,8 +300,12 @@ public class test {
 		
 	}
 
-	private static void drawTest2() {
-		String[] imagesPaths = new String[] {"src\\test\\assets\\burner5.png","src\\test\\assets\\burner6.png","src\\test\\assets\\burner7.png"};
+	private static void drawTest2() throws IOException {
+		Image[] images = new Image[] {
+			ImageIO.read(IOUtils.resourceToURL("burner5.png", test.class.getClassLoader())),
+			ImageIO.read(IOUtils.resourceToURL("burner6.png", test.class.getClassLoader())),
+			ImageIO.read(IOUtils.resourceToURL("burner7.png", test.class.getClassLoader()))
+		};
 		int wid = 400;	//400
 		int hei = 250;	//250
 		WindowFrame fra = new WindowFrame(wid, hei) {
@@ -316,7 +336,7 @@ public class test {
 		
 		fra.setResizable(true);
 		
-		pan.addAnimation("anim", 23, "move",  pan.getWidth() / 2, pan.getHeight() * 6 / 4, true,	new int[] {13, 7, 12}, 5, imagesPaths);
+		pan.addAnimation("anim", 23, "move",  pan.getWidth() / 2, pan.getHeight() * 6 / 4, true,	new int[] {13, 7, 12}, 5, images);
 	}
 	
 	private static void drawFrame(ElementPanel p) {
