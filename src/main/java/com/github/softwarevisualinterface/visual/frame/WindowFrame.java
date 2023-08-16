@@ -2,6 +2,8 @@ package com.github.softwarevisualinterface.visual.frame;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,8 +38,9 @@ public class WindowFrame extends Frame{
 	private HashSet<String> activeWindow;
 	
 	private boolean start;
-	
-	private boolean mutex;
+
+	/** The lock used for synchronization. */
+	protected final Lock lock = new ReentrantLock(true);
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -56,7 +59,6 @@ public class WindowFrame extends Frame{
 		activeWindow = new HashSet<String>();
 		reserveWindow(DEFAULT_WINDOW);
 		start = true;
-		mutex = false;
 	}
 
 //---  Adder Methods   ------------------------------------------------------------------------
@@ -66,9 +68,9 @@ public class WindowFrame extends Frame{
 			logger.error("Reserved Window: \"" + windowName + "\" already exists. Window \"" + DEFAULT_WINDOW + "\" is present by default.");
 			return;
 		}
-		openLock();
+		lock.lock();
 		windows.put(windowName, new HashMap<String, Panel>());
-		closeLock();
+		lock.unlock();
 		if(activeWindow.size() == 0) {
 			showActiveWindow(windowName);
 		}
@@ -87,18 +89,18 @@ public class WindowFrame extends Frame{
 		if(windows.get(windowName) == null) {
 			reserveWindow(windowName);
 		}
-		openLock();
+		lock.lock();
 		windows.get(windowName).put(panelName, panel);
-		closeLock();
+		lock.unlock();
 		if(activeWindow.contains(windowName)) {
 			showPanel(windowName, panelName);
 		}
 	}
 	
 	public void addPanel(String panelName, Panel panel) {
-		openLock();
+		lock.lock();
 		windows.get(DEFAULT_WINDOW).put(panelName, panel);
-		closeLock();
+		lock.unlock();
 		showPanel(panelName);
 		if(activeWindow.contains(DEFAULT_WINDOW)) {
 			showPanel(DEFAULT_WINDOW, panelName);
@@ -140,9 +142,9 @@ public class WindowFrame extends Frame{
 	public void removeWindow(String windowName) {
 		try {
 			hideActiveWindow(windowName);
-			openLock();
+			lock.lock();
 			windows.remove(windowName);
-			closeLock();
+			lock.unlock();
 		}
 		catch(Exception e) {
 			logger.error("Attempt to remove non-existant Window collection of Panel objects", e);
@@ -153,20 +155,20 @@ public class WindowFrame extends Frame{
 
 	public void showActiveWindow(String windowName) {
 		activeWindow.add(windowName);
-		openLock();
+		lock.lock();
 		for(Panel p : windows.get(windowName).values()) {
 			addPanelToScreen(p);
 		}
-		closeLock();
+		lock.unlock();
 	}
 	
 	public void hideActiveWindow(String windowName) {
 		activeWindow.remove(windowName);
-		openLock();
+		lock.lock();
 		for(Panel p : windows.get(windowName).values()) {
 			removePanelFromScreen(p);
 		}
-		closeLock();
+		lock.unlock();
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -200,13 +202,13 @@ public class WindowFrame extends Frame{
 		if(!start || activeWindow.size() == 0) {
 			return;
 		}
-		openLock();
+		lock.lock();
 		for(String window : activeWindow) {
 			for(String p : windows.get(window).keySet()) {
 				showPanel(window, p);
 			}
 		}
-		closeLock();
+		lock.unlock();
 	}
 	
 	public void showPanel(String windowName, String panelName) {
@@ -249,41 +251,29 @@ public class WindowFrame extends Frame{
 		if(activeWindow.size() == 0) {
 			return;
 		}
-		openLock();
+		lock.lock();
 		for(String window : activeWindow) {
 			for(String p : windows.get(window).keySet()) {
 				hidePanel(window, p);
 			}
 		}
 
-		closeLock();
+		lock.unlock();
 	}
 	
 	public void dispenseAttention() {
-		openLock();
+		lock.lock();
 		for(String window : activeWindow) {
 			for(Panel p : windows.get(window).values()) {
 				p.setAttention(false);
 			}
 		}
-		closeLock();
+		lock.unlock();
 	}
 	
 	@Override
 	public void reactToResize() {
 		System.out.println("Overwrite this method: reactToResize() in WindowFrame.java");
-	}
-	
-//---  Mechanics   ----------------------------------------------------------------------------
-	
-	private void openLock() {
-		while(mutex) {
-		}
-		mutex = true;
-	}
-	
-	private void closeLock() {
-		mutex = false;
 	}
 	
 }

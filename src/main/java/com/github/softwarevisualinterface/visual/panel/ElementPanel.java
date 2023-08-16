@@ -146,9 +146,9 @@ public class ElementPanel extends Panel implements OffsetManager{
 	
 	public void paintComponent(Graphics gIn) {
 		Graphics g = gIn.create();
-		openLock();
+		lock.lock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		closeLock();
+		lock.unlock();
 		try {
 			Collections.sort(elements);
 		}
@@ -228,13 +228,13 @@ public class ElementPanel extends Panel implements OffsetManager{
 			logger.error("Null added to drawList or frameList for pair <" + n + ", " + e.toString() + ">");
 			return;
 		}
-		openLock();
+		lock.lock();
 		e.setHash(n);
 		drawList.put(n, e);
 		if(frame != null) {
 			groupInfoManager.addMapping(e.hashCode(), frame);
 		}
-		closeLock();
+		lock.unlock();
 		if(clickList.contains(n))
 			updateClickRegion(n);
 	}
@@ -250,18 +250,18 @@ public class ElementPanel extends Panel implements OffsetManager{
 	public void removeElement(String name) {
 		if(clickList.contains(name)) {
 			Clickable c = getClickableElement(name);
-			openLock();
+			lock.lock();
 			if(c != null && clickList.contains(name))
 				removeClickRegion(c.getIdentity());
-			closeLock();
+			lock.unlock();
 		}
-		openLock();
+		lock.lock();
 		Element e = drawList.get(name);
 		if(e != null)
 			groupInfoManager.removeMapping(e.hashCode());
 		drawList.remove(name);
 		clickList.remove(name);
-		closeLock();
+		lock.unlock();
 	}
 	
 	/**
@@ -275,7 +275,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	 */
 	
 	public void removeElementPrefixed(String prefix) {
-		openLock();
+		lock.lock();
 		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
 		HashSet<String> remv = new HashSet<String>();
 		for(int i = 0; i < cs.size(); i++) {
@@ -287,7 +287,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 				remv.add(s);
 			}
 		}
-		closeLock();
+		lock.unlock();
 		for(String s : remv) {
 			removeElement(s);
 		}
@@ -329,23 +329,23 @@ public class ElementPanel extends Panel implements OffsetManager{
 	}
 	
 	public void removeElementPrefixedFromGroup(String pref, String groupName) {
-		openLock();
+		lock.lock();
 		for(String n : drawList.keySet()) {
 			if(n.matches(pref + ".*")) {
 				removeElementFromGroup(n, groupName);
 			}
 		}
-		closeLock();
+		lock.unlock();
 	}
 	
 	public void addElementPrefixedToGroup(String pref, String groupName) {
-		openLock();
+		lock.lock();
 		for(String n : drawList.keySet()) {
 			if(n.matches(pref + ".*")) {
 				addElementToGroup(n, groupName);
 			}
 		}
-		closeLock();
+		lock.unlock();
 	}
 
 	public boolean addGroup(String nom) {
@@ -383,9 +383,9 @@ public class ElementPanel extends Panel implements OffsetManager{
 	}
 	
 	public void moveElementPrefixed(String prefix, int x, int y) {
-		openLock();
+		lock.lock();
 		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
-		closeLock();
+		lock.unlock();
 		for(String s : cs) {
 			if(s.matches(prefix + ".*")) {
 				moveElement(s, x, y);
@@ -933,9 +933,9 @@ public class ElementPanel extends Panel implements OffsetManager{
 	 */
 	
 	private Element getElement(String name) {
-		openLock();
+		lock.lock();
 		Element e = drawList.get(name);
-		closeLock();
+		lock.unlock();
 		return e;
 	}
 	
@@ -1054,17 +1054,17 @@ public class ElementPanel extends Panel implements OffsetManager{
 	 */
 	
 	public int getNumberActiveElements() {
-		openLock();
+		lock.lock();
 		int out = drawList.values().size();
-		closeLock();
+		lock.unlock();
 		return out;
 	}
 	
 	public int getMinimumScreenX(String groupName) {
 		Integer minX = null;
-		openLock();
+		lock.lock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		closeLock();
+		lock.unlock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
 			if((groupName == null || groupInfoManager.getGroups(e.hashCode()).contains(groupName)) && (minX == null || e.getMinimumX() < minX)) {
@@ -1077,9 +1077,9 @@ public class ElementPanel extends Panel implements OffsetManager{
 	
 	public int getMaximumScreenX(String groupName) {
 		Integer maxX = null;
-		openLock();
+		lock.lock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		closeLock();
+		lock.unlock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
 			if((groupName == null || groupInfoManager.getGroups(e.hashCode()).contains(groupName)) && (maxX == null || e.getMaximumX() > maxX)) {
@@ -1092,9 +1092,9 @@ public class ElementPanel extends Panel implements OffsetManager{
 	
 	public int getMinimumScreenY(String groupName) {
 		Integer minY = null;
-		openLock();
+		lock.lock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		closeLock();
+		lock.unlock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
 			if((groupName == null || groupInfoManager.getGroups(e.hashCode()).contains(groupName)) && (minY == null || e.getMinimumY() < minY)) {
@@ -1107,9 +1107,9 @@ public class ElementPanel extends Panel implements OffsetManager{
 	
 	public int getMaximumScreenY(String groupName) {
 		Integer maxY = null;
-		openLock();
+		lock.lock();
 		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
-		closeLock();
+		lock.unlock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
 			if((groupName == null || groupInfoManager.getGroups(e.hashCode()).contains(groupName)) && (maxY == null || e.getMaximumY() > maxY)) {

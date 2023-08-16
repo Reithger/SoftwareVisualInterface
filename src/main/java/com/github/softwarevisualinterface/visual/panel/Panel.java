@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.JPanel;
 
@@ -41,8 +43,9 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	private boolean attention;
 	
 	private int priority;
-	
-	private volatile boolean mutex;
+
+	/** The lock used for synchronization. */
+	protected final Lock lock = new ReentrantLock(true);
 	
 	private NestedEventReceiver inputHandler;
 	
@@ -282,15 +285,6 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------
-	
-	protected void openLock() {
-		while(mutex) {}
-		mutex = true;
-	}
-	
-	protected void closeLock() {
-		mutex = false;
-	}
 	
 	@Override
 	public int compareTo(Panel p) {
