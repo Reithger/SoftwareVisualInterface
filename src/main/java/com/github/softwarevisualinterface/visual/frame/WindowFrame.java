@@ -3,6 +3,9 @@ package com.github.softwarevisualinterface.visual.frame;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.softwarevisualinterface.visual.panel.Panel;
 
 /**
@@ -23,6 +26,7 @@ public class WindowFrame extends Frame{
 //---  Constants   ----------------------------------------------------------------------------
 	
 	private final static String DEFAULT_WINDOW = "default";
+	private static final Logger logger = LogManager.getLogger();
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -59,7 +63,7 @@ public class WindowFrame extends Frame{
 	
 	public void reserveWindow(String windowName) {
 		if(windows.get(windowName) != null) {
-			System.out.println("Error: Reserved Window: \"" + windowName + "\" already exists. Window \"" + DEFAULT_WINDOW + "\" is present by default.");
+			logger.error("Reserved Window: \"" + windowName + "\" already exists. Window \"" + DEFAULT_WINDOW + "\" is present by default.");
 			return;
 		}
 		openLock();
@@ -118,7 +122,7 @@ public class WindowFrame extends Frame{
 			windows.get(windowName).remove(panelName);
 		}
 		catch(Exception e) {
-			System.out.println("Error: Attempt to remove non-existant Panel object");
+			logger.error("Attempt to remove non-existant Panel object", e);
 		}
 	}
 	
@@ -129,7 +133,7 @@ public class WindowFrame extends Frame{
 			windows.get(DEFAULT_WINDOW).remove(panelName);
 		}
 		catch(Exception e) {
-			System.out.println("Error: Attempt to remove non-existant Panel object; \"" + panelName + "\" not found in default Window, please specify the Window this Panel is in.");
+			logger.error("Attempt to remove non-existant Panel object; \"" + panelName + "\" not found in default Window, please specify the Window this Panel is in.", e);
 		}
 	}
 	
@@ -141,7 +145,7 @@ public class WindowFrame extends Frame{
 			closeLock();
 		}
 		catch(Exception e) {
-			System.out.println("Error: Attempt to remove non-existant Window collection of Panel objects");
+			logger.error("Attempt to remove non-existant Window collection of Panel objects", e);
 		}
 	}
 	
@@ -210,7 +214,7 @@ public class WindowFrame extends Frame{
 			addPanelToScreen(windows.get(windowName).get(panelName));
 		}
 		catch(Exception e) {
-			System.out.println("Error: Attempt to show non-existant Panel object");
+			logger.error("Attempt to show non-existant Panel object", e);
 		}
 	}
 	
@@ -219,7 +223,7 @@ public class WindowFrame extends Frame{
 			addPanelToScreen(windows.get(DEFAULT_WINDOW).get(panelName));
 		}
 		catch(Exception e) {
-			System.out.println("Error: Attempt to show non-existant Panel object");
+			logger.error("Attempt to show non-existant Panel object", e);
 		}
 	}
 
@@ -228,7 +232,7 @@ public class WindowFrame extends Frame{
 			removePanelFromScreen(windows.get(windowName).get(panelName));
 		}
 		catch(Exception e) {
-			System.out.println("Error: Attempt to hide non-existant Panel object");
+			logger.error("Attempt to hide non-existant Panel object", e);
 		}
 	}
 	
@@ -237,7 +241,7 @@ public class WindowFrame extends Frame{
 			removePanelFromScreen(windows.get(DEFAULT_WINDOW).get(panelName));
 		}
 		catch(Exception e) {
-			System.out.println("Error: Attempt to hide non-existant Panel object");
+			logger.error("Attempt to hide non-existant Panel object", e);
 		}
 	}
 

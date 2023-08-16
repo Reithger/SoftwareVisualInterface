@@ -14,6 +14,9 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.softwarevisualinterface.misc.Canvas;
 import com.github.softwarevisualinterface.visual.panel.element.ElementFactory;
 import com.github.softwarevisualinterface.visual.panel.element.Clickable;
@@ -67,6 +70,8 @@ public class ElementPanel extends Panel implements OffsetManager{
 	private static final int DRAG_CLICK_SENSITIVITY = 25;
 	
 	private static int SCROLLBAR_CODE_VALUE = -50;
+
+	private static Logger logger = LogManager.getLogger();
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -220,7 +225,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	
 	private void handleAddElement(String n, Element e, String frame) {
 		if(n == null || e == null) {
-			System.out.println("Error: Null added to drawList or frameList for pair <" + n + ", " + e.toString() + ">");
+			logger.error("Null added to drawList or frameList for pair <" + n + ", " + e.toString() + ">");
 			return;
 		}
 		openLock();

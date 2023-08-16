@@ -4,7 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class ConfigBlueprint {
+
+	private static Logger logger = LogManager.getLogger();
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -27,8 +32,7 @@ public class ConfigBlueprint {
 			return true;
 		}
 		catch(IOException e) {
-			e.printStackTrace();
-			System.out.println("Error during Configuration System write");
+			logger.error("Error during Configuration System write", e);
 			return false;
 		}
 	}
