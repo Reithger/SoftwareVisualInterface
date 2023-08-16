@@ -28,7 +28,7 @@ public class WindowFrame extends Frame{
 //---  Constants   ----------------------------------------------------------------------------
 	
 	private final static String DEFAULT_WINDOW = "default";
-	private static final Logger logger = LogManager.getLogger();
+	private static Logger logger = LogManager.getLogger();
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -273,7 +273,7 @@ public class WindowFrame extends Frame{
 	
 	@Override
 	public void reactToResize() {
-		System.out.println("Overwrite this method: reactToResize() in WindowFrame.java");
+		logger.info("Overwrite this method: reactToResize() in WindowFrame.java");
 	}
 	
 }

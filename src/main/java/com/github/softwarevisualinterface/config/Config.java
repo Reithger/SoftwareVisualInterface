@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.softwarevisualinterface.config.blueprint.ConfigBlueprint;
 
 //TODO: Closing function that stops all this data from being active
@@ -16,6 +19,7 @@ public class Config {
 //---  Constants   ----------------------------------------------------------------------------
 	
 	public final static int CONFIG_VERIFY_SUCCESS = 958273;
+	private static final Logger logger = LogManager.getLogger();
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -88,8 +92,7 @@ public class Config {
 			return ConfigFileParser.setContents(new File(fullPath), entryName, newValue);
 		}
 		catch(IOException e) {
-			e.printStackTrace();
-			System.out.println("Failure to assign data: \"" + newValue + "\" to entry: \"" + entryName + "\" in file: \"" + fullPath + "\".");
+			logger.error("Failure to assign data: \"" + newValue + "\" to entry: \"" + entryName + "\" in file: \"" + fullPath + "\".", e);
 			return false;
 		}
 	}
@@ -99,8 +102,7 @@ public class Config {
 			return ConfigFileParser.setContents(fil, entryName, newValue);
 		}
 		catch(IOException e) {
-			e.printStackTrace();
-			System.out.println("Failure to assign data: \"" + newValue + "\" to entry: \"" + entryName + "\" in file: \"" + fil.getAbsolutePath() + "\".");
+			logger.error("Failure to assign data: \"" + newValue + "\" to entry: \"" + entryName + "\" in file: \"" + fil.getAbsolutePath() + "\".", e);
 			return false;
 		}
 	}
@@ -116,8 +118,7 @@ public class Config {
 			return ConfigFileParser.getContents(fil, entryName);
 		}
 		catch(IOException e) {
-			e.printStackTrace();
-			System.out.println("Failure to retrieve data in file: \"" + fil.getAbsolutePath() + "\" with entry name: " + entryName);
+			logger.error("Failure to retrieve data in file: \"" + fil.getAbsolutePath() + "\" with entry name: " + entryName, e);
 			return null;
 		}
 	}
@@ -127,8 +128,7 @@ public class Config {
 			return ConfigFileParser.getContents(new File(fullPath), entryName);
 		}
 		catch(IOException e) {
-			e.printStackTrace();
-			System.out.println("Failure to retrieve data in file: \"" + fullPath + "\" with entry name: " + entryName);
+			logger.error("Failure to retrieve data in file: \"" + fullPath + "\" with entry name: " + entryName, e);
 			return null;
 		}
 	}
@@ -146,8 +146,8 @@ public class Config {
 			try {
 				is = new FileInputStream(new File(path));
 			}
-			catch(Exception e) {
-				e.printStackTrace();
+			catch(IOException e) {
+				logger.catching(e);
 				return null;
 			}
 		}

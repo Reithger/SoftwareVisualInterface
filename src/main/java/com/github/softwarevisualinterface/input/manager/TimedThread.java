@@ -1,9 +1,14 @@
 package com.github.softwarevisualinterface.input.manager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.softwarevisualinterface.input.EventReceiver;
 import com.github.softwarevisualinterface.input.manager.actionevent.ActionEvent;
 
 public class TimedThread extends Thread {
+
+	private static Logger logger = LogManager.getLogger();
 	
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -58,8 +63,7 @@ public class TimedThread extends Thread {
 				event.execute(reference);
 			}
 			catch(Exception e) {
-				e.printStackTrace();
-				System.out.println("Fail forward exception: ActionEventManager's TimedThread object produced an exception while executing input.");
+				logger.error("Fail forward exception: ActionEventManager's TimedThread object produced an exception while executing input.", e);
 			}
 			updateEvent(null);
 		}

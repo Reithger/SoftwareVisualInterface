@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Scanner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.softwarevisualinterface.config.blueprint.ConfigFile;
 
 public class ConfigFileParser {
@@ -14,6 +17,8 @@ public class ConfigFileParser {
 	public final static String ENTRY_EQUAL_SYMBOL = " = ";
 	public final static String ENTRY_VALUE_END_SYMBOL = "</;>";
 	public final static String COMMENT_SYMBOL = ConfigFile.COMMENT_SYMBOL;
+
+	private static Logger logger = LogManager.getLogger();
 	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
@@ -75,8 +80,7 @@ public class ConfigFileParser {
 			return true;
 		}
 		catch(IOException e) {
-			e.printStackTrace();
-			System.out.println("Failure to write config file: " + f.getAbsolutePath() + " with contents:\n" + out);
+			logger.error("Failure to write config file: " + f.getAbsolutePath() + " with contents:\n" + out, e);
 			return false;
 		}
 	}

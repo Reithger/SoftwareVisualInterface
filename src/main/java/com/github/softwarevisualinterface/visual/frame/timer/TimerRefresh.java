@@ -1,6 +1,10 @@
 package com.github.softwarevisualinterface.visual.frame.timer;
 
 import java.util.TimerTask;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.softwarevisualinterface.visual.frame.Frame;
 
 /**
@@ -15,6 +19,8 @@ import com.github.softwarevisualinterface.visual.frame.Frame;
  */
 
 public class TimerRefresh extends TimerTask{
+
+	private static Logger logger = LogManager.getLogger();
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -43,8 +49,7 @@ public class TimerRefresh extends TimerTask{
 			parent.repaint();
 		}
 		catch(Exception e) {
-			e.printStackTrace();
-			System.out.println("Crash at TimerRefresh run function");
+			logger.catching(e);
 		}
 	}
 

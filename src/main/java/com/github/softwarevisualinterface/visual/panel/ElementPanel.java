@@ -14,8 +14,7 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.*;
 
 import com.github.softwarevisualinterface.misc.Canvas;
 import com.github.softwarevisualinterface.visual.panel.element.ElementFactory;
@@ -153,7 +152,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 			Collections.sort(elements);
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+			logger.catching(e);
 		}
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
@@ -967,9 +966,8 @@ public class ElementPanel extends Panel implements OffsetManager{
 			}
 		}
 		catch(Exception e) {
-			e.printStackTrace();
-			System.out.println("Failure to retrieve Clickable implementing Element object; \"getClickableElement(String name)\" function.");
-			System.out.println("Attempted to retrieve " + name);
+			logger.error("Failure to retrieve Clickable implementing Element object; \"getClickableElement(String name)\" function.", e);
+			logger.debug("Attempted to retrieve " + name);
 			return null;
 		}
 	}
@@ -1000,8 +998,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 			return (TextStorage)getElement(name);
 		}
 		catch(Exception e) {
-			e.printStackTrace();
-			System.out.println("Failure to retrieve TextStorage implementing Element object; \"getStoredTextElement(String name)\" function.");
+			logger.error("Failure to retrieve TextStorage implementing Element object; \"getStoredTextElement(String name)\" function.", e);
 			return null;
 		}
 	}
@@ -1149,12 +1146,13 @@ public class ElementPanel extends Panel implements OffsetManager{
 		try {
 			images.put(path, ImageIO.read(ElementPanel.class.getResource(path.substring(path.indexOf("/")))));
 		}
-		catch(Exception e) {
+		catch(Throwable e) {
+			logger.catching(Level.DEBUG, e);
 			try {
 				images.put(path, ImageIO.read(new File(path)));
 			}
-			catch(Exception e1) {
-				e1.printStackTrace();
+			catch(Throwable e1) {
+				logger.catching(e1);
 				return null;
 			}
 		}
