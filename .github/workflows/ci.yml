@@ -33,11 +33,11 @@ jobs:
       with:
         gradle-version: current
         arguments: build
-    - name: Publish snapshot package to GitHub
-      if: ${{ github.event_name == 'push' }}
-      uses: gradle/gradle-build-action@v2.7.0
-      with:
-        gradle-version: current
-        arguments: publish
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+#   - name: Publish snapshot package to GitHub
+#     if: ${{ github.event_name == 'push' }}
+#     uses: gradle/gradle-build-action@v2.7.0
+#     with:
+#       gradle-version: current
+#       arguments: publish
+#     env:
+#       GITHUB_TOKEN: ${{ github.token }}

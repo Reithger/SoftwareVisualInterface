@@ -68,11 +68,11 @@ publishing {
     }
   }
 
-  publications {
-    maven(MavenPublication) {
-      groupId = 'com.github.softwarevisualinterface'
-      artifactId = 'svi'
-      version = '2.0-SNAPSHOT'
-    }
-  }
+//  publications {
+//    maven(MavenPublication) {
+//      groupId = 'com.github.softwarevisualinterface'
+//      artifactId = 'svi'
+//      version = '2.0-SNAPSHOT'
+//    }
+//  }
 }
