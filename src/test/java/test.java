@@ -12,7 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import com.github.softwarevisualinterface.filemeta.FileChooser;
-import com.github.softwarevisualinterface.config.Config;
+import com.github.softwarevisualinterface.filemeta.config.Config;
 import com.github.softwarevisualinterface.misc.Canvas;
 import com.github.softwarevisualinterface.visual.composite.popout.PopoutSelectList;
 import com.github.softwarevisualinterface.visual.frame.WindowFrame;

@@ -1,11 +1,11 @@
-package com.github.softwarevisualinterface.config.blueprint;
+package com.github.softwarevisualinterface.filemeta.config.blueprint;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashSet;
 
-import com.github.softwarevisualinterface.config.ConfigFileParser;
+import com.github.softwarevisualinterface.filemeta.config.ConfigFileParser;
 
 public class ConfigFile {
 	

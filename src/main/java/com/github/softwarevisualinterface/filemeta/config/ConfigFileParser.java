@@ -1,4 +1,4 @@
-package com.github.softwarevisualinterface.config;
+package com.github.softwarevisualinterface.filemeta.config;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.softwarevisualinterface.config.blueprint.ConfigFile;
+import com.github.softwarevisualinterface.filemeta.config.blueprint.ConfigFile;
 
 public class ConfigFileParser {
 

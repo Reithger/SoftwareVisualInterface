@@ -1,4 +1,4 @@
-package com.github.softwarevisualinterface.config;
+package com.github.softwarevisualinterface.filemeta.config;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.softwarevisualinterface.config.blueprint.ConfigBlueprint;
+import com.github.softwarevisualinterface.filemeta.config.blueprint.ConfigBlueprint;
 
 //TODO: Closing function that stops all this data from being active
 

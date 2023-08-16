@@ -1,4 +1,4 @@
-package com.github.softwarevisualinterface.config.blueprint;
+package com.github.softwarevisualinterface.filemeta.config.blueprint;
 
 public class FileEntry {
 

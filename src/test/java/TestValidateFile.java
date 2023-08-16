@@ -1,7 +1,7 @@
 import java.io.File;
 
-import com.github.softwarevisualinterface.config.Config;
-import com.github.softwarevisualinterface.config.ValidateFiles;
+import com.github.softwarevisualinterface.filemeta.config.Config;
+import com.github.softwarevisualinterface.filemeta.config.ValidateFiles;
 
 public class TestValidateFile implements ValidateFiles{
 

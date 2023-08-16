@@ -1,4 +1,4 @@
-package com.github.softwarevisualinterface.config;
+package com.github.softwarevisualinterface.filemeta.config;
 
 import java.io.File;
 
