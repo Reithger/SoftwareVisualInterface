@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 
 // Assume Java 11
 sourceCompatibility = 11
@@ -53,4 +54,25 @@ compileTestJava {
 task buildDependenciesFolder(type: Copy) {
   from configurations.implementation
   into './dependencies'
+}
+
+publishing {
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      url = "https://maven.pkg.github.com/syoon2/SoftwareVisualInterface"
+      credentials {
+        username = System.getenv("GITHUB_ACTOR")
+        password = System.getenv("GITHUB_TOKEN")
+      }
+    }
+  }
+
+  publications {
+    maven(MavenPublication) {
+      groupId = 'com.github.softwarevisualinterface'
+      artifactId = 'svi'
+      version = '2.0-SNAPSHOT'
+    }
+  }
 }
