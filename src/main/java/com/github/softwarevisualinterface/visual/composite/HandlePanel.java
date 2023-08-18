@@ -124,4 +124,21 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 		}
 	}
 	
+
+	@Override
+	public void handleImageButton(String name, String frame, int prior, int x, int y, int wid, int hei, Image image, int code) {
+		String imageName = name + "_image";
+		if(!moveElement(imageName, x, y)) {
+			double imgWid = image.getWidth(null);
+			double zoom = 1.0;
+			if(imgWid != wid) {
+				zoom = wid / imgWid;
+			}
+			addImage(imageName, prior, frame, x, y, true, image, zoom);
+		}
+		String buttonName = name + "_button";
+		if(!moveElement(buttonName, x, y)) {
+			addButton(buttonName, prior, frame,  x, y, wid, hei, code, true);
+		}
+	}
 }

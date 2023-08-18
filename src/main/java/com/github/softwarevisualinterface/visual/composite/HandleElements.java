@@ -29,5 +29,7 @@ public interface HandleElements {
 	public abstract void handleTextButton(String nom, String group, int prior, int x, int y, int wid, int hei, Font font, String phr, int code, Color fill, Color border);
 
 	public abstract void handleImageButton(String name, String group, int prior, int x, int y, int wid, int hei, String path, int code);
+
+	public void handleImageButton(String name, String group, int prior, int x, int y, int wid, int hei, Image image, int code);
 	
 }
