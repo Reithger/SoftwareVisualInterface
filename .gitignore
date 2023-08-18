@@ -1,4 +1,4 @@
-/test$1.class
-/test$2.class
-/test.class
-/bin/
+.gradle/**
+**/*.class
+bin/**
+build/**
