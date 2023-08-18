@@ -1,4 +1,4 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 group = 'com.github.softwarevisualinterface'
@@ -68,6 +68,16 @@ publishing {
         username = System.getenv("GITHUB_ACTOR")
         password = System.getenv("GITHUB_TOKEN")
       }
+    }
+  }
+
+  publications {
+    maven(MavenPublication) {
+      groupId = project.group
+      artifactId = 'svi'
+      version = project.version
+
+      from components.java
     }
   }
 }
