@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -140,8 +142,8 @@ public class Config {
 //---  Support   ------------------------------------------------------------------------------
 	
 	public static BufferedReader retrieveFileReader(String pathIn) {
-		String path = pathIn.replace("\\", "/");
-		InputStream is = Config.class.getResourceAsStream(path.substring(path.indexOf("/"))); 
+		String path = FilenameUtils.separatorsToUnix(pathIn);
+		InputStream is = Config.class.getResourceAsStream(path.substring(path.indexOf(IOUtils.DIR_SEPARATOR_UNIX))); 
 		if(is == null) {
 			try {
 				is = new FileInputStream(new File(path));

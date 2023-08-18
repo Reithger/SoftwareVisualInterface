@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +19,7 @@ public class ConfigBlueprint {
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public ConfigBlueprint(String src) {
-		if(src.equals("")) {
+		if(src.isEmpty()) {
 			src = (new File("")).getAbsolutePath();
 		}
 		root = new Folder(src);
@@ -42,9 +43,7 @@ public class ConfigBlueprint {
 	}
 	
 	private String[] processPath(String path) {
-		path = path.replaceAll("\\\\", "/").replaceAll("//", "/");
-		String[] use = path.split("/");
-		return use;
+		return FilenameUtils.normalize(path).split(File.separator);
 	}
 	
 //---  Adder Methods   ------------------------------------------------------------------------

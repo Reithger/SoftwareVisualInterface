@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
+
 /**
  * Generic definition of a Folder in a File System to map out a blueprint of a config system for reproduction
  * 
@@ -32,7 +35,7 @@ public class Folder {
 //---  Operations   ---------------------------------------------------------------------------
 
 	public void write(String path, boolean erase) throws IOException{
-		path += name + "/";
+		path += name + IOUtils.DIR_SEPARATOR_UNIX;
 		File gen = new File(path);
 		gen.mkdir();
 		for(ConfigFile s : files) {
@@ -44,7 +47,7 @@ public class Folder {
 	}
 
 	public void erase(String path) {
-		path += name + "/";
+		path += name + IOUtils.DIR_SEPARATOR_UNIX;
 		for(Folder f : children) {
 			f.erase(path);
 		}
@@ -122,7 +125,7 @@ public class Folder {
 	public List<File> getFiles(String path){
 		List<File> out = new ArrayList<File>();
 		for(ConfigFile cf : files) {
-			File f = new File(path + "/" + name + "/" + cf.getName());
+			File f = new File(path + File.separator + name + File.separator + cf.getName());
 			out.add(f);
 		}
 		return out;
@@ -131,7 +134,7 @@ public class Folder {
 	public List<File> getAllFiles(String path){
 		List<File> out = getFiles(path);
 		for(Folder f : children) {
-			out.addAll(f.getAllFiles(path + "/" + name));
+			out.addAll(f.getAllFiles(path + File.separator + name));
 		}
 		return out;
 	}
@@ -140,7 +143,7 @@ public class Folder {
 	
 	private String[] tearArray(String[] in) {
 		if(in.length == 0) {
-			return new String[] {};
+			return ArrayUtils.EMPTY_STRING_ARRAY;
 		}
 		return Arrays.copyOfRange(in, 1, in.length);
 	}

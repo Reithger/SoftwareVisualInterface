@@ -17,6 +17,8 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.*;
 
 import com.github.softwarevisualinterface.misc.Canvas;
@@ -1142,12 +1144,12 @@ public class ElementPanel extends Panel implements OffsetManager{
 	 */
 	
 	public Image retrieveImage(String pathIn) {
-		String path = pathIn.replace("\\", "/");
+		String path = FilenameUtils.separatorsToUnix(pathIn);
 		if(images.containsKey(path)) {
 			return images.get(path);
 		}
 		try {
-			images.put(path, ImageIO.read(ElementPanel.class.getResource(path.substring(path.indexOf("/")))));
+			images.put(path, ImageIO.read(ElementPanel.class.getResource(path.substring(path.indexOf(IOUtils.DIR_SEPARATOR_UNIX)))));
 		}
 		catch(Throwable e) {
 			logger.catching(Level.DEBUG, e);
@@ -1163,7 +1165,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	}
 	
 	public boolean removeCachedImage(String pathIn) {
-		String path = pathIn.replace("\\", "/");
+		String path = FilenameUtils.separatorsToUnix(pathIn);
 		return null != images.remove(path);
 	}
 	

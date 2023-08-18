@@ -6,6 +6,8 @@ import java.io.RandomAccessFile;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.io.RandomAccessFileMode;
+
 import com.github.softwarevisualinterface.filemeta.config.ConfigFileParser;
 
 public class ConfigFile {
@@ -37,7 +39,7 @@ public class ConfigFile {
 		}
 		f.delete();
 		f.createNewFile();
-		RandomAccessFile raf = new RandomAccessFile(f, "rw");
+		RandomAccessFile raf = RandomAccessFileMode.READ_WRITE.create(f);
 		if(fileComment.length() > 0)
 			raf.writeBytes(COMMENT_SYMBOL + fileComment + "\n");
 		for(FileEntry s : getFileEntries()) {

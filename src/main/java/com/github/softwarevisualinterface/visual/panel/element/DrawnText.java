@@ -79,16 +79,16 @@ public class DrawnText extends Element{
 				lines.add(lin);
 				lin = " ";
 			}
-			else if(fM.stringWidth(lin + (lin.equals("") ? "" : " ") + s) < width) {
-				lin += (lin.equals("") ? "" : " ") + s;
+			else if(fM.stringWidth(lin + (lin.isEmpty() ? "" : " ") + s) < width) {
+				lin += (lin.isEmpty() ? "" : " ") + s;
 			}
 			else {
-				if(lin.equals("")) {
+				if(lin.isEmpty()) {
 					String holdOver = s;
 					while(fM.stringWidth(holdOver) > width) {
 						String holdOn = "";
 						for(char l : holdOver.toCharArray()) {
-							if(lin.equals("") || fM.stringWidth(lin + l) < width) {
+							if(lin.isEmpty() || fM.stringWidth(lin + l) < width) {
 								lin += l;
 							}
 							else {
@@ -96,7 +96,7 @@ public class DrawnText extends Element{
 							}
 						}
 						holdOver = holdOn;
-						if(!holdOver.equals("")) {
+						if(!holdOver.isEmpty()) {
 							lines.add(lin);
 							lin = "";
 						}

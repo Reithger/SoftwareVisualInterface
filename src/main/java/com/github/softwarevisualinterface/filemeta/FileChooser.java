@@ -31,7 +31,7 @@ public class FileChooser {
 		jf.setFileSelectionMode(explore ? files ? JFileChooser.FILES_AND_DIRECTORIES : JFileChooser.DIRECTORIES_ONLY : JFileChooser.FILES_ONLY);
 		if(jf.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 			File saveLocale = jf.getSelectedFile();
-			saveLocale = new File(saveLocale.getAbsolutePath() + "/" + toSave.getName());
+			saveLocale = new File(saveLocale.getAbsolutePath() + File.separator + toSave.getName());
 			toSave.renameTo(saveLocale);
 		}
 	}

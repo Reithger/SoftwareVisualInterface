@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Scanner;
 
+import org.apache.commons.io.RandomAccessFileMode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -74,7 +75,7 @@ public class ConfigFileParser {
 		sc.close();
 		f.delete();
 		try {
-			RandomAccessFile raf = new RandomAccessFile(f, "rw");
+			RandomAccessFile raf = RandomAccessFileMode.READ_WRITE.create(f);
 			raf.writeBytes(out);
 			raf.close();
 			return true;
