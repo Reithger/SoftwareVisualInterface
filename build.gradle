@@ -1,6 +1,9 @@
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
+group = 'com.github.softwarevisualinterface'
+version = '2.0-SNAPSHOT'
+
 // Assume Java 11
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -67,12 +70,4 @@ publishing {
       }
     }
   }
-
-//  publications {
-//    maven(MavenPublication) {
-//      groupId = 'com.github.softwarevisualinterface'
-//      artifactId = 'svi'
-//      version = '2.0-SNAPSHOT'
-//    }
-//  }
 }
