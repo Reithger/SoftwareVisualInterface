@@ -2,6 +2,8 @@ package com.github.softwarevisualinterface.visual.frame;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,9 +35,9 @@ public class WindowFrame extends Frame{
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** HashMap<<r>String, Panel> object containing the Panel objects contained by this WindowFrame and their names*/
-	private HashMap<String, HashMap<String, Panel>> windows;
+	private Map<String, Map<String, Panel>> windows;
 	
-	private HashSet<String> activeWindow;
+	private Set<String> activeWindow;
 	
 	private boolean start;
 
@@ -55,7 +57,7 @@ public class WindowFrame extends Frame{
 	
 	public WindowFrame(int width, int height) {
 		super(width, height);
-		windows = new HashMap<String, HashMap<String, Panel>>();
+		windows = new HashMap<String, Map<String, Panel>>();
 		activeWindow = new HashSet<String>();
 		reserveWindow(DEFAULT_WINDOW);
 		start = true;
@@ -173,7 +175,7 @@ public class WindowFrame extends Frame{
 	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
-	public HashSet<String> getActiveWindows() {
+	public Set<String> getActiveWindows() {
 		return activeWindow;
 	}
 	

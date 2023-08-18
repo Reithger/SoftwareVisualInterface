@@ -2,21 +2,23 @@ package com.github.softwarevisualinterface.visual.panel.group;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class ElementGroupManager {
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
-	private HashMap<Integer, HashSet<String>> groupMapping;
+	private Map<Integer, Set<String>> groupMapping;
 
-	private HashMap<String, OffsetValues> groupOffsets;
+	private Map<String, OffsetValues> groupOffsets;
 	
-	private HashMap<String, WindowValues> groupWindows;
+	private Map<String, WindowValues> groupWindows;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public ElementGroupManager() {
-		groupMapping = new HashMap<Integer, HashSet<String>>();
+		groupMapping = new HashMap<Integer, Set<String>>();
 		groupOffsets = new HashMap<String, OffsetValues>();
 		groupWindows = new HashMap<String, WindowValues>();
 	}
@@ -25,13 +27,13 @@ public class ElementGroupManager {
 	
 	public void addMapping(Integer hash, String groupName) {
 		addGroup(groupName);
-		HashSet<String> ref = groupMapping.get(hash);
+		Set<String> ref = groupMapping.get(hash);
 		if(ref != null) {
 			ref.add(groupName);
 			groupMapping.put(hash, ref);
 		}
 		else {
-			HashSet<String> use = new HashSet<String>();
+			Set<String> use = new HashSet<String>();
 			use.add(groupName);
 			groupMapping.put(hash, use);
 		}
@@ -47,7 +49,7 @@ public class ElementGroupManager {
 //---  Remover Methods   ----------------------------------------------------------------------
 	
 	public void removeMapping(Integer hash, String groupName) {
-		HashSet<String> ref = groupMapping.get(hash);
+		Set<String> ref = groupMapping.get(hash);
 		if(ref != null) {
 			ref.remove(groupName);
 			groupMapping.put(hash, ref);
@@ -60,7 +62,7 @@ public class ElementGroupManager {
 	
 	public void removeGroup(String groupName) {
 		for(Integer i : groupMapping.keySet()) {
-			HashSet<String> get = groupMapping.get(i);
+			Set<String> get = groupMapping.get(i);
 			get.remove(groupName);
 			groupMapping.put(i, get);
 		}
@@ -128,7 +130,7 @@ public class ElementGroupManager {
 		return 0;
 	}
 	
-	public HashSet<String> getGroups(Integer hash){
+	public Set<String> getGroups(Integer hash){
 		return groupMapping.get(hash);
 	}
 	

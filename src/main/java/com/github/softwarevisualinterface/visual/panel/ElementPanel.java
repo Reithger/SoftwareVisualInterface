@@ -2,6 +2,9 @@ package com.github.softwarevisualinterface.visual.panel;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -77,12 +80,12 @@ public class ElementPanel extends Panel implements OffsetManager{
 	//-- Element Storage/Management  --------------------------
 	
 	/** HashMap that assigns a name to objects that can be drawn to the screen; each repaint uses this list to draw to the screen*/
-	private volatile HashMap<String, Element> drawList;	//TODO: Abstract these out
+	private Map<String, Element> drawList;	//TODO: Abstract these out
 	
 	private volatile ElementGroupManager groupInfoManager;
 	
 	/** HashMap that assigns a name to defined regions of the screen that generate a specified code upon interaction*/
-	private volatile LinkedList<String> clickList;	
+	private List<String> clickList;	
 	/** 
 	 * 	Clickable object representing the most recently selected interactive Element by the User for directing Key Inputs towards.
 	 * 
@@ -95,7 +98,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	//-- 
 
 	/** HashMap linking String system paths to Images to cache images that may be used repeatedly*/
-	private HashMap<String, Image> images;	//TODO: Image manager? Can be a small class, but still
+	private Map<String, Image> images;	//TODO: Image manager? Can be a small class, but still
 	
 	private int dragClickX;
 	
@@ -119,9 +122,9 @@ public class ElementPanel extends Panel implements OffsetManager{
 	
  	public ElementPanel(int x, int y, int width, int height){
 		super(x, y, width, height);
-		drawList = new HashMap<String, Element>();
+		drawList = Collections.synchronizedMap(new HashMap<String, Element>());
 		groupInfoManager = new ElementGroupManager();
-		clickList = new LinkedList<String>();
+		clickList = Collections.synchronizedList(new LinkedList<String>());
 		images = new HashMap<String, Image>();
 		dragClickSensitivity = DRAG_CLICK_SENSITIVITY;
 	}
@@ -146,7 +149,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	public void paintComponent(Graphics gIn) {
 		Graphics g = gIn.create();
 		lock.lock();
-		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		List<Element> elements = new ArrayList<Element>(drawList.values());
 		lock.unlock();
 		try {
 			Collections.sort(elements);
@@ -156,7 +159,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 		}
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
-			HashSet<String> group = groupInfoManager.getGroups(e.hashCode());
+			Set<String> group = groupInfoManager.getGroups(e.hashCode());
 			if(group == null) {
 				elements.get(i).drawToScreen(g, 0, 0);
 			}
@@ -184,7 +187,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 		}
 	}
 	
-	private boolean canDrawElement(Element e, HashSet<String> group) {
+	private boolean canDrawElement(Element e, Set<String> group) {
 		boolean canDraw = true;
 		int offX = 0;
 		int offY = 0;
@@ -275,8 +278,8 @@ public class ElementPanel extends Panel implements OffsetManager{
 	
 	public void removeElementPrefixed(String prefix) {
 		lock.lock();
-		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
-		HashSet<String> remv = new HashSet<String>();
+		List<String> cs = new ArrayList<String>(drawList.keySet());
+		Set<String> remv = new HashSet<String>();
 		for(int i = 0; i < cs.size(); i++) {
 			String s = cs.get(i);
 			if(s == null) {
@@ -383,7 +386,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	
 	public void moveElementPrefixed(String prefix, int x, int y) {
 		lock.lock();
-		ArrayList<String> cs = new ArrayList<String>(drawList.keySet());
+		List<String> cs = new ArrayList<String>(drawList.keySet());
 		lock.unlock();
 		for(String s : cs) {
 			if(s.matches(prefix + ".*")) {
@@ -414,7 +417,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 			if(c == null) {
 				continue;
 			}
-			HashSet<String> group = groupInfoManager.getGroups(c.getIdentity());
+			Set<String> group = groupInfoManager.getGroups(c.getIdentity());
 			if(group.contains(groupName)) {
 				if(canDrawElement(getElement(clickList.get(i)), group)) {
 					updateClickRegion(clickList.get(i));
@@ -429,7 +432,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	private void updateClickRegion(String name) {
 		Clickable c = getClickableElement(name);
 		if(c != null) {
-			HashSet<String> group = groupInfoManager.getGroups(c.getIdentity());
+			Set<String> group = groupInfoManager.getGroups(c.getIdentity());
 			if(group == null) {
 				addClickRegion(c.getIdentity(), c.getDetectionRegion(0, 0));
 			}
@@ -1060,7 +1063,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	public int getMinimumScreenX(String groupName) {
 		Integer minX = null;
 		lock.lock();
-		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		List<Element> elements = new ArrayList<Element>(drawList.values());
 		lock.unlock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
@@ -1075,7 +1078,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	public int getMaximumScreenX(String groupName) {
 		Integer maxX = null;
 		lock.lock();
-		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		List<Element> elements = new ArrayList<Element>(drawList.values());
 		lock.unlock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
@@ -1090,7 +1093,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	public int getMinimumScreenY(String groupName) {
 		Integer minY = null;
 		lock.lock();
-		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		List<Element> elements = new ArrayList<Element>(drawList.values());
 		lock.unlock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);
@@ -1105,7 +1108,7 @@ public class ElementPanel extends Panel implements OffsetManager{
 	public int getMaximumScreenY(String groupName) {
 		Integer maxY = null;
 		lock.lock();
-		ArrayList<Element> elements = new ArrayList<Element>(drawList.values());
+		List<Element> elements = new ArrayList<Element>(drawList.values());
 		lock.unlock();
 		for(int i = 0; i < elements.size(); i++) {
 			Element e = elements.get(i);

@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -31,7 +32,7 @@ public class Canvas {
 	
 	private int subGridSizeMaximum;
 	
-	private static HashMap<Integer, Color> cache;
+	private static Map<Integer, Color> cache;
 
 //---  Constructors   -------------------------------------------------------------------------
 	

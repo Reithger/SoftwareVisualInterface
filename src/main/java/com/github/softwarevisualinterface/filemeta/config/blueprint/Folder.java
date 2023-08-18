@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Generic definition of a Folder in a File System to map out a blueprint of a config system for reproduction
@@ -17,8 +18,8 @@ public class Folder {
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	private String name;
-	private ArrayList<Folder> children;
-	private ArrayList<ConfigFile> files;
+	private List<Folder> children;
+	private List<ConfigFile> files;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -118,8 +119,8 @@ public class Folder {
 		return name;
 	}
 	
-	public ArrayList<File> getFiles(String path){
-		ArrayList<File> out = new ArrayList<File>();
+	public List<File> getFiles(String path){
+		List<File> out = new ArrayList<File>();
 		for(ConfigFile cf : files) {
 			File f = new File(path + "/" + name + "/" + cf.getName());
 			out.add(f);
@@ -127,8 +128,8 @@ public class Folder {
 		return out;
 	}
 	
-	public ArrayList<File> getAllFiles(String path){
-		ArrayList<File> out = getFiles(path);
+	public List<File> getAllFiles(String path){
+		List<File> out = getFiles(path);
 		for(Folder f : children) {
 			out.addAll(f.getAllFiles(path + "/" + name));
 		}

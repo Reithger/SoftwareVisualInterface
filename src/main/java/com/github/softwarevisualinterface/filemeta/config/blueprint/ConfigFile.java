@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashSet;
+import java.util.Set;
 
 import com.github.softwarevisualinterface.filemeta.config.ConfigFileParser;
 
@@ -17,7 +18,7 @@ public class ConfigFile {
 	
 	private String name;
 	private String fileComment;
-	private HashSet<FileEntry> fileEntries;
+	private Set<FileEntry> fileEntries;
 	
 //---  Constructors   -------------------------------------------------------------------------
 	
@@ -63,7 +64,7 @@ public class ConfigFile {
 		return name;
 	}
 	
-	public HashSet<FileEntry> getFileEntries(){
+	public Set<FileEntry> getFileEntries(){
 		return fileEntries;
 	}
 	

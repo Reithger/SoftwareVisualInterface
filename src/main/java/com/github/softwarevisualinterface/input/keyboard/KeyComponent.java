@@ -3,6 +3,7 @@ package com.github.softwarevisualinterface.input.keyboard;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.github.softwarevisualinterface.input.EventFielder;
 import com.github.softwarevisualinterface.input.manager.actionevent.ActionEventGenerator;
@@ -26,7 +27,7 @@ public class KeyComponent implements KeyListener{
 	/** EventReceiver object providing reference to the EventReceiver to which this KeyComponent is attached*/
 	private EventFielder eventHandler;
 	
-	private HashMap<Integer, Integer> VK_mapping;
+	private Map<Integer, Integer> VK_mapping;
 	
 //---  Constructors   -------------------------------------------------------------------------
 

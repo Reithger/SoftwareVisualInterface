@@ -8,6 +8,8 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -35,7 +37,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 //---  Instance Variables   -------------------------------------------------------------------
 	
 	/** ArrayList<Integer[]> object containing the coordinates and codes for each event-region*/
-	private HashMap<Integer, Detectable> detectionRegions;
+	private Map<Integer, Detectable> detectionRegions;
 	/** EventReceiver object representing the EventReceiver to which this ClickComponent is attached (the EventReceiver that is being clicked)*/
 	private EventFielder eventHandler;
 
@@ -121,7 +123,7 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	 * @param updated - ArrayList<<r>Detectable> object containing Detectable objects
 	 */
 	
-	public void setDetectionRegions(HashMap<Integer, Detectable> updated){
+	public void setDetectionRegions(Map<Integer, Detectable> updated){
 		lock.lock();
 		detectionRegions = updated;
 		lock.unlock();
@@ -253,8 +255,8 @@ public class ClickComponent implements MouseListener, MouseMotionListener, Mouse
 	
 	//-- Support  ---------------------------------------------
 	
-	private ArrayList<Detectable> findClicked(int x, int y) {
-		ArrayList<Detectable> response = new ArrayList<Detectable>();
+	private List<Detectable> findClicked(int x, int y) {
+		List<Detectable> response = new ArrayList<Detectable>();
 		lock.lock();
 		for(Detectable d : (new HashMap<Integer, Detectable>(detectionRegions)).values()) {
 			if(d.wasClicked(x, y)) {
