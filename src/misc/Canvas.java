@@ -316,6 +316,10 @@ public class Canvas {
 //---  Mechanics   ----------------------------------------------------------------------------
 	
 	private Color getCachedColor(int in) {
+		if(cache.size() > 1000) {
+			cache.clear();
+			return new Color(in, true);
+		}
 		if(cache.get(in) == null) {
 			cache.put(in, new Color(in, true));
 		}

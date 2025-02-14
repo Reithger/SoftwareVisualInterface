@@ -30,7 +30,6 @@ public class PopoutSelectList extends PopoutWindow{
 	
 	public String getSelected() {
 		while(!ready) {
-			Thread.onSpinWait();
 		};
 		return output;
 	}

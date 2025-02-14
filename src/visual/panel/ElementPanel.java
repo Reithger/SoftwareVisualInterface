@@ -33,6 +33,7 @@ import visual.panel.group.OffsetManager;
  * Additionally, a composite package has been made that builds on top of this basic foundation to make less
  * flexible but more convenient tools which can themselves be overridden.
  * 
+ * TODO: Some way to reduce number of threads once no longer necessary, increment/decrement the amount dynamically
  * TODO: Big memory leak issues, need to fix that; maybe not? Still needs a good reworking though
  * TODO: ElementFactory to reduce number of dependencies on specific subclasses; simplify their input?
  * TODO: Small pixel font options for text
@@ -698,36 +699,36 @@ public class ElementPanel extends Panel implements OffsetManager{
 	
 	//-- Animations  ------------------------------------------
 	
-	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int period, double scale, String[] images) {
-		Image[] rec = new Image[images.length];
+	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int period, double scale, String[] frames) {
+		Image[] rec = new Image[frames.length];
 		for(int i = 0; i < rec.length; i++) {
-			rec[i] = retrieveImage(images[i]);
+			rec[i] = retrieveImage(frames[i]);
 		}
-		int[] periods = new int[images.length];
+		int[] periods = new int[frames.length];
 		for(int i = 0; i < periods.length; i++) {
 			periods[i] = period;
 		}
 		handleAddElement(name, ElementFactory.generateAnimation(priority, x, y, center, periods, scale, rec), frame);
 	}
 	
-	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int[] period, double scale, String[] images) {
-		Image[] rec = new Image[images.length];
+	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int[] period, double scale, String[] frames) {
+		Image[] rec = new Image[frames.length];
 		for(int i = 0; i < rec.length; i++) {
-			rec[i] = retrieveImage(images[i]);
+			rec[i] = retrieveImage(frames[i]);
 		}
 		handleAddElement(name, ElementFactory.generateAnimation(priority, x, y, center, period, scale, rec), frame);
 	}
 	
-	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int period, double scale, Image[] images) {
-		int[] periods = new int[images.length];
+	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int period, double scale, Image[] frames) {
+		int[] periods = new int[frames.length];
 		for(int i = 0; i < periods.length; i++) {
 			periods[i] = period;
 		}
-		handleAddElement(name, ElementFactory.generateAnimation(priority, x, y, center, periods, scale, images), frame);
+		handleAddElement(name, ElementFactory.generateAnimation(priority, x, y, center, periods, scale, frames), frame);
 	}
 	
-	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int[] period, double scale, Image[] images) {
-		handleAddElement(name, ElementFactory.generateAnimation(priority, x, y, center, period, scale, images), frame);
+	public void addAnimation(String name, int priority, String frame, int x, int y, boolean center, int[] period, double scale, Image[] frames) {
+		handleAddElement(name, ElementFactory.generateAnimation(priority, x, y, center, period, scale, frames), frame);
 	}
 	
 	//-- Button  ----------------------------------------------
