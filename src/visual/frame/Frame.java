@@ -140,6 +140,14 @@ public abstract class Frame{
 		frame.getContentPane().setPreferredSize(d);
 	}
 	
+	public void setLocationRelativeTo(Frame f) {
+		frame.setLocationRelativeTo(f == null ? null : f.getFrame());
+	}
+	
+	public void setBackgroundColor(Color col) {
+		getFrame().getContentPane().setBackground(col);
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public abstract Panel getPanel(String name);
@@ -152,7 +160,7 @@ public abstract class Frame{
 		return frame.getHeight() - BULLSHIT_OFFSET_Y;
 	}
 	
-	public JFrame getFrame() {
+	protected JFrame getFrame() {
 		return frame;
 	}
 

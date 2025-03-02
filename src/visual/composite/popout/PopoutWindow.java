@@ -7,6 +7,7 @@ import java.awt.Image;
 import input.CustomEventReceiver;
 import visual.composite.HandleElements;
 import visual.composite.HandlePanel;
+import visual.frame.Frame;
 import visual.frame.WindowFrame;
 
 public abstract class PopoutWindow implements HandleElements{
@@ -36,6 +37,61 @@ public abstract class PopoutWindow implements HandleElements{
 		parFrame.setName("Popup Window");
 		parFrame.setResizable(false);
 		parFrame.setExitOnClose(false);
+		parFrame.setLocationRelativeTo(null);
+		panel = new HandlePanel(0, 0, width, height);
+		panel.setEventReceiver(new CustomEventReceiver(){
+			@Override
+			public void clickEvent(int code, int x, int y, int clickType){
+				clickAction(code, x, y);
+			}
+			
+			@Override
+			public void keyEvent(char code) {
+				keyAction(code);
+			}
+			
+			@Override
+			public void mouseWheelEvent(int scroll) {
+				panel.setOffsetY("move", panel.getOffsetY("move") - scroll * ROTATION_MULTIPLIER);
+				scrollAction(scroll);
+			}
+
+			@Override
+			public void clickPressEvent(int code, int x, int y, int clickType) {
+				clickPressAction(code, x, y);
+			}
+
+			@Override
+			public void clickReleaseEvent(int code, int x, int y, int clickType) {
+				clickReleaseAction(code, x, y);
+			}
+
+			@Override
+			public void dragEvent(int code, int x, int y, int clickType) {
+				dragAction(code, x, y);
+			}
+			
+		});
+		parFrame.reserveWindow("popout");
+		parFrame.showActiveWindow("popout");
+		parFrame.addPanelToWindow("popout", "pan", panel);
+	}
+	
+	public PopoutWindow(int width, int height, Frame locReference) {
+		panel = null;
+		parFrame = new WindowFrame(width, height) {
+			@Override
+			public void reactToResize() {
+				if(panel != null) {
+					popoutResize(parFrame.getWidth(), parFrame.getHeight());
+				}
+			}
+			
+		};
+		parFrame.setName("Popup Window");
+		parFrame.setResizable(false);
+		parFrame.setExitOnClose(false);
+		parFrame.setLocationRelativeTo(locReference);
 		panel = new HandlePanel(0, 0, width, height);
 		panel.setEventReceiver(new CustomEventReceiver(){
 			@Override
@@ -87,7 +143,7 @@ public abstract class PopoutWindow implements HandleElements{
 	public void dispose() {
 		parFrame.disposeFrame();
 	}
-	
+
 	public void clickAction(int code, int x, int y) {
 		
 	}
@@ -130,6 +186,14 @@ public abstract class PopoutWindow implements HandleElements{
 		panel.setElementStoredText(ref, now);
 	}
 	
+	public void setOffsetX(String group, int newOffX) {
+		panel.setOffsetX(group, newOffX);
+	}
+	
+	public void setOffsetY(String group, int newOffY) {
+		panel.setOffsetY(group, newOffY);
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 	
 	public int getWidth() {
@@ -146,6 +210,14 @@ public abstract class PopoutWindow implements HandleElements{
 	
 	public HandlePanel getHandlePanel() {
 		return panel;
+	}
+	
+	public int getOffsetX(String group) {
+		return panel.getOffsetX(group);
+	}
+	
+	public int getOffsetY(String group) {
+		return panel.getOffsetY(group);
 	}
 	
 //---  Drawing Support   ----------------------------------------------------------------------
