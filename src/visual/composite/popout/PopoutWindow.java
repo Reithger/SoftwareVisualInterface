@@ -276,4 +276,14 @@ public abstract class PopoutWindow implements HandleElements{
 	public void handleImageButton(String name, String group, int prior, int x, int y, int wid, int hei, String path, int code) {
 		panel.handleImageButton(name, group, prior, x, y, wid, hei, path, code);
 	}
+	
+	@Override
+	public void handleScrollbar(String name, String group, String controlledGroup, int prior, int scrollX, int scrollY, int scrollWid, int scrollHei, int windowAxisOrigin, int windowSize, boolean isBarVert) {
+		panel.handleScrollbar(name, group, controlledGroup, prior, scrollX,  scrollY, scrollWid, scrollHei, windowAxisOrigin, windowSize, isBarVert);
+	}
+	
+	@Override
+	public void handleCanvas(String name, String group, int prior, int x, int y, int wid, int hei, int canWid, int canHei, int code) {
+		panel.handleCanvas(name, group, prior, x, y, wid, hei, canWid, canHei, code);
+	}
 }

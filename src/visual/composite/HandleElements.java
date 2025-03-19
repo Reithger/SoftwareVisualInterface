@@ -30,4 +30,8 @@ public interface HandleElements {
 
 	public abstract void handleImageButton(String name, String group, int prior, int x, int y, int wid, int hei, String path, int code);
 	
+	public abstract void handleScrollbar(String name, String group, String controlledGroup, int prior, int scrollX, int scrollY, int scrollWid, int scrollHei, int windowAxisOrigin, int windowSize, boolean isBarVert);
+
+	public abstract void handleCanvas(String name, String group, int prior, int x, int y, int wid, int hei, int canWid, int canHei, int code);
+	
 }

@@ -123,5 +123,21 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 			addButton(buttonName, prior, frame,  x, y, wid, hei, code, true);
 		}
 	}
+
+	@Override
+	public void handleScrollbar(String name, String group, String controlledGroup, int prior, int scrollX, int scrollY, int scrollWid, int scrollHei, int windowAxisOrigin, int windowSize, boolean isBarVert) {
+		if(!moveElement(name, scrollX, scrollY)) {
+			addScrollbar(name, prior, group, scrollX, scrollY, scrollWid, scrollHei, windowAxisOrigin, windowSize, controlledGroup, isBarVert);
+		}
+		
+	}
+
+	@Override
+	public void handleCanvas(String name, String group, int prior, int x, int y, int wid, int hei, int canWid, int canHei, int code) {
+		if(!moveElement(name, x, y)) {
+			addCanvas(name, prior, group, x, y, wid, hei, canWid, canHei, code);
+		}
+		
+	}
 	
 }
