@@ -10,3 +10,11 @@ If you have any questions, concerns, or recommendations for the library, please 
 I'm aware the library may be a bit dense, but hopefully through provided examples it's usage will be made clear.
 
 Enjoy!
+
+## Example image
+
+This is a testing ground I use for making sure elements are drawn properly, to give a visual idea of some of what it can do
+
+![image](https://github.com/user-attachments/assets/07fd43d3-073d-4798-8b55-39d4eeeb59ba)
+
+Scrollbars can be added to move elements vertically and horizontally, canvases can be drawn on, animations are supported, text has some formatting options for placement within a bounded space, lots of stuff going on here.
