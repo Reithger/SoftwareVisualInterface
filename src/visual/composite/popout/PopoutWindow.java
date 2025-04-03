@@ -133,6 +133,10 @@ public abstract class PopoutWindow implements HandleElements{
 
 //---  Operations   ---------------------------------------------------------------------------
 	
+	public void setExitOnClose(boolean in) {
+		parFrame.setExitOnClose(in);
+	}
+	
 	public void popoutResize(int wid, int hei) {
 		if(panel != null) {
 			panel.resize(wid, hei);
@@ -245,6 +249,11 @@ public abstract class PopoutWindow implements HandleElements{
 	@Override
 	public void handleImage(String nom, String group, int prior, int x, int y, int wid, int hei, boolean prop, String imgPath) {
 		panel.handleImage(nom, group, prior, x, y, wid, hei, prop, imgPath);
+	}
+
+	@Override
+	public void handleImage(String nom, String group, int prior, int x, int y, int wid, int hei, boolean prop, Image img) {
+		panel.handleImage(nom, group, prior, x, y, wid, hei, prop, img);
 	}
 	
 	@Override
