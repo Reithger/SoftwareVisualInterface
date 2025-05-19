@@ -3,6 +3,8 @@ package visual.composite.popout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Shape;
 
 import input.CustomEventReceiver;
 import visual.composite.HandleElements;
@@ -21,9 +23,15 @@ public abstract class PopoutWindow implements HandleElements{
 	private WindowFrame parFrame;
 	private HandlePanel panel;
 	
+	private boolean clickAndDragMode;
+	
+	private int lastX;
+	private int lastY;
+	private boolean dragged;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
-	public PopoutWindow(int width, int height) {
+ 	public PopoutWindow(int width, int height) {
 		panel = null;
 		parFrame = new WindowFrame(width, height) {
 			@Override
@@ -132,11 +140,7 @@ public abstract class PopoutWindow implements HandleElements{
 	}
 
 //---  Operations   ---------------------------------------------------------------------------
-	
-	public void setExitOnClose(boolean in) {
-		parFrame.setExitOnClose(in);
-	}
-	
+
 	public void popoutResize(int wid, int hei) {
 		if(panel != null) {
 			panel.resize(wid, hei);
@@ -144,20 +148,34 @@ public abstract class PopoutWindow implements HandleElements{
 		}
 	}
 
+	public void toggleClickAndDragMode() {
+		clickAndDragMode = !clickAndDragMode;
+	}
+	
 	public void dispose() {
 		parFrame.disposeFrame();
 	}
 
+	public void resize(int wid, int hei) {
+		parFrame.resize(wid, hei);
+	}
+	
 	public void clickAction(int code, int x, int y) {
 		
 	}
 	
 	public void clickPressAction(int code, int x, int y) {
-		
+		if(clickAndDragMode) {
+			lastX = x;
+			lastY = y;
+			dragged = true;
+		}
 	}
 	
 	public void clickReleaseAction(int code, int x, int y) {
-		
+		if(clickAndDragMode) {
+			dragged = false;
+		}
 	}
 	
 	public void keyAction(char code) {
@@ -169,7 +187,12 @@ public abstract class PopoutWindow implements HandleElements{
 	}
 	
 	public void dragAction(int code, int x, int y) {
-		
+		if(clickAndDragMode) {
+			if(dragged) {
+				Point p = parFrame.getLocation();
+				parFrame.setLocation(new Point((int)(p.getX() + (x - lastX)), (int)(p.getY() + (y - lastY))));
+			}
+		}
 	}
 	
 	protected void removeElementPrefixed(String in) {
@@ -196,6 +219,26 @@ public abstract class PopoutWindow implements HandleElements{
 	
 	public void setOffsetY(String group, int newOffY) {
 		panel.setOffsetY(group, newOffY);
+	}
+
+	public void setFrameShapeDisc() {
+		parFrame.setFrameShapeDisc();
+	}
+	
+	public void setFrameShapeNormal() {
+		parFrame.setFrameShapeNormal();
+	}
+	
+	public void setExitOnClose(boolean in) {
+		parFrame.setExitOnClose(in);
+	}
+
+	public void setBackgroundColor(Color col) {
+		parFrame.setBackgroundColor(col);
+	}
+	
+	public void setFrameShapeArbitrary(Shape frameShape) {
+		parFrame.setFrameShapeArbitrary(frameShape);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------

@@ -3,8 +3,12 @@ package visual.frame;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Shape;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Timer;
 import javax.swing.JFrame;
 
@@ -148,7 +152,31 @@ public abstract class Frame{
 		getFrame().getContentPane().setBackground(col);
 	}
 	
+	public void setFrameShapeNormal() {
+		setFrameShapeArbitrary(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
+	}
+	
+	public void setFrameShapeDisc() {
+		setFrameShapeArbitrary(new Ellipse2D.Double(0, 0, getWidth(), getHeight()));
+	}
+	
+	public void setFrameShapeArbitrary(Shape frameShape) {
+		frame.setVisible(false);
+		frame.dispose();
+		frame.setUndecorated(true);
+		frame.setShape(frameShape);
+		frame.setVisible(true);
+	}
+	
+	public void setLocation(Point in) {
+		frame.setLocation(in);
+	}
+	
 //---  Getter Methods   -----------------------------------------------------------------------
+	
+	public Point getLocation() {
+		return frame.getLocationOnScreen();
+	}
 	
 	public abstract Panel getPanel(String name);
 
