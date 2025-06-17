@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Shape;
+import java.util.ArrayList;
 
 import input.CustomEventReceiver;
 import visual.composite.HandleElements;
@@ -279,6 +280,11 @@ public abstract class PopoutWindow implements HandleElements{
 		panel.handleText(nom, group, prior, x, y, wid, hei, font, phr);
 	}
 
+	@Override
+	public void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, ArrayList<String> phrases, ArrayList<Font> fonts, ArrayList<Color> colors) {
+		panel.handleText(nom, group, prior, x, y, wid, hei, phrases, fonts, colors);
+	}
+	
 	@Override
 	public void handleImage(String nom, String group, int prior, int x, int y, String path, double scale) {
 		panel.handleImage(nom, group, prior, x, y, path, scale);

@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.io.File;
-
+import java.util.ArrayList;
 
 import filemeta.FileChooser;
 import filemeta.config.Config;
@@ -12,7 +12,7 @@ import misc.Canvas;
 import visual.composite.popout.PopoutSelectList;
 import visual.frame.WindowFrame;
 import visual.panel.ElementPanel;
-import visual.panel.element.DrawnCanvas;
+import visual.panel.element.drawn.DrawnCanvas;
 
 public class test {
 	
@@ -98,10 +98,15 @@ public class test {
 		pan.addRectangle("rect2", 8, "move",  pan.getWidth() / 18,  pan.getHeight() / 18, pan.getWidth() * 16 / 18,  pan.getHeight() * 2 / 18, false, Color.white, Color.black);
 		pan.addText("tex", 10, "move",  pan.getWidth() / 18, pan.getHeight() / 18, pan.getWidth() * 16 / 18, pan.getHeight() * 2 / 18, "This is a test phrase for a text\n object", defaultFont, true, true, false);
 		
+		ArrayList<String> strings = new ArrayList<String>();
+		ArrayList<Font> fonts = new ArrayList<Font>();
+		ArrayList<Color> colors = new ArrayList<Color>();
+
 		pan.addRectangle("rect3", 8, "move",  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, true, Color.white, Color.black);
-		pan.addText("tex1", 10, "move",  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T T T", defaultFont, true, true, false);
-		pan.addText("tex2", 10, "move",  pan.getWidth() / 2, pan.getHeight() /  2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "F F F", defaultFont, true, false, false);
+		pan.addText("tex1", 10, "move",  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T T T", defaultFont, true, true, true);
+		pan.addText("tex2", 10, "move",  pan.getWidth() / 2, pan.getHeight() /  2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "F F F", defaultFont, false, false, false);
 		pan.addText("tex3", 10, "move",  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T F T", defaultFont, true, false, true);
+		pan.addText("tex4", 10, "move",  pan.getWidth() / 2, pan.getHeight() / 2, pan.getWidth() * 12 / 18, pan.getHeight() / 12, "T T F", defaultFont, true, true, false);
 		
 		pan.addAnimation("anim", 23, "move",  pan.getWidth() / 2, pan.getHeight() * 3 / 4, true, new int[] {13, 7, 12}, 5, imagesPaths);
 		
@@ -201,6 +206,20 @@ public class test {
 				}
 			}
 		};
+		
+		strings.add("wod 1");
+		strings.add("wod of length 2");
+		strings.add("and much much more");
+		
+		fonts.add(new Font("Sans Serif", Font.BOLD, 12));
+		fonts.add(new Font("Times New Roman", Font.ITALIC, 18));
+		fonts.add(new Font("Sans Serif", Font.PLAIN, 24));
+		
+		colors.add(Color.black);
+		colors.add(Color.red);
+		colors.add(Color.blue);
+		
+		pan2.addText("test 5", 25, "move", pan.getWidth() / 2, pan.getHeight() * 3 / 4, pan.getWidth() * 12 / 18, pan.getHeight() / 4, strings, fonts, colors, false, false, true);
 		
 		ElementPanel pan3 = new ElementPanel(800, 0, 300, 500) {
 			

@@ -3,6 +3,7 @@ package visual.composite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.util.ArrayList;
 
 import visual.panel.ElementPanel;
 
@@ -36,6 +37,25 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	}
 
 	@Override
+	public void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, ArrayList<String> phrases, ArrayList<Font> fonts, ArrayList<Color> colors) {
+		if(fonts == null) {
+			fonts = new ArrayList<Font>();
+			for(int i = 0; i < phrases.size(); i++) {
+				fonts.add(DEFAULT_FONT);
+			}
+		}
+		if(colors == null) {
+			colors = new ArrayList<Color>();
+			for(int i = 0; i < phrases.size(); i++) {
+				colors.add(Color.black);
+			}
+		}
+		if(!moveElement(nom, x, y)){
+			addText(nom, prior, group, x, y, wid, hei, phrases, fonts, colors, true, true, true);
+		}
+	}
+	
+	@Override
 	public void handleImage(String nom, String frame, int prior, int x, int y, String path, double scale) {
 		if(!moveElement(nom, x, y)){
 			addImage(nom, prior, frame, x, y, true, path, scale);
@@ -62,7 +82,7 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 			addImage(nom, prior, frame, x, y, wid, hei, true, img, prop);
 		}
 	}
-	
+
 	@Override
 	public void handleTextEntry(String nom, String frame, int prior, int x, int y, int wid, int hei, int cod, Font font, String phr) {
 		if(!moveElement(nom, x, y)){
@@ -146,5 +166,5 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 		}
 		
 	}
-	
+
 }

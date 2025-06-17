@@ -1,10 +1,14 @@
 package visual.panel;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.InputStream;
 
 import javax.swing.JPanel;
 
@@ -75,6 +79,7 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 		panel.setLocation(x, y);
 		panel.setSize(width, height);
 		panel.setPreferredSize(new Dimension(width, height));
+		panel.setOpaque(false);
 		panel.setVisible(true);
 		eventHandler = new EventFielder(this);
 		attention = true;
@@ -115,6 +120,10 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	public void resetDetectionRegions() {
 		eventHandler.resetDetectionRegions();
 	}
+	
+	public void setBackgroundColor(Color in) {
+		panel.setBackground(in);
+	}
 
 	public void requestFocusInWindow() {
 		getPanel().requestFocusInWindow();
@@ -141,6 +150,48 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	public void removeEventReceiver(String label) {
 		if(inputHandler != null) {
 			inputHandler.removeNestedEventReceiver(label);
+		}
+	}
+
+	/**
+	 * 
+	 * Registers a new font from the file denoted by the provided file path and returns
+	 * the name of that font for future reference and usage of the generated font.
+	 * 
+	 * Throws an exception if no valid font file was retrievable with the given path.
+	 * 
+	 * If working from an executable .jar context, you will likely need to call this
+	 * function twice with the two pathing contexts for a file stored within a .jar
+	 * (the in-dev environment pathing and the packaged .jar environment pathing differ
+	 * slightly).
+	 * 
+	 * @param fontFilePath
+	 * @return
+	 * @throws Exception
+	 */
+	
+	
+	
+	public String registerFont(String fontFilePath) throws Exception{
+		InputStream is = null;
+		try {
+			is = Panel.class.getResourceAsStream(fontFilePath);
+			if(is == null) {
+				throw new Exception("Invalid file path: " + fontFilePath + " for registering new font");
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			Font f = Font.createFont(Font.TRUETYPE_FONT, is);
+			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(f);
+			is.close();
+			return f.getName();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	

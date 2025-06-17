@@ -779,6 +779,14 @@ public class ElementPanel extends Panel implements OffsetManager{
 	public void addText(String name, int priority, String frame, int x, int y, int width, int height, String phrase, Font font, boolean centeredX, boolean centeredY, boolean centeredText){
 		handleAddElement(name, ElementFactory.generateText(priority, x, y, width, height, phrase, font, centeredX, centeredY, centeredText), frame);
 	}
+	
+	public void addText(String name, int priority, String frame, int x, int y, int width, int height, String phrase, Font font, Color col, boolean centeredX, boolean centeredY, boolean centeredText){
+		handleAddElement(name, ElementFactory.generateText(priority, x, y, width, height, phrase, font, col, centeredX, centeredY, centeredText), frame);
+	}
+	
+	public void addText(String name, int priority, String frame, int x, int y, int width, int height, ArrayList<String> phrases, ArrayList<Font> fonts, ArrayList<Color> colors, boolean centeredX, boolean centeredY, boolean centeredText){
+		handleAddElement(name, ElementFactory.generateText(priority, x, y, width, height, phrases, fonts, colors, centeredX, centeredY, centeredText), frame);
+	}
 
 	/**
 	 * This method permits a region of the screen to be relegated to receiving user input;

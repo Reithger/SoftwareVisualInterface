@@ -3,8 +3,19 @@ package visual.panel.element;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.util.ArrayList;
 
 import misc.Canvas;
+import visual.panel.element.drawn.DrawnAnimation;
+import visual.panel.element.drawn.DrawnButton;
+import visual.panel.element.drawn.DrawnCanvas;
+import visual.panel.element.drawn.DrawnImage;
+import visual.panel.element.drawn.DrawnLine;
+import visual.panel.element.drawn.DrawnRectangle;
+import visual.panel.element.drawn.DrawnScrollbar;
+import visual.panel.element.drawn.DrawnText;
+import visual.panel.element.drawn.DrawnTextEntry;
+import visual.panel.element.drawn.text.TextSegmentComposite;
 import visual.panel.group.OffsetManager;
 
 public class ElementFactory {
@@ -46,7 +57,19 @@ public class ElementFactory {
 	//-- Text  ------------------------------------------------
 	
 	public static Element generateText(int priority, int x, int y, int width, int height, String phrase, Font font, boolean centeredX, boolean centeredY, boolean centeredText){
-		return new DrawnText(x, y, width, height, priority, centeredX, centeredY, centeredText, phrase, font);
+		return new DrawnText(x, y, width, height, priority, centeredX, centeredY, centeredText, new TextSegmentComposite(phrase, font, Color.black));
+	}
+	
+	public static Element generateText(int priority, int x, int y, int width, int height, String phrase, Font font, Color col, boolean centeredX, boolean centeredY, boolean centeredText){
+		return new DrawnText(x, y, width, height, priority, centeredX, centeredY, centeredText, new TextSegmentComposite(phrase, font, col));
+	}
+	
+	public static Element generateText(int priority, int x, int y, int width, int height, ArrayList<String> phrases, ArrayList<Font> fonts, ArrayList<Color> colors, boolean centeredX, boolean centeredY, boolean centeredText){
+		TextSegmentComposite tsc = new TextSegmentComposite();
+		for(int i = 0; i < phrases.size(); i++) {
+			tsc.addTextSegment(phrases.get(i), fonts.get(i), colors.get(i));
+		}
+		return new DrawnText(x, y, width, height, priority, centeredX, centeredY, centeredText, tsc);
 	}
 
 	public static Element generateTextEntry(int priority, int x, int y, int width, int height, int code, String defaultText, Font font, boolean centeredX, boolean centeredY, boolean centeredText) {

@@ -3,6 +3,7 @@ package visual.composite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.util.ArrayList;
 
 public interface HandleElements {
 	
@@ -25,6 +26,8 @@ public interface HandleElements {
 	public abstract void handleImage(String nom, String group, int prior, int x, int y, int wid, int hei, boolean prop, Image path);
 	
 	public abstract void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, Font font, String phr);
+	
+	public abstract void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, ArrayList<String> phrases, ArrayList<Font> fonts, ArrayList<Color> colors);
 
 	public abstract void handleTextEntry(String nom, String group, int prior, int x, int y, int wid, int hei, int cod, Font font, String phr);
 	

@@ -150,6 +150,7 @@ public abstract class Frame{
 	
 	public void setBackgroundColor(Color col) {
 		getFrame().getContentPane().setBackground(col);
+		getFrame().setBackground(col);
 	}
 	
 	public void setFrameShapeNormal() {
@@ -166,6 +167,10 @@ public abstract class Frame{
 		frame.setUndecorated(true);
 		frame.setShape(frameShape);
 		frame.setVisible(true);
+	}
+	
+	public void setShapedFrameTransparent(float transp) {
+		frame.setOpacity(transp);
 	}
 	
 	public void setLocation(Point in) {
