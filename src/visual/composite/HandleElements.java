@@ -27,6 +27,8 @@ public interface HandleElements {
 	
 	public abstract void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, Font font, String phr);
 	
+	public abstract void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, Font font, String phr, Color col);
+	
 	public abstract void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, ArrayList<String> phrases, ArrayList<Font> fonts, ArrayList<Color> colors);
 
 	public abstract void handleTextEntry(String nom, String group, int prior, int x, int y, int wid, int hei, int cod, Font font, String phr);

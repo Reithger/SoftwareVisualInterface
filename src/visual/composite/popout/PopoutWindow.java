@@ -281,6 +281,11 @@ public abstract class PopoutWindow implements HandleElements{
 	}
 
 	@Override
+	public void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, Font font, String phr, Color col) {
+		panel.handleText(nom, group, prior, x, y, wid, hei, font, phr, col);
+	}
+	
+	@Override
 	public void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, ArrayList<String> phrases, ArrayList<Font> fonts, ArrayList<Color> colors) {
 		panel.handleText(nom, group, prior, x, y, wid, hei, phrases, fonts, colors);
 	}

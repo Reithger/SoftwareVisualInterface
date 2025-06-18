@@ -37,6 +37,13 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	}
 
 	@Override
+	public void handleText(String nom, String frame, int prior, int x, int y, int wid, int hei, Font font, String phr, Color col) {
+		if(!moveElement(nom, x, y)){
+			addText(nom, prior, frame, x, y, wid, hei, phr, font == null ? DEFAULT_FONT : font, col == null ? Color.black : col, true, true, true);
+		}
+	}
+
+	@Override
 	public void handleText(String nom, String group, int prior, int x, int y, int wid, int hei, ArrayList<String> phrases, ArrayList<Font> fonts, ArrayList<Color> colors) {
 		if(fonts == null) {
 			fonts = new ArrayList<Font>();
