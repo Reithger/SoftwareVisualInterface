@@ -174,14 +174,9 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	
 	public String registerFont(String fontFilePath) throws Exception{
 		InputStream is = null;
-		try {
-			is = Panel.class.getResourceAsStream(fontFilePath);
-			if(is == null) {
-				throw new Exception("Invalid file path: " + fontFilePath + " for registering new font");
-			}
-		}
-		catch(Exception e) {
-			e.printStackTrace();
+		is = Panel.class.getResourceAsStream(fontFilePath);
+		if(is == null) {
+			throw new Exception("Invalid file path: " + fontFilePath + " for registering new font");
 		}
 		try {
 			Font f = Font.createFont(Font.TRUETYPE_FONT, is);

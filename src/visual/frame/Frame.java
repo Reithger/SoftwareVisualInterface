@@ -83,6 +83,8 @@ public abstract class Frame{
 	}
 
 	public void disposeFrame() {
+		timer.cancel();
+		frame.setVisible(false);
 		frame.dispose();
 	}
 	
