@@ -63,6 +63,11 @@ public class DrawnTextEntry extends DrawnText implements Clickable, TextStorage{
 
 //---  Operations   ---------------------------------------------------------------------------
 	
+	/**
+	 * TODO: Need to fix where the indicator is placed based on new backend for how text draws, oh goodness
+	 * 
+	 */
+	
 	@Override
 	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
 		super.drawToScreen(g, offsetX, offsetY);

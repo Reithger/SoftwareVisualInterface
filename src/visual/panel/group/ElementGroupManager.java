@@ -3,7 +3,20 @@ package visual.panel.group;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class ElementGroupManager {
+/**
+ * 
+ * Element Groups are a way to tie the offset positions of many Elements together so that
+ * they can easily be moved all together (such as someone scrolling a scrollbar and the main
+ * elements of the page moving but not the header/footer).
+ * 
+ * This class manages these Groups and the elements associated to each group, as well as
+ * the 'view' window for particular Groups. The user may desire to represent a scrolling
+ * collection of elements that are limited to a finite region of the Panel, so the window
+ * defines the viewport for which elements in a group will be drawn or not.
+ * 
+ */
+
+public class ElementGroupManager implements OffsetManager{
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
@@ -77,12 +90,14 @@ public class ElementGroupManager {
 			groupWindows.get(groupName).update(origin, breadth, isVert);
 		}
 	}
-	
+
+	@Override
 	public void setOffsetX(String groupName, int newOffsetX) {
 		addGroup(groupName);
 		groupOffsets.get(groupName).setOffsetX(newOffsetX);
 	}
-	
+
+	@Override
 	public void setOffsetY(String groupName, int newOffsetY) {
 		addGroup(groupName);
 		groupOffsets.get(groupName).setOffsetY(newOffsetY);
@@ -114,6 +129,21 @@ public class ElementGroupManager {
 		return groupWindows.containsKey(groupName);
 	}
 	
+	/**
+	 * 
+	 * A Group is defined across a single axis (vertical or horizontal), so this
+	 * function gets the x or y coordinate that is the origin/initial point for
+	 * the span managed by this group.
+	 * 
+	 * Currently it seems that a Group can only move along one axis, so that something
+	 * like a Scrollbar being scrolled would contribute that movement only to vertical
+	 * or horizontal translation.
+	 * 
+	 * @param groupName
+	 * @param isVert
+	 * @return
+	 */
+	
 	public int getWindowOrigin(String groupName, boolean isVert) {
 		if(hasWindow(groupName)) {
 			return groupWindows.get(groupName).getOrigin(isVert);
@@ -128,6 +158,10 @@ public class ElementGroupManager {
 		return 0;
 	}
 	
+	public HashSet<String> getGroupMembership(String name) {
+		return groupMapping.get(name.hashCode());
+	}
+	
 	public HashSet<String> getGroups(Integer hash){
 		return groupMapping.get(hash);
 	}
@@ -136,14 +170,17 @@ public class ElementGroupManager {
 		return groupOffsets.containsKey(groupName);
 	}
 	
+	@Override
 	public int getOffsetX(String groupName) {
 		addGroup(groupName);
 		return groupOffsets.get(groupName).getOffsetX();
 	}
-	
+
+	@Override
 	public int getOffsetY(String groupName) {
 		addGroup(groupName);
 		return groupOffsets.get(groupName).getOffsetY();
 	}
+
 	
 }

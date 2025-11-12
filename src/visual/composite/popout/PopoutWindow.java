@@ -12,6 +12,7 @@ import visual.composite.HandleElements;
 import visual.composite.HandlePanel;
 import visual.frame.Frame;
 import visual.frame.WindowFrame;
+import visual.panel.group.OffsetManager;
 
 public abstract class PopoutWindow implements HandleElements{
 
@@ -23,6 +24,8 @@ public abstract class PopoutWindow implements HandleElements{
 	
 	private WindowFrame parFrame;
 	private HandlePanel panel;
+	
+	private OffsetManager om;
 	
 	private boolean clickAndDragMode;
 	
@@ -48,6 +51,7 @@ public abstract class PopoutWindow implements HandleElements{
 		parFrame.setExitOnClose(false);
 		parFrame.setLocationRelativeTo(null);
 		panel = new HandlePanel(0, 0, width, height);
+		om = panel.getOffsetManager();
 		panel.setEventReceiver(new CustomEventReceiver(){
 			@Override
 			public void clickEvent(int code, int x, int y, int clickType){
@@ -61,7 +65,7 @@ public abstract class PopoutWindow implements HandleElements{
 			
 			@Override
 			public void mouseWheelEvent(int scroll) {
-				panel.setOffsetY("move", panel.getOffsetY("move") - scroll * ROTATION_MULTIPLIER);
+				om.setOffsetY("move", om.getOffsetY("move") - scroll * ROTATION_MULTIPLIER);
 				scrollAction(scroll);
 			}
 
@@ -115,7 +119,7 @@ public abstract class PopoutWindow implements HandleElements{
 			
 			@Override
 			public void mouseWheelEvent(int scroll) {
-				panel.setOffsetY("move", panel.getOffsetY("move") - scroll * ROTATION_MULTIPLIER);
+				om.setOffsetY("move", om.getOffsetY("move") - scroll * ROTATION_MULTIPLIER);
 				scrollAction(scroll);
 			}
 
@@ -211,15 +215,20 @@ public abstract class PopoutWindow implements HandleElements{
 	}
 	
 	public void setStoredText(String ref, String now) {
-		panel.setElementStoredText(ref, now);
+		try {
+			panel.setElementStoredText(ref, now);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setOffsetX(String group, int newOffX) {
-		panel.setOffsetX(group, newOffX);
+		om.setOffsetX(group, newOffX);
 	}
 	
 	public void setOffsetY(String group, int newOffY) {
-		panel.setOffsetY(group, newOffY);
+		om.setOffsetY(group, newOffY);
 	}
 
 	public void setFrameShapeDisc() {
@@ -253,7 +262,13 @@ public abstract class PopoutWindow implements HandleElements{
 	}
 	
 	public String getStoredText(String ref) {
-		return panel.getElementStoredText(ref);
+		try {
+			return panel.getElementStoredText(ref);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public HandlePanel getHandlePanel() {
@@ -261,11 +276,11 @@ public abstract class PopoutWindow implements HandleElements{
 	}
 	
 	public int getOffsetX(String group) {
-		return panel.getOffsetX(group);
+		return om.getOffsetX(group);
 	}
 	
 	public int getOffsetY(String group) {
-		return panel.getOffsetY(group);
+		return om.getOffsetY(group);
 	}
 	
 //---  Drawing Support   ----------------------------------------------------------------------

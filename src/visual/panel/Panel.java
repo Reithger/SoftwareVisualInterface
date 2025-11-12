@@ -295,7 +295,9 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	 */
 	
 	public void addClickRegion(int identity, Detectable detect) {
+		openLock();
 		eventHandler.addClickRegion(identity, detect);
+		closeLock();
 	}
 	
 //---  Remove Methods   -----------------------------------------------------------------------
@@ -310,7 +312,10 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	 */
 	
 	public boolean removeClickRegion(int identity) {
-		return eventHandler.removeDetectionRegion(identity);
+		openLock();
+		boolean out = eventHandler.removeDetectionRegion(identity);
+		closeLock();
+		return out;
 	}
 	
 	/**
@@ -324,7 +329,10 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	 */
 	
 	public boolean removeClickRegions(int x, int y) {
-		return eventHandler.removeDetectionRegions(x, y);
+		openLock();
+		boolean out = eventHandler.removeDetectionRegions(x, y);
+		closeLock();
+		return out;
 	}
 	
 //---  Mechanics   ----------------------------------------------------------------------------

@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.util.ArrayList;
 
+import visual.panel.ElementLoader;
 import visual.panel.ElementPanel;
 
 public class HandlePanel extends ElementPanel implements HandleElements{
@@ -14,10 +15,15 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	protected final static Font DEFAULT_FONT = new Font("Serif", Font.BOLD, 16);
 	protected final static Font ENTRY_FONT = new Font("Serif", Font.BOLD, 12);
 	
+//---  Instance Variables   -------------------------------------------------------------------
+	
+	private ElementLoader el;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public HandlePanel(int x, int y, int width, int height) {
 		super(x, y, width, height);
+		el = new ElementLoader(this);
 	}
 	
 //---  Operations   ---------------------------------------------------------------------------
@@ -32,14 +38,14 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	@Override
 	public void handleText(String nom, String frame, int prior, int x, int y, int wid, int hei, Font font, String phr) {
 		if(!moveElement(nom, x, y)){
-			addText(nom, prior, frame, x, y, wid, hei, phr, font == null ? DEFAULT_FONT : font, true, true, true);
+			el.addText(nom, prior, frame, x, y, wid, hei, phr, font == null ? DEFAULT_FONT : font, true, true, true);
 		}
 	}
 
 	@Override
 	public void handleText(String nom, String frame, int prior, int x, int y, int wid, int hei, Font font, String phr, Color col) {
 		if(!moveElement(nom, x, y)){
-			addText(nom, prior, frame, x, y, wid, hei, phr, font == null ? DEFAULT_FONT : font, col == null ? Color.black : col, true, true, true);
+			el.addText(nom, prior, frame, x, y, wid, hei, phr, font == null ? DEFAULT_FONT : font, col == null ? Color.black : col, true, true, true);
 		}
 	}
 
@@ -58,66 +64,71 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 			}
 		}
 		if(!moveElement(nom, x, y)){
-			addText(nom, prior, group, x, y, wid, hei, phrases, fonts, colors, true, true, true);
+			el.addText(nom, prior, group, x, y, wid, hei, phrases, fonts, colors, true, true, true);
 		}
 	}
 	
 	@Override
 	public void handleImage(String nom, String frame, int prior, int x, int y, String path, double scale) {
 		if(!moveElement(nom, x, y)){
-			addImage(nom, prior, frame, x, y, true, path, scale);
+			el.addImage(nom, prior, frame, x, y, true, path, scale);
 		}
 	}
 	
 	@Override
 	public void handleImage(String nom, String frame, int prior, int x, int y, Image img, double scale) {
 		if(!moveElement(nom, x, y)){
-			addImage(nom, prior, frame, x, y, true, img, scale);
+			el.addImage(nom, prior, frame, x, y, true, img, scale);
 		}
 	}
 
 	@Override
 	public void handleImage(String nom, String frame, int prior, int x, int y, int wid, int hei, boolean prop, String imgPath) {
 		if(!moveElement(nom, x, y)){
-			addImage(nom, prior, frame, x, y, wid, hei, true, imgPath, prop);
+			el.addImage(nom, prior, frame, x, y, wid, hei, true, imgPath, prop);
 		}
 	}
 
 	@Override
 	public void handleImage(String nom, String frame, int prior, int x, int y, int wid, int hei, boolean prop, Image img) {
 		if(!moveElement(nom, x, y)){
-			addImage(nom, prior, frame, x, y, wid, hei, true, img, prop);
+			el.addImage(nom, prior, frame, x, y, wid, hei, true, img, prop);
 		}
 	}
 
 	@Override
 	public void handleTextEntry(String nom, String frame, int prior, int x, int y, int wid, int hei, int cod, Font font, String phr) {
 		if(!moveElement(nom, x, y)){
-			addTextEntry(nom, prior, frame, x, y, wid, hei, cod, phr, font == null ? ENTRY_FONT : font, true, true, true);	//TODO: Smaller font for entry?
+			el.addTextEntry(nom, prior, frame, x, y, wid, hei, cod, phr, font == null ? ENTRY_FONT : font, true, true, true);	//TODO: Smaller font for entry?
 		}
-		if(!getElementStoredText(nom).equals(phr)) {
-			setElementStoredText(nom, phr);
+		try {
+			if(!getElementStoredText(nom).equals(phr)) {
+				setElementStoredText(nom, phr);
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void handleButton(String nom, String frame, int prior, int x, int y, int wid, int hei, int code) {
 		if(!moveElement(nom, x, y)) {
-			addButton(nom, prior, frame, x, y, wid, hei, code, true);
+			el.addButton(nom, prior, frame, x, y, wid, hei, code, true);
 		}
 	}
 
 	@Override
 	public void handleLine(String nom, String frame, int prior, int x, int y, int x2, int y2, int thck, Color fill) {
 		if(!moveElement(nom, x, y)) {
-			addLine(nom, prior, frame, x, y, x2, y2, thck, fill);
+			el.addLine(nom, prior, frame, x, y, x2, y2, thck, fill);
 		}
 	}
 
 	@Override
 	public void handleRectangle(String nom, String frame, int prior, int x, int y, int wid, int hei, Color fill, Color border) {
 		if(!moveElement(nom, x, y)) {
-			addRectangle(nom, prior, frame, x, y, wid, hei, true, fill, border);
+			el.addRectangle(nom, prior, frame, x, y, wid, hei, true, fill, border);
 		}
 	}
 
@@ -128,16 +139,16 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 		x2 -= thick / 2;
 		y2 -= thick / 2;
 		if(!moveElement(nom + "_line_1", x, y)) {
-			addLine(nom + "_line_1", prior, frame, x, y, x2, y, thick, border);
+			el.addLine(nom + "_line_1", prior, frame, x, y, x2, y, thick, border);
 		}
 		if(!moveElement(nom + "_line_2", x, y)) {
-			addLine(nom + "_line_2", prior, frame, x, y, x, y2, thick, border);
+			el.addLine(nom + "_line_2", prior, frame, x, y, x, y2, thick, border);
 		}
 		if(!moveElement(nom + "_line_3", x2, y2)) {
-			addLine(nom + "_line_3", prior, frame, x2, y2, x2, y, thick, border);
+			el.addLine(nom + "_line_3", prior, frame, x2, y2, x2, y, thick, border);
 		}
 		if(!moveElement(nom + "_line_4", x2, y2)) {
-			addLine(nom + "_line_4", prior, frame, x2, y2, x, y2, thick, border);
+			el.addLine(nom + "_line_4", prior, frame, x2, y2, x, y2, thick, border);
 		}
 	}
 
@@ -150,18 +161,18 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 			if(imgWid != wid) {
 				zoom = wid / imgWid;
 			}
-			addImage(imageName, prior, frame, x, y, true, path, zoom);
+			el.addImage(imageName, prior, frame, x, y, true, path, zoom);
 		}
 		String buttonName = name + "_button";
 		if(!moveElement(buttonName, x, y)) {
-			addButton(buttonName, prior, frame,  x, y, wid, hei, code, true);
+			el.addButton(buttonName, prior, frame,  x, y, wid, hei, code, true);
 		}
 	}
 
 	@Override
 	public void handleScrollbar(String name, String group, String controlledGroup, int prior, int scrollX, int scrollY, int scrollWid, int scrollHei, int windowAxisOrigin, int windowSize, boolean isBarVert) {
 		if(!moveElement(name, scrollX, scrollY)) {
-			addScrollbar(name, prior, group, scrollX, scrollY, scrollWid, scrollHei, windowAxisOrigin, windowSize, controlledGroup, isBarVert);
+			el.addScrollbar(name, prior, group, scrollX, scrollY, scrollWid, scrollHei, windowAxisOrigin, windowSize, controlledGroup, isBarVert);
 		}
 		
 	}
@@ -169,7 +180,7 @@ public class HandlePanel extends ElementPanel implements HandleElements{
 	@Override
 	public void handleCanvas(String name, String group, int prior, int x, int y, int wid, int hei, int canWid, int canHei, int code) {
 		if(!moveElement(name, x, y)) {
-			addCanvas(name, prior, group, x, y, wid, hei, canWid, canHei, code);
+			el.addCanvas(name, prior, group, x, y, wid, hei, canWid, canHei, code);
 		}
 		
 	}

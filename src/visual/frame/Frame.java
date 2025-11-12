@@ -78,6 +78,13 @@ public abstract class Frame{
 	
 //---  Operations   ---------------------------------------------------------------------------
 	
+	/**
+	 * 
+	 * TODO: Need to inform the user or change this so that if you overwrite this to use the
+	 *  innate clock of repaint(), you have to call super.repaint() at the end of your override.
+	 * 
+	 */
+	
 	public void repaint() {
 		frame.repaint();
 	}

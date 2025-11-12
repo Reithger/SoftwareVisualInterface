@@ -16,6 +16,7 @@ import visual.panel.element.drawn.DrawnScrollbar;
 import visual.panel.element.drawn.DrawnText;
 import visual.panel.element.drawn.DrawnTextEntry;
 import visual.panel.element.drawn.text.TextSegmentComposite;
+import visual.panel.group.GroupBoundings;
 import visual.panel.group.OffsetManager;
 
 public class ElementFactory {
@@ -28,8 +29,8 @@ public class ElementFactory {
 	
 	//-- Scrollbar  -------------------------------------------
 	
-	public static Element generateScrollbar(int priority, int x, int y, int scrollWid, int scrollHei, int windowOrigin, int windowSize, int code, String groupName, boolean isVert, OffsetManager offset) {
-		return new DrawnScrollbar(x, y, scrollWid, scrollHei, windowOrigin, windowSize, offset, code, priority, groupName, isVert);
+	public static Element generateScrollbar(int priority, int x, int y, int scrollWid, int scrollHei, int windowOrigin, int windowSize, int code, String groupName, boolean isVert, OffsetManager offset, GroupBoundings boundsAccess) {
+		return new DrawnScrollbar(x, y, scrollWid, scrollHei, windowOrigin, windowSize, offset, boundsAccess, code, priority, groupName, isVert);
 	}
 	
 	//-- Image  -----------------------------------------------

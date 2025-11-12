@@ -6,6 +6,7 @@ import input.mouse.ClickRegionRectangle;
 import input.mouse.Detectable;
 import visual.panel.element.Clickable;
 import visual.panel.element.Element;
+import visual.panel.group.GroupBoundings;
 import visual.panel.group.OffsetManager;
 
 public class DrawnScrollbar extends Element implements Clickable{
@@ -26,6 +27,8 @@ public class DrawnScrollbar extends Element implements Clickable{
 	private boolean isVert;
 	
 	private OffsetManager offsetManager;
+	
+	private GroupBoundings groupBounds;
 	
 	private int counterUpdate;
 	
@@ -53,7 +56,7 @@ public class DrawnScrollbar extends Element implements Clickable{
 
 //---  Constructors   -------------------------------------------------------------------------
 	
-	public DrawnScrollbar(int x, int y, int wid, int hei, int winOrigin, int winAcr, OffsetManager offset, int codeIn, int prior, String groupNom, boolean vert) {
+	public DrawnScrollbar(int x, int y, int wid, int hei, int winOrigin, int winAcr, OffsetManager offset, GroupBoundings boundsAccess, int codeIn, int prior, String groupNom, boolean vert) {
 		setX(x);
 		setY(y);
 		setDrawPriority(prior);
@@ -65,6 +68,7 @@ public class DrawnScrollbar extends Element implements Clickable{
 		code = codeIn;
 		isVert = vert;
 		offsetManager = offset;
+		groupBounds = boundsAccess;
 		update();
 	}
 	
@@ -136,8 +140,8 @@ public class DrawnScrollbar extends Element implements Clickable{
 	}
 	
 	private void update() {
-		minBound = isVert ? offsetManager.getMinimumScreenY(groupName) : offsetManager.getMinimumScreenX(groupName);
-		maxBound = isVert ? offsetManager.getMaximumScreenY(groupName) : offsetManager.getMaximumScreenX(groupName);
+		minBound = isVert ? groupBounds.getMinimumScreenY(groupName) : groupBounds.getMinimumScreenX(groupName);
+		maxBound = isVert ? groupBounds.getMaximumScreenY(groupName) : groupBounds.getMaximumScreenX(groupName);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------

@@ -5,7 +5,9 @@ import java.awt.Font;
 import java.awt.Image;
 
 import input.CustomEventReceiver;
+import visual.panel.ElementLoader;
 import visual.panel.ElementPanel;
+import visual.panel.group.OffsetManager;
 
 public class ImageDisplay {
 
@@ -80,6 +82,8 @@ public class ImageDisplay {
 	private boolean help;
 	private boolean update;
 	
+	private OffsetManager om;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public ImageDisplay(String path, ElementPanel in) {
@@ -88,6 +92,7 @@ public class ImageDisplay {
 		originUIY = 0;
 		zoom = 1;
 		p = in;
+		om = in.getOffsetManager();
 	}
 	
 	public ImageDisplay(Image ref, ElementPanel in) {
@@ -96,6 +101,7 @@ public class ImageDisplay {
 		zoom = 1;
 		originUIX = 0;
 		originUIY = 0;
+		om = in.getOffsetManager();
 	}
 
 //---  Operations   ---------------------------------------------------------------------------
@@ -276,10 +282,11 @@ public class ImageDisplay {
 	}
 	
 	public void drawPage() {
+		ElementLoader el = p.accessElementLoader();
 		if(help) {
 			p.removeAllElements();
-			p.addRectangle(ELEMENT_HELP + "_rect", 2, "no_move", p.getWidth() / 2, p.getHeight() / 2, p.getWidth() * 9 / 10, p.getHeight() * 9 / 10, true, Color.white, Color.black);
-			p.addText(ELEMENT_HELP + "_text", 5, "no_move", p.getWidth() / 2, p.getHeight() / 2, p.getWidth() * 9 / 10, p.getHeight() * 9 / 10, HELP_PAGE, HELP_FONT, true, true, true);
+			el.addRectangle(ELEMENT_HELP + "_rect", 2, "no_move", p.getWidth() / 2, p.getHeight() / 2, p.getWidth() * 9 / 10, p.getHeight() * 9 / 10, true, Color.white, Color.black);
+			el.addText(ELEMENT_HELP + "_text", 5, "no_move", p.getWidth() / 2, p.getHeight() / 2, p.getWidth() * 9 / 10, p.getHeight() * 9 / 10, HELP_PAGE, HELP_FONT, true, true, true);
 		}
 		else {
 			p.removeElementPrefixed(ELEMENT_HELP);
@@ -288,13 +295,14 @@ public class ImageDisplay {
 				update = false;
 			}
 			if(!p.moveElement(IMAGE_NAME, 0, 0)) {
-				p.addImage(IMAGE_NAME, 10, "image_display_navigate", 0, 0, false, getImage(), getZoom());
+				el.addImage(IMAGE_NAME, 10, "image_display_navigate", 0, 0, false, getImage(), getZoom());
 			}
 			drawUI();
 		}
 	}
 	
 	public void drawUI() {
+		ElementLoader el = p.accessElementLoader();
 		int usedWidth = p.getWidth() > MAXIMUM_UI_WIDTH ? MAXIMUM_UI_WIDTH : p.getWidth();
 		int usedHeight =  p.getHeight() > MAXIMUM_UI_HEIGHT ? MAXIMUM_UI_HEIGHT : p.getHeight();
 		
@@ -309,14 +317,14 @@ public class ImageDisplay {
 		
 		if(!hideUI) {
 			if(!p.moveElement("ui_box_drag_button", originUIX, originUIY))
-				p.addButton("ui_box_drag_button", 10, "no_move", originUIX, originUIY, useWid, useHei, CODE_DRAG_UI, false);
+				el.addButton("ui_box_drag_button", 10, "no_move", originUIX, originUIY, useWid, useHei, CODE_DRAG_UI, false);
 			int spacing = imageSize * 5 / 4;
 
 			int posX = originUIX + useWid / 2;
 			int posY = originUIY + spacing * 3 / 5;
 
 			if(!p.moveElement("rect_ui", originUIX, originUIY))
-				p.addRectangle("rect_ui", 13, "no_move",  originUIX, originUIY, useWid, useHei, false, Color.white, Color.black);
+				el.addRectangle("rect_ui", 13, "no_move",  originUIX, originUIY, useWid, useHei, false, Color.white, Color.black);
 			
 			handleImageButton("ui_box_zoom_in", "no_move", posX - spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_in.png", CODE_ZOOM_IN);
 			handleImageButton("ui_box_zoom_out", "no_move", posX + spacing, posY, imageSize, imageSize, "/visual/composite/assets/zoom_out.png", CODE_ZOOM_OUT);
@@ -332,7 +340,7 @@ public class ImageDisplay {
 		}
 		if(!disableToggleUI) {
 			handleImageButton("ui_hide_ui", "no_move", p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, hideUI ? "/visual/composite/assets/eye_open-2.png" : "/visual/composite/assets/eye_closed-2.png", CODE_HIDE_UI);
-			p.addRectangle("rect_hide_ui", 13, "no_move", p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, true, Color.white, Color.black);
+			el.addRectangle("rect_hide_ui", 13, "no_move", p.getWidth() - 1 * imageSize, imageSize, imageSize * 3 / 2, imageSize * 3 / 2, true, Color.white, Color.black);
 		}
 	}
 
@@ -381,8 +389,8 @@ public class ImageDisplay {
 	}
 	
 	public void resetPosition() {
-		p.setOffsetX("image_display_navigate", 0);
-		p.setOffsetY("image_display_navigate", 0);
+		om.setOffsetX("image_display_navigate", 0);
+		om.setOffsetY("image_display_navigate", 0);
 	}
 	
 	public void resetZoom() {
@@ -391,17 +399,18 @@ public class ImageDisplay {
 
 	public void handleImageButton(String name, String frame, int x, int y, int wid, int hei, String path, int code) {
 		String imageName = name + "_image";
+		ElementLoader el = p.accessElementLoader();
 		if(!p.moveElement(imageName, x, y)) {
 			double imgWid = p.retrieveImage(path).getWidth(null);
 			double zoom = 1.0;
 			if(imgWid != wid) {
 				zoom = wid / imgWid;
 			}
-			p.addImage(imageName,15, frame, x, y, true, path, zoom);
+			el.addImage(imageName,15, frame, x, y, true, path, zoom);
 		}
 		String buttonName = name + "_button";
 		if(!p.moveElement(buttonName, x, y)) {
-			p.addButton(buttonName, 15, frame,  x, y, wid, hei, code, true);
+			el.addButton(buttonName, 15, frame,  x, y, wid, hei, code, true);
 		}
 	}
 	
@@ -417,37 +426,37 @@ public class ImageDisplay {
 	}
 	
 	public void increaseOriginX() {
-		p.setOffsetX("image_display_navigate", (int)(p.getOffsetX("image_display_navigate") + reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
+		om.setOffsetX("image_display_navigate", (int)(om.getOffsetX("image_display_navigate") + reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
 	}
 
 	public void increaseOriginY() {
-		p.setOffsetY("image_display_navigate", (int)(p.getOffsetY("image_display_navigate") + reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
+		om.setOffsetY("image_display_navigate", (int)(om.getOffsetY("image_display_navigate") + reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
 	}
 	
 	public void decreaseOriginX() {
-		p.setOffsetX("image_display_navigate", (int)(p.getOffsetX("image_display_navigate") - reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
+		om.setOffsetX("image_display_navigate", (int)(om.getOffsetX("image_display_navigate") - reference.getWidth(null) * zoom * MOVEMENT_FACTOR));
 	}
 	
 	public void decreaseOriginY() {
-		p.setOffsetY("image_display_navigate", (int)(p.getOffsetY("image_display_navigate") - reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
+		om.setOffsetY("image_display_navigate", (int)(om.getOffsetY("image_display_navigate") - reference.getHeight(null) * zoom * MOVEMENT_FACTOR));
 	}
 	
 	public void dragOriginX(int amount) {
-		p.setOffsetX("image_display_navigate", p.getOffsetX("image_display_navigate") + amount);
+		om.setOffsetX("image_display_navigate", om.getOffsetX("image_display_navigate") + amount);
 	}
 	
 	public void dragOriginY(int amount) {
-		p.setOffsetY("image_display_navigate", p.getOffsetY("image_display_navigate") + amount);
+		om.setOffsetY("image_display_navigate", om.getOffsetY("image_display_navigate") + amount);
 	}
 	
 	public void increaseZoom() {
 		int wid = reference.getWidth(null);
 		int hei = reference.getHeight(null);
 		
-		int origX = p.getWidth() / 2 - p.getOffsetX("image_display_navigate");
+		int origX = p.getWidth() / 2 - om.getOffsetX("image_display_navigate");
 		double propX = origX / (wid * zoom);
 		
-		int origY = p.getHeight() / 2 - p.getOffsetY("image_display_navigate");
+		int origY = p.getHeight() / 2 - om.getOffsetY("image_display_navigate");
 		double propY = origY / (hei * zoom);
 		
 		int wDif = (int)((ZOOM_FACTOR - 1) * wid * zoom * propX);
@@ -463,10 +472,10 @@ public class ImageDisplay {
 		int wid = reference.getWidth(null);
 		int hei = reference.getHeight(null);
 		
-		int origX = p.getWidth() / 2 - p.getOffsetX("image_display_navigate");
+		int origX = p.getWidth() / 2 - om.getOffsetX("image_display_navigate");
 		double propX = origX / (wid * zoom);
 		
-		int origY = p.getHeight() / 2 - p.getOffsetY("image_display_navigate");
+		int origY = p.getHeight() / 2 - om.getOffsetY("image_display_navigate");
 		double propY = origY / (hei * zoom);
 		
 		int wDif = (int)((ZOOM_FACTOR - 1) * wid * zoom / ZOOM_FACTOR * propX);
@@ -483,11 +492,11 @@ public class ImageDisplay {
 	}
 	
 	public void setOffsetX(int in) {
-		p.setOffsetX("image_display_navigate", in);
+		om.setOffsetX("image_display_navigate", in);
 	}
 	
 	public void setOffsetY(int in) {
-		p.setOffsetY("image_display_navigate", in);
+		om.setOffsetY("image_display_navigate", in);
 	}
 	
 //---  Getter Methods   -----------------------------------------------------------------------
@@ -501,11 +510,11 @@ public class ImageDisplay {
 	}
 	
 	public int getOffsetX() {
-		return p.getOffsetX("image_display_navigate");
+		return om.getOffsetX("image_display_navigate");
 	}
 	
 	public int getOffsetY() {
-		return p.getOffsetY("image_display_navigate");
+		return om.getOffsetY("image_display_navigate");
 	}
 	
 }
