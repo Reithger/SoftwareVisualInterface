@@ -42,7 +42,7 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	
 	private EventFielder eventHandler;
 	
-	private boolean attention;
+	private volatile boolean attention;
 	
 	private int priority;
 	
@@ -74,30 +74,37 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 				p.paintComponent(g);
 			}
 		};
-		panel.setDoubleBuffered(true);
-		panel.setFocusable(true);
-		panel.setLocation(x, y);
-		panel.setSize(width, height);
-		panel.setPreferredSize(new Dimension(width, height));
-		panel.setOpaque(false);
-		panel.setVisible(true);
-		eventHandler = new EventFielder(this);
-		attention = true;
 		panel.addFocusListener(new FocusListener() {
 
 			@Override
 			public void focusGained(FocusEvent e) {
-
+				if(!attention) {
+					panel.transferFocus();
+				}
 			}
 
 			@Override
 			public void focusLost(FocusEvent e) {
 				if(attention) {
-					panel.requestFocusInWindow();
+					panel.grabFocus(); // or .requestFocusInWindow()?
 				}
 			}
 			
 		});
+		eventHandler = new EventFielder(this);
+		
+		panel.setPreferredSize(new Dimension(width, height));
+		panel.setSize(width, height);
+		panel.setLocation(x, y);
+		
+		panel.setDoubleBuffered(true);
+		panel.setOpaque(false);
+		
+		panel.setFocusable(true);
+		panel.setVisible(true);
+		panel.setEnabled(true);
+		
+		attention = true;
 	}
 
 //---  Operations   ---------------------------------------------------------------------------
@@ -118,7 +125,9 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	 */
 	
 	public void resetDetectionRegions() {
+		openLock();
 		eventHandler.resetDetectionRegions();
+		closeLock();
 	}
 	
 	public void setBackgroundColor(Color in) {
@@ -126,6 +135,7 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	}
 
 	public void requestFocusInWindow() {
+		getPanel().setFocusable(true);
 		getPanel().requestFocusInWindow();
 	}
 	
@@ -170,8 +180,6 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	 * @throws Exception
 	 */
 	
-	
-	
 	public String registerFont(String fontFilePath) throws Exception{
 		InputStream is = null;
 		is = Panel.class.getResourceAsStream(fontFilePath);
@@ -200,7 +208,7 @@ public abstract class Panel implements Comparable<Panel>, ComponentReceiver{
 	
 	public void setParentFrame(Frame fram) {
 		parentFrame = fram;
-		
+		resetDetectionRegions();
 	}
 	
 	public void setEventReceiver(EventReceiver in) {

@@ -95,9 +95,11 @@ public class WindowFrame extends Frame{
 		openLock();
 		windows.get(DEFAULT_WINDOW).put(panelName, panel);
 		closeLock();
-		showPanel(panelName);
 		if(activeWindow.contains(DEFAULT_WINDOW)) {
 			showPanel(DEFAULT_WINDOW, panelName);
+		}
+		else {
+			showPanel(panelName);
 		}
 	}
 	

@@ -2,6 +2,7 @@ package input.keyboard;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import input.EventFielder;
@@ -19,10 +20,15 @@ import input.manager.actionevent.ActionEventGenerator;
  *
  */
 
-public class KeyComponent implements KeyListener{
+public class KeyComponent implements KeyListener, Serializable{
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6875584274622270853L;
+
 	/** EventReceiver object providing reference to the EventReceiver to which this KeyComponent is attached*/
 	private EventFielder eventHandler;
 	

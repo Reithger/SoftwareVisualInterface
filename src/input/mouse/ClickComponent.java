@@ -5,6 +5,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,10 +29,14 @@ import input.manager.actionevent.ActionEventGenerator;
  *
  */
 
-public class ClickComponent implements MouseListener, MouseMotionListener, MouseWheelListener{
+public class ClickComponent implements MouseListener, MouseMotionListener, MouseWheelListener, Serializable{
 
 //---  Instance Variables   -------------------------------------------------------------------
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4764422151602591857L;
 	/** ArrayList<Integer[]> object containing the coordinates and codes for each event-region*/
 	private HashMap<Integer, Detectable> detectionRegions;
 	/** EventReceiver object representing the EventReceiver to which this ClickComponent is attached (the EventReceiver that is being clicked)*/

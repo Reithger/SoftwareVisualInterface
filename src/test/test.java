@@ -77,24 +77,61 @@ public class test {
 		WindowFrame fram = new WindowFrame(1200, 500);
 		fram.setName("Test");
 		ElementPanel pan = new ElementPanel(0, 0, 300, 500) {
+			
 			public void keyEvent(char event) {
 				super.keyEvent(event);
 				System.out.println(event);
 				//PopoutSelectList psL = new PopoutSelectList(300, 500, new String[] {"A", "B"}, false);
 				//System.out.println(psL.getSelected());
+				if(event == 'k') {
+					fram.hidePanel("window", "panel2");
+					fram.showPanel("window", "panel22");
+				}
+				if(event == 'l') {
+					fram.hidePanel("window", "panel22");
+					fram.showPanel("window", "panel2");
+				}
+			}
+			
+			private boolean flip;
+			
+			@Override
+			public void clickPressEvent(int event, int x, int y, int clickType) {
+				super.clickReleaseEvent(event, x, y, clickType);
+				System.out.println("Down");
 			}
 			
 			public void clickEvent(int event, int x, int y, int clickType) {
 				super.clickEvent(event, x, y, clickType);
-				System.out.println(x + " " + y);
-				
+				System.out.println(x + " " + y + " " + flip);
+				if(flip) {
+					fram.hidePanel("window", "panel2");
+					fram.showPanel("window", "panel22");
+					
+				}
+				else {
+					fram.hidePanel("window", "panel22");
+					fram.showPanel("window", "panel2");
+					
+				}
+				flip = !flip;
 			} 
 			
+			@Override
+			public void clickReleaseEvent(int event, int x, int y, int clickType) {
+				super.clickReleaseEvent(event, x, y, clickType);
+				System.out.println("Release");
+			}
+			
 		};
+		
+		//fram.setIconImage(pan.retrieveImage(imagePath2));
 		
 		Font defaultFont = new Font("Serif", Font.BOLD, 18);
 		
 		ElementLoader el = new ElementLoader(pan);
+		
+		el.addRectangle("rect555", 0, "move", 0, 0, pan.getWidth(), pan.getHeight(), false, Color.blue);
 		
 		el.addRectangle("rect", 1, "move", pan.getWidth() / 20, pan.getHeight() / 10, pan.getWidth() * 18/20, pan.getHeight() * 17/20, false, Color.blue);
 		
@@ -179,8 +216,62 @@ public class test {
 			
 		};
 		
+		ElementPanel pan22 = new ElementPanel(400, 0, 300, 500) {
+			
+			private boolean dragging;
+			private int lastX;
+			private int lastY;
+			
+			@Override
+			public void keyEvent(char event) {
+				super.keyEvent(event);
+				if(event == 't') {
+					try {
+						this.setElementStoredText("texEn", "display");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			@Override
+			public void clickPressEvent(int code, int x, int y, int clickType) {
+				super.clickPressEvent(code, x, y, clickType);
+				dragging = true;
+				lastX = x;
+				lastY = y;
+			}
+			
+			@Override
+			public void dragEvent(int code, int x, int y, int clickType) {
+				super.dragEvent(code, x, y, clickType);
+				if(dragging) {
+					resize(getWidth() + (x - lastX), getHeight() + (y - lastY));
+					lastX = x;
+					lastY = y;
+					drawPan2(this);
+				}
+			}
+			
+			@Override
+			public void clickReleaseEvent(int code, int x, int y, int clickType) {
+				super.clickReleaseEvent(code, x, y, clickType);
+				dragging = false;
+			}
+			
+			@Override
+			public void clickEvent(int event, int x, int y, int clickType) {
+				super.clickEvent(event, x, y, clickType);
+				System.out.println(event + " " + x + " " + y);
+				moveElement("line5", 40, 900);
+			} 
+			
+		};
+		
 
 		drawPan2(pan2);
+		drawPan2(pan22);
 		
 		String CANVAS_NAME = "canvas";
 		
@@ -297,6 +388,8 @@ public class test {
 		fram.showActiveWindow("window");
 		fram.addPanelToWindow("window", "panel1", pan);
 		fram.addPanelToWindow("window", "panel2", pan2);
+		fram.addPanelToWindow("window", "panel22", pan22);
+		fram.hidePanel("window", "panel22");
 		fram.addPanelToWindow("window", "canvas", pan3);
 	}
 	

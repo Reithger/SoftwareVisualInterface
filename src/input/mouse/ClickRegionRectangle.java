@@ -98,6 +98,16 @@ public class ClickRegionRectangle implements Detectable{
 //---  Mechanics   ----------------------------------------------------------------------------
 	
 	@Override
+	public String toString() {
+		StringBuilder out = new StringBuilder();
+		out.append("x: " + x);
+		out.append("y: " + y);
+		out.append("wid: " + width);
+		out.append("hei: " + height);
+		return out.toString();
+	}
+	
+	@Override
 	public int compareTo(Detectable d) {
 		int a = getPriority();
 		int b = d.getPriority();

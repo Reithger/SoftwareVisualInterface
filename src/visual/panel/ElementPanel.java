@@ -11,6 +11,7 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import input.mouse.Detectable;
 import visual.panel.element.Clickable;
 import visual.panel.element.Element;
 import visual.panel.element.TextStorage;
@@ -194,7 +195,7 @@ public class ElementPanel extends Panel {
 				c.unfocus();
 			}
 		}
-		if(focusElement.equals(name)) {
+		if(focusElement != null && focusElement.equals(name)) {
 			focusElement = null;
 		}
 		int hash = elements.removeElement(name);
@@ -317,6 +318,26 @@ public class ElementPanel extends Panel {
 		int out_y = y - getElement(name).getY() - getOffsetManager().getOffsetY(group);
 		return new int[] {out, out_y};
 	}
+
+	@Override
+	public void resetDetectionRegions() {
+		super.resetDetectionRegions();
+		updateClickRegions();
+	}
+	
+	public void updateClickRegions() {
+		for(String s : clickList.getClickableNames()) {
+			updateClickRegion(s);
+		}
+	}
+	
+	public void printClickRegions() {
+		for(String s : clickList.getClickableNames()) {
+			Clickable c = getClickableElement(s);
+			Detectable dr = c.getDetectionRegion(0, 0);
+			System.out.println(c.getCode() + " " + c.getIdentity() + " " + dr.toString());
+		}
+	}
 	
 	private void updateClickRegion(String name) {
 		Clickable c = getClickableElement(name);
@@ -351,6 +372,7 @@ public class ElementPanel extends Panel {
 				}
 			}
 		}
+		focusElement = null;
 	}
 
 	//-- Mouse Reactions  -------------------------------------
@@ -368,7 +390,9 @@ public class ElementPanel extends Panel {
 			return;
 		}
 		clickFired = true;
-		getParentFrame().dispenseAttention();
+		if(getParentFrame() != null) {
+			getParentFrame().dispenseAttention();
+		}
 		setAttention(true);
 		getEventReceiver().clickEvent(event, x, y, clickType);
 	}
@@ -472,7 +496,7 @@ public class ElementPanel extends Panel {
 	public void setDragClickSensitivity(int in) {
 		dragClickSensitivity = in;
 	}
-
+	
 //---  Getter Methods   -----------------------------------------------------------------------
 
 	/**
@@ -596,14 +620,14 @@ public class ElementPanel extends Panel {
 	 * @return - Returns a Clickable-implementing object representing the current Clickable object the ElementPanel is focusing on.
 	 */
 	
-	private String getFocusElement() {
+	public String getFocusElement() {
 		return focusElement;
 	}
 	
 	private int getFocusElementCode() {
 		return getClickableElement(getFocusElement()).getCode();
 	}
-
+	
 //---  Mechanics   ----------------------------------------------------------------------------
 	
 	/**
