@@ -60,17 +60,41 @@ public class ElementManager implements GroupBoundings {
 			else {
 				int offX = 0;
 				int offY = 0;
-				boolean compl = false;
+				boolean cullIfOutOfWindow = false;
+				int origX = -1;
+				int origY = -1;
+				int maxX = -1;
+				int maxY = -1;
 				for(String s : group) {
 					offX += groupInfoManager.getOffsetX(s);
 					offY += groupInfoManager.getOffsetY(s);
+					// This mess is so we know the most rigid window viewport available
+					// for cutting off a part of how an Element is drawn to remain in
+					// that viewport.
+					int yOrig = groupInfoManager.getWindowOrigin(s, true);
+					int xOrig = groupInfoManager.getWindowOrigin(s, false);
+					int yBreadth = groupInfoManager.getWindowBreadth(s, true);
+					int xBreadth = groupInfoManager.getWindowBreadth(s, false);
+					if((yOrig < origY || origY == -1) && yOrig != -1) {
+						origY = yOrig;
+					}
+					if((xOrig < origX || origX == -1) && xOrig != -1) {
+						origX = xOrig;
+					}
+					if((yOrig + yBreadth < maxY || maxY == -1) && (yOrig + yBreadth >= 0)) {
+						maxY = yOrig + yBreadth;
+					}
+					if((xOrig + xBreadth < maxX || maxX == -1) && (xOrig + xBreadth >= 0)) {
+						maxX = xOrig + xBreadth;
+					}
 					if(!groupInfoManager.getGroupDrawSetting(s)) {
-						compl = true;
+						cullIfOutOfWindow = true;
 					}
 				}
-				if(compl) {
+				if(cullIfOutOfWindow) {
 					if(canDrawElement(e, group)) {
-						e.drawToScreen(g, offX, offY);
+						//TODO: detect if partial draw (cut off by viewport) so can call 'drawPartialToScreen' instead
+						e.drawPartialToScreen(g, offX, offY, origX, origY, maxX, maxY);
 					}
 				}
 				else {
@@ -80,6 +104,18 @@ public class ElementManager implements GroupBoundings {
 			}
 		}
 	}
+	
+	/**
+	 * 
+	 * Function that checks whether a particular element, given the groups it belongs to and their relating window viewports,
+	 * should be drawn or not. This uses the element's calculated position based on group offsets along with the view context
+	 * of each group's window viewport to see if the element appears in any of the legal viewing spaces (assuming that the
+	 * viewports are set to cull elements if they are not within the alloted space for each viewport).
+	 * 
+	 * @param e
+	 * @param group
+	 * @return
+	 */
 	
 	private boolean canDrawElement(Element e, HashSet<String> group) {
 		boolean canDraw = true;

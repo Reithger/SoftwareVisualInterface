@@ -148,14 +148,14 @@ public class ElementGroupManager implements OffsetManager{
 		if(hasWindow(groupName)) {
 			return groupWindows.get(groupName).getOrigin(isVert);
 		}
-		return 0;
+		return -1;
 	}
 	
 	public int getWindowBreadth(String groupName, boolean isVert) {
 		if(hasWindow(groupName)) {
 			return groupWindows.get(groupName).getBreadth(isVert);
 		}
-		return 0;
+		return -1;
 	}
 	
 	public HashSet<String> getGroupMembership(String name) {

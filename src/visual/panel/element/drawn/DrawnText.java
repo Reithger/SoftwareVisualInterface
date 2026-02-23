@@ -9,6 +9,15 @@ import visual.panel.element.Element;
 import visual.panel.element.drawn.text.TextLine;
 import visual.panel.element.drawn.text.TextSegmentComposite;
 
+/**
+ * 
+ * TODO: Needs a way for a Group window to cut off text outside of that viewport
+ * 
+ * TODO: Document all this stuff, girl
+ * 
+ * 
+ */
+
 public class DrawnText extends Element{
 
 //---  Instance Variables   -------------------------------------------------------------------
@@ -80,6 +89,39 @@ public class DrawnText extends Element{
 		g.setFont(save);
 	}
 	
+	//TODO: Need a way to cull parts of a text line that are vertically in view but cut off horizontally
+	
+	@Override
+	public void drawPartialToScreen(Graphics g, int inOffsetX, int inOffsetY, int originX, int originY, int maxX, int maxY) {
+		Font save = g.getFont();
+		offsetX = inOffsetX;
+		offsetY = inOffsetY;
+		int useX = getXDraw() - (centeredText ? width / 2 : 0);
+		int useY = getYDraw() - (centeredText ? height / 2 : 0);
+		int totalHeight = totalTextLineHeight();
+		if(lines.size() > 0) {
+			int posY = useY + lines.get(0).getTallest() +  (centeredY ? (height - totalHeight) / 2 : 0);
+			posY = posY < inOffsetY ? inOffsetY : posY;
+			for(TextLine tl : lines) {
+				int finalX = useX + (centeredX ? (width - tl.calculateWidth()) / 2 : 0);
+				boolean visibleWid = originX == -1 || (finalX >= originX && finalX <= maxX);
+				boolean visibleHei = originY == -1 || (posY - tl.getTallest() / 2 >= originY && posY <= maxY);
+				if(visibleWid && visibleHei) {
+					tl.draw(g, finalX, posY);
+				}
+				posY += tl.getTallest();
+			}
+		}
+		g.setFont(save);
+	}
+	
+	/**
+	 * Function to calculate the approximate total pixel height of this DrawnText element when drawn
+	 * given the sizing of each composing TextLine object summed together.
+	 * 
+	 * @return
+	 */
+	
 	private int totalTextLineHeight() {
 		int out = 0;
 		
@@ -138,9 +180,9 @@ public class DrawnText extends Element{
 					// Slice off as much of the next word into the previous TextLine as will fit
 					String pull = lines.get(lines.size() - 1).tackOnExtra(words.getNextWord(), words.getNextWordFont(), words.getNextWordColor());
 					while(!pull.equals("")) {
-						System.out.println("B: " + pull);
+						//System.out.println("B: " + pull);
 						pull = toAdd.tackOnExtra(pull, words.getNextWordFont(), words.getNextWordColor());
-						System.out.println("A: " + pull);
+						//System.out.println("A: " + pull);
 						if(!pull.equals("")) {
 							lines.add(toAdd);
 							toAdd = new TextLine(width);
@@ -218,7 +260,10 @@ public class DrawnText extends Element{
 
 	@Override
 	public int getMaximumY() {
-		return height + getMinimumY();
+		if(lines == null) {
+			processTextComposite();
+		}
+		return totalTextLineHeight() + getMinimumY();
 	}
 	
 }

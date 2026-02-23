@@ -11,7 +11,8 @@ public class WindowValues {
 	private int breadthX;
 	
 	private int breadthY;
-	
+	/** Boolean to denote whether the elements in the group associated to this WindowValues object
+	 *  need to lie within the bounds of this window to be drawn or not (do we cull elements outside the window)*/
 	private boolean groupDraw;
 	
 //---  Constructors   -------------------------------------------------------------------------

@@ -15,7 +15,7 @@ public class DrawnScrollbar extends Element implements Clickable{
 	
 	public static final int CODE_SCROLL_BAR_X = -58;
 	public static final int CODE_SCROLL_BAR_Y = -57;
-	public static final double BAR_SIZE_PROPORTION = 1.0 / 30;
+	public static final double BAR_SIZE_PROPORTION = 1.0 / 70;
 	private static final int UPDATE_TIMER = 15;
 
 //---  Instance Variables   -------------------------------------------------------------------

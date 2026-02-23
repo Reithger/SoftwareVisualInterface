@@ -42,6 +42,29 @@ public abstract class Element implements Comparable<Element>{
 	
 	public abstract void drawToScreen(Graphics g, int offsetX, int offsetY);
 	
+	/**
+	 * Default implementation of partial draw function; in the event that an Element can appear in a group
+	 * viewport but should be partially cut off (some of it is in the view window but some of it is not), this
+	 * alternate draw function is called to instruct the draw to be done only in the visible area.
+	 * 
+	 * Generally, most Elements draw in a way that is constrained to their desired size and this isn't really necessary,
+	 * but some Elements can have more dynamic drawing sizes that make this more relevant and needed. Thus, the default
+	 * implementation of this function is to just call the regular drawToScreen and specific Elements can override
+	 * this function for their custom purposes.
+	 * 
+	 * @param g
+	 * @param offsetX
+	 * @param offsetY
+	 * @param xPos
+	 * @param yPos
+	 * @param wid
+	 * @param hei
+	 */
+	
+	public void drawPartialToScreen(Graphics g, int offsetX, int offsetY, int xPos, int yPos, int wid, int hei) {
+		drawToScreen(g, offsetX, offsetY);
+	}
+	
 	public void moveElement(int newX, int newY) {
 		setX(newX);
 		setY(newY);

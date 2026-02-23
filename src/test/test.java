@@ -194,10 +194,10 @@ public class test {
 			public void dragEvent(int code, int x, int y, int clickType) {
 				super.dragEvent(code, x, y, clickType);
 				if(dragging) {
-					resize(getWidth() + (x - lastX), getHeight() + (y - lastY));
+					//resize(getWidth() + (x - lastX), getHeight() + (y - lastY));
 					lastX = x;
 					lastY = y;
-					drawPan2(this);
+					//drawPan2(this);
 				}
 			}
 			
@@ -306,7 +306,7 @@ public class test {
 		
 		strings.add("wod 1");
 		strings.add("wod of length 2");
-		strings.add("and much much more");
+		strings.add("and much much more like a lot more holy shit there is so much here what is going on aaaaa aaaaa aaaa aaaaa a aaaaa and much much more like a lot more holy shit there is so much here what is going on aaaaa aaaaa aaaa aaaaa a aaaaa and much much more like a lot more holy shit there is so much here what is going on aaaaa aaaaa aaaa aaaaa a aaaaa and much much more like a lot more holy shit there is so much here what is going on aaaaa aaaaa aaaa aaaaa a aaaaa");
 		
 		fonts.add(new Font("Sans Serif", Font.BOLD, 12));
 		fonts.add(new Font("Times New Roman", Font.ITALIC, 18));
@@ -388,9 +388,9 @@ public class test {
 		fram.showActiveWindow("window");
 		fram.addPanelToWindow("window", "panel1", pan);
 		fram.addPanelToWindow("window", "panel2", pan2);
-		fram.addPanelToWindow("window", "panel22", pan22);
+		//fram.addPanelToWindow("window", "panel22", pan22);
 		fram.hidePanel("window", "panel22");
-		fram.addPanelToWindow("window", "canvas", pan3);
+		//fram.addPanelToWindow("window", "canvas", pan3);
 	}
 	
 	private static void drawPan2(ElementPanel pan2) {
@@ -406,7 +406,9 @@ public class test {
 		el.addLine("line5", 30, "move",  40, -70, 50, 750, 5, Color.black);
 		el.addLine("line6", 30, "move",  50, 50, 150, 50, 5, Color.black);
 		
-		el.addScrollbar("scrollbar", 30, "no_move", pan2.getWidth() - 30, 150, 30, pan2.getHeight() - 150, 0, pan2.getHeight(), "move", true);
+		el.addScrollbar("scrollbar", 30, "no_move", pan2.getWidth() - 30, 0, 30, pan2.getHeight(), 250, pan2.getHeight() / 4, "move", true);
+		el.addRectangle("boundary", 50, "no_move", 50, 250, pan2.getWidth() - 100, pan2.getHeight() / 4, false, new Color(0, 0, 0, 1), new Color(5, 5, 5));
+		pan2.setGroupDrawOutsideWindow("move", false);
 		
 	}
 

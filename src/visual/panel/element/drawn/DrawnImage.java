@@ -1,7 +1,6 @@
 package visual.panel.element.drawn;
 
 import java.awt.Image;
-import java.awt.Toolkit;
 
 import visual.panel.element.Element;
 
@@ -20,6 +19,8 @@ public class DrawnImage extends Element{
 	
 	private int height;
 	
+	private boolean maintainProportion;
+	
 //---  Constructors   -------------------------------------------------------------------------
 	
 	public DrawnImage(int x, int y, int prior, boolean inCenter, Image img, int inWidth, int inHeight, boolean proportion) {
@@ -30,6 +31,7 @@ public class DrawnImage extends Element{
 		width = inWidth;
 		height = inHeight;
 		setDrawPriority(prior);
+		maintainProportion = proportion;
 	}
 
 	/**
@@ -47,12 +49,31 @@ public class DrawnImage extends Element{
 		setDrawPriority(prior);
 		width = img.getWidth(null);
 		height = img.getHeight(null);
+		maintainProportion = true;
 	}	
 
 //---  Operations   ---------------------------------------------------------------------------
 	
 	public void drawToScreen(Graphics g, int offsetX, int offsetY) {
-		g.drawImage(image, getX() - (center ? width / 2 : 0) + offsetX, getY() - (center ? height / 2 : 0) + offsetY, width, height, null);
+		int useWid = width;
+		int useHei = height;
+		if(maintainProportion) {
+			int imgWid = image.getWidth(null);
+			int imgHei = image.getHeight(null);
+			if(useWid != imgWid || useHei != imgHei) {
+				double widStretch = (double) useWid / imgWid;
+				double heiStretch = (double) useHei / imgHei;
+				if(widStretch < heiStretch) {
+					useWid = (int) (widStretch * imgWid);
+					useHei = (int) (widStretch * imgHei);
+				}
+				else {
+					useWid = (int) (heiStretch * imgWid);
+					useHei = (int) (heiStretch * imgHei);
+				}
+			}
+		}
+		g.drawImage(image, getX() - (center ? useWid / 2 : 0) + offsetX, getY() - (center ? useHei / 2 : 0) + offsetY, useWid, useHei, null);
 	}
 
 //---  Getter Methods   -----------------------------------------------------------------------
